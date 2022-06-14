@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
+{% block title %} HvZ @ RIT - {{ player }} {% endblock %}
+{% block extrahead %}
+<script>
+$(document).ready(function () {
+    if ("{{player.role}}" == "h" || "{{player.role}}" == "v") {
+        $('#maincontainer').addClass("humancontainer");
+    }
+    if ("{{player.role}}" == "z") {
+        $('#maincontainer').addClass("zombiecontainer");
+    }
+});
+</script>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-md-center playermainrow">
+    <div class="col col-md-4">
+        <div class="row justify-content-md-center">
+            <div class="col">
+                <h1 class="team_name"> {{ player }} </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="team_picture"><img src="{{ player.picture.url }}"/></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" id="player_role">
+                <h1> Status </h1>
+                <h5>{{player.get_role_display}}</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" id="player_role">
+                <h1> Team </h1>
+                <a href="/team/{{player.team}}/" class="team_link">
+                    {% if player.team.picture %}<img src="/{{player.team.picture}}"/>{% endif %}
+                    <h5>{{player.team}}</h5>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col col-lg-8">
+        <div class="row">
+            <div id="player_badges" class="col">
+                <h1> Badges </h1>
+                {% for badge in badges %} <img src="{{ badge.badge_type.picture.url }}" title="{{ badge.badge_type.badge_name }}" class="player_badge_img" /> {% empty %} <span class="nobadges">No badges to show </span>{% endfor %}
+            </div>
+        </div>
+        <div id="player_tags" class="row">
+            <div class="col">
+                <h1> Tags </h1>
+                {% for tag in tags %} <div class="player_tag_div"><a href="/player/{{tag.taggee.zombie_uuid}}/"><div><img src="{{ tag.taggee.picture.url }}" class="player_tag_img" /></div><div>{{tag.taggee}}</div></a></div>
+                {% empty %}<span class="notags">No tags to show</span>{% endfor %}
+            </div>
+        </div>
+        <div id="player_blasters" class="row">
+            <div class="col">
+                <h1> Blasters </h1>
+                {% for blaster in blasters %} <div class="player_blaster_div"><img src="{{ blaster.picture.url }}" title="{{ blaster }}" class="player_blaster_img" /><div>{{blaster.name}}</div>{% empty %}<span class="noblasters">No blasters to show</span> {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

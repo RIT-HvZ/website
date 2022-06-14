@@ -1,0 +1,33 @@
+{% extends "socialaccount/base.html" %}
+{% load i18n %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  <div class="login_alreadylogged">You are already logged in. <a href="/">Return home</a></div>
+{% else %}
+  {% if process == "connect" %}
+  <h1>{% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}</h1>
+
+  <p>{% blocktrans with provider.name as provider %}You are about to connect a new third party account from {{ provider }}.{% endblocktrans %}</p>
+  {% else %}
+  <div class="row">
+    <div class="col login-title">
+      <h1>{% blocktrans with provider.name as provider %}Sign In via {{ provider }}{% endblocktrans %}</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col login-description">
+      <p>{% blocktrans with provider.name as provider %}You are about to sign in using a third party account from {{ provider }}.{% endblocktrans %}</p>
+    </div>
+  </div>
+  {% endif %}
+  <div class="row">
+    <div class="col login-button">
+      <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit">{% trans "Continue" %}</button>
+      </form>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

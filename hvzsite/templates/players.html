@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
+{% block title %} HvZ @ RIT - Player List {% endblock %}
+
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable = $('#players').DataTable( {
+            "serverSide": true,
+            "ajax": {
+                "url": '/api/players',
+                "type": 'GET'
+            },
+            "scrollX": true,
+            "order": [[1, 'asc']],
+            "columns": [
+                {"className": "dt_profilepic", "name": "picture", "data": "pic", "orderable": false},
+                {"className": "dt_name", "name": "name"  , "data": "name"},
+                {"className": "dt_status", "name": "status"  , "data": "status"},
+                {"className": "dt_tags", "name": "tags"  , "data": "tags"},
+                {"className": "dt_team", "name": "team"  , "data": "team"}
+            ],
+        } );
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Players </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="players" class="table table-striped display">
+            <thead>
+                <tr>
+                    <th class="foo">Picture</th>
+                    <th class="foo">Name</th>
+                    <th class="foo">Status</th>
+                    <th class="foo">Tags</th>
+                    <th class="foo">Team</th>
+            </thead>
+        </table>
+    </div>
+</div>
+{% endblock %}

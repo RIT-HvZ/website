@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
+{% block title %} HvZ @ RIT - {{ team }} {% endblock %}
+{% block extrahead %}
+<script>
+$(document).ready(function () {
+    var datatable = $('#rostertable').DataTable({});
+});
+</script>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-md-center">
+    <div class="col col-md-4">
+        <div class="row justify-content-md-center">
+            <div class="col">
+                <h1 class="team_name"> {{ team }} </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="team_picture"><img src="{{ team.picture.url }}"/></div>
+            </div>
+        </div>
+    </div>
+    <div class="col col-lg-8">
+        <div class="row">
+            <div class="col" id="team_roster">
+                <h1 class="roster_title"> Roster </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table id="rostertable" class="table table-striped display"> 
+                    <thead>
+                        <tr>
+                            <th> Picture </th>
+                            <th> Name </th>
+                            <th> Status </th>
+                            <th> Tags </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for player in roster %} 
+                        <tr class="{% if player.status == 'z' %}dt_zombie{% else %}dt_human{% endif %}">
+                            <td class="roster_pic"><a class="dt_profile" href="/player/{{player.zombie_uuid}}/"><img src="{{ player.picture.url }}"/></a></td>
+                            <td class="roster_name"><a class="dt_name_link" href="/player/{{player.zombie_uuid}}/">{{player}}</a></td>
+                            <td class="roster_status">{{player.get_role_display}}</td>
+                            <td class="roster_tags">{{player.taggers.count}}</td>
+                        </tr>
+                        {% endfor %} 
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

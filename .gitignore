@@ -1,0 +1,4 @@
+hvzsite/secret.txt
+hvzvenv
+*.pyc
+hvzsite/hvz/migrations

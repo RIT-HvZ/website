@@ -1,0 +1,137 @@
+body {
+    background-color: #020202;
+    padding-top: 75px;
+}
+
+.logout-link {
+    color: rgb(80,80,80);
+}
+.container {
+    border-radius: 2em;
+    background-color: #4d4d4d;
+}
+
+.logo-img {
+    position:relative;
+    width: 59px;
+    height: 45px;
+    top:0px;
+}
+
+.dt_profile {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.dt_profilepic {
+    max-width: 110px;
+}
+
+.dt_teampic {
+    max-width: 60px;
+    max-height: 60px;
+}
+
+.dt_human td{
+    background-color: rgba(201, 119, 13, 0.5);
+}
+
+.dt_zombie td{
+    background-color: rgba(16, 185, 1, 0.527);
+}
+
+#maincontainer.zombiecontainer {
+    background-color: rgba(16, 185, 1, 0.527);
+}
+
+#maincontainer.humancontainer {
+    background-color: rgba(201, 119, 13, 0.5);
+}
+.dt_name_link, .dt_team_link{
+    text-decoration: none;
+    color: rgb(30,30,30);
+}
+
+.dt_name, .dt_size {
+    vertical-align: middle;
+}
+
+.dt_name_link:hover, .dt_team_link:hover{
+    color: rgb(60,60,60);
+}
+
+.dt_teamname {
+    padding-left: 5px;
+    padding-right: 1px;
+}
+#player_name h1 {
+    display: inline-block;
+}
+
+#player_name div {
+    display: inline-block;
+}
+
+.roster_pic img{
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.team_picture img {
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.team_name {
+    width: 100%;
+    text-align: center;
+}
+ 
+.team_picture {
+    width: 100%;
+    text-align: center;
+}
+
+#rostertable tbody tr td, #players tbody tr td {
+    vertical-align: middle;
+}
+
+#players {
+    width: 100% !important;
+}
+
+.playermainrow {
+    text-align: center;
+}
+
+.team_link img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.team_link, .login_alreadylogged a, #player_tags a {
+    text-decoration: none;
+    color: rgb(30,30,30);
+}
+
+.team_link:hover, .login_alreadylogged a:hover, #player_tags a:hover {
+    color: rgb(60,60,60);
+}
+
+.login-title, .login-description, .login-button, .center {
+    text-align: center;
+}
+
+.player_blaster_img, .player_badge_img, .player_tag_img {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+
+.player_blaster_div, .player_tag_div {
+    display: inline-block;
+}
+
+.playermainrow h1 {
+    text-decoration: underline;
+}

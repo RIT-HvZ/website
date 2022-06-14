@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
+{% block title %} HvZ @ RIT - Player List {% endblock %}
+
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable = $('#teams').DataTable( {
+            "serverSide": true,
+            "ajax": {
+                "url": '/api/teams',
+                "type": 'GET'
+            },
+            "order": [[1, 'asc']],
+            "columns": [
+                {"className": "dt_profilepic", "name": "picture", "data": "pic", "orderable": false},
+                {"className": "dt_name", "name": "name", "data": "name"},
+                {"className": "dt_size", "name": "size", "data": "size"},
+            ],
+        } );
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+<h1> Teams </h1>
+
+<table id="teams" class="table table-striped">
+    <thead>
+        <tr>
+            <th class="foo">Picture</th>
+            <th class="foo">Name</th>
+            <th class="foo"># Members</th>
+    </thead>
+</table>
+{% endblock %}
