@@ -1,7 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager, BaseUserManager
 from django.db.models.functions import Concat
 from django.db.models import CharField
+
+import datetime
 import uuid
 import os
 
@@ -17,14 +19,20 @@ class Team(models.Model):
 def get_person_upload_path(instance, filename):
     return os.path.join("static","profile_pictures",str(instance.zombie_uuid), filename)
 
-class PersonManager(models.Manager):
+class PersonFullNameManager(models.Manager):
     def get_queryset(self):
-        return super(PersonManager, self).get_queryset().annotate(full_name=Concat('first_name', 'last_name', output_field=CharField()))
+        return super(PersonFullNameManager, self).get_queryset().annotate(full_name=Concat('first_name', 'last_name', output_field=CharField()))
 
 class Game(models.Model):
     game_name = models.CharField(max_length=50)
     start_date = models.DateField()
     end_date = models.DateField()
+
+    def __str__(self) -> str:
+        return f"{self.game_name}: {datetime.datetime.strftime(self.start_date, '%Y/%m/%d')}-{datetime.datetime.strftime(self.end_date, '%Y/%m/%d')}"
+
+def get_latest_game():
+    return Game.objects.latest("start_date")
 
 class Mission(models.Model):
     team = models.CharField(max_length=1,choices=[('h','Human'),('z','Zombie'),('s',"Staff")])
@@ -32,11 +40,14 @@ class Mission(models.Model):
     go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the mission")
 
 class Person(AbstractUser):
+    player_uuid = models.UUIDField(verbose_name="Player UUID", default=uuid.uuid4, unique=True)
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, related_name="team_members")
     picture = models.ImageField(upload_to=get_person_upload_path, null=False, default="/static/images/noprofile.png")
-    full_name_objects = PersonManager()
+    objects = UserManager()
+    full_name_objects = PersonFullNameManager()
     discord_id = models.CharField(max_length=100, null=True)
     games_played = models.ManyToManyField(Game)
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -46,7 +57,7 @@ class PlayerStatus(models.Model):
     tag2_uuid = models.UUIDField(verbose_name="Tag #2 ID",   editable=True, default=uuid.uuid4)
     zombie_uuid = models.UUIDField(verbose_name="Zombie ID", editable=True, default=uuid.uuid4)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('z','Zombie'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)",("n","NonPlayer"))], max_length=1, default='h', null=False)
+    status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('z','Zombie'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='h', null=False)
 
 class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)
@@ -77,6 +88,7 @@ def get_blaster_upload_path(instance, filename):
 class Blaster(models.Model):
     name = models.CharField(max_length=100, default="No name given")
     owner = models.ForeignKey(Person, on_delete=models.CASCADE, null=False, related_name="owned_blasters")
+    game_approved_in = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     approved_by = models.ForeignKey(Person, on_delete=models.SET_NULL, null=True, related_name="approved_blasters", limit_choices_to={'is_staff': True})
     picture = models.ImageField(upload_to=get_blaster_upload_path, null=True)
 

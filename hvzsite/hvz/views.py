@@ -1,3 +1,4 @@
+from webbrowser import get
 from django.shortcuts import render
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -7,7 +8,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import Person, BadgeInstance, Tag, Blaster, Team
+from .models import Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game
 from rest_framework.decorators import api_view
 import json 
 
@@ -19,7 +20,7 @@ def index(request):
 def me(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
-    return player_view(request, request.user.zombie_uuid)
+    return player_view(request, request.user.player_uuid)
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -38,13 +39,16 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-def player_view(request, player_id):
-    player = Person.objects.get(zombie_uuid=player_id)
+def player_view(request, player_id, game=None):
+    player = Person.objects.get(player_uuid=player_id)
+    if game is None:
+        game = get_latest_game()
     context = {
         'player': player,
         'badges': BadgeInstance.objects.filter(player=player), 
-        'tags': Tag.objects.filter(tagger=player),
-        'blasters': Blaster.objects.filter(owner=player)
+        'tags': Tag.objects.filter(tagger=player, game=game),
+        'status': PlayerStatus.objects.get(player=player, game=game),
+        'blasters': Blaster.objects.filter(owner=player, game_approved_in=game)
     }
     return render(request, "player.html", context)
 
@@ -63,7 +67,9 @@ def players(request):
 
 
 @api_view(["GET"])
-def players_api(request):
+def players_api(request, game=None):
+    if game is None:
+        game = get_latest_game()
     r = request.query_params
     print(json.dumps(r, indent=4))
     try:
@@ -84,18 +90,19 @@ def players_api(request):
     if order_column_name != "tags":
         query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "status": "role", "team": "team__name"}[order_column_name]}""")
     else:
-        query = query.annotate(num_tags=Count('taggers')).order_by(f"""{'-' if order_direction == 'asc' else ''}num_tags""")
+        query = query.annotate(num_tags=Count('taggers', filter=Q(game=game))).order_by(f"""{'-' if order_direction == 'asc' else ''}num_tags""")
     result = []
     for person in query[start:limit]:
+        person_status = PlayerStatus.objects.get(player=person, game=game)
         result.append({
-            "name": f"""<a class="dt_name_link" href="/player/{person.zombie_uuid}/">{person.first_name} {person.last_name}</a>""",
-            "pic": f"""<a class="dt_profile_link" href="/player/{person.zombie_uuid}/"><img src='{person.picture.url}' class='dt_profile' /></a>""",
-            "status": {"h": "Human", "a": "Human", "z": "Zombie"}[person.role],
+            "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
+            "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture.url}' class='dt_profile' /></a>""",
+            "status": {"h": "Human", "a": "Human", "z": "Zombie"}[person_status.role],
             "team": None if person.team is None else (f"""<a href="/team/{person.team.name}/" class="dt_team_link">person.team.name</a>""" if (person.team is None or person.team.picture is None) else f"""<a href="/team/{person.team.name}/" class="dt_team_link"><img src='{person.team.picture.url}' class='dt_teampic' alt='{person.team}' /><span class="dt_teamname">{person.team}</span></a>"""),
             "team_pic": None if (person.team is None or person.team.picture is None) else person.team.picture.url,
-            "tags": person.taggers.count(),
-            "DT_RowClass": {"h": "dt_human", "a": "dt_human", "z": "dt_zombie"}[person.role],
-            "DT_RowData": {"person_url": f"/player/{person.zombie_uuid}/", "team_url": f"/team/{person.team.name}/" if person.team is not None else ""}
+            "tags": Tag.objects.filter(tagger=person,game=game).count(),
+            "DT_RowClass": {"h": "dt_human", "a": "dt_human", "z": "dt_zombie"}[person_status.role],
+            "DT_RowData": {"person_url": f"/player/{person.player_uuid}/", "team_url": f"/team/{person.team.name}/" if person.team is not None else ""}
         })
     data = {
         "draw": int(r['draw']),
