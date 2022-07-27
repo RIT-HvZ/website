@@ -51,13 +51,39 @@ class Person(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+    @property
+    def current_status(self):
+        return PlayerStatus.objects.get_or_create(player=self, game=get_latest_game())[0]
+
+    @property
+    def num_tags(self):
+        return Tag.objects.filter(game=get_latest_game(), tagger=self).count()
+
 class PlayerStatus(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE)
     tag1_uuid = models.UUIDField(verbose_name="Tag #1 ID",   editable=True, default=uuid.uuid4)
     tag2_uuid = models.UUIDField(verbose_name="Tag #2 ID",   editable=True, default=uuid.uuid4)
     zombie_uuid = models.UUIDField(verbose_name="Zombie ID", editable=True, default=uuid.uuid4)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('z','Zombie'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='h', null=False)
+    status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('z','Zombie'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='n', null=False)
+
+    def __str__(self) -> str:
+        return f"Status of {self.player} during game \"{self.game}\" ({self.get_status_display()})"
+
+    def is_zombie(self):
+        return self.status in ['z','o']
+
+    def is_human(self):
+        return self.status in ['h','v']
+
+    def is_mod(self):
+        return self.status == 'm'
+
+    def is_admin(self):
+        return self.status == 'a'
+
+    def is_nonplayer(self):
+        return self.status == 'n'
 
 class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)

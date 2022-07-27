@@ -5,10 +5,10 @@
 {% block extrahead %}
 <script>
 $(document).ready(function () {
-    if ("{{player.role}}" == "h" || "{{player.role}}" == "v") {
+    if ("{{player.current_status.is_human}}" == "True") {
         $('#maincontainer').addClass("humancontainer");
     }
-    if ("{{player.role}}" == "z") {
+    if ("{{player.current_status.is_zombie}}" == "True") {
         $('#maincontainer').addClass("zombiecontainer");
     }
 });

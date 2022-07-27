@@ -47,7 +47,7 @@ def player_view(request, player_id, game=None):
         'player': player,
         'badges': BadgeInstance.objects.filter(player=player), 
         'tags': Tag.objects.filter(tagger=player, game=game),
-        'status': PlayerStatus.objects.get(player=player, game=game),
+        'status': PlayerStatus.objects.get_or_create(player=player, game=game)[0],
         'blasters': Blaster.objects.filter(owner=player, game_approved_in=game)
     }
     return render(request, "player.html", context)
@@ -88,20 +88,25 @@ def players_api(request, game=None):
     if search != "":
         query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(team__name__icontains=search))
     if order_column_name != "tags":
-        query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "status": "role", "team": "team__name"}[order_column_name]}""")
+        query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "status": "status", "team": "team__name"}[order_column_name]}""")
     else:
         query = query.annotate(num_tags=Count('taggers', filter=Q(game=game))).order_by(f"""{'-' if order_direction == 'asc' else ''}num_tags""")
     result = []
     for person in query[start:limit]:
-        person_status = PlayerStatus.objects.get(player=person, game=game)
+        try:
+            person_status = PlayerStatus.objects.get(player=person, game=game)
+        except:
+            continue
+        if person_status.status == "n":
+            continue
         result.append({
             "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
             "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture.url}' class='dt_profile' /></a>""",
-            "status": {"h": "Human", "a": "Human", "z": "Zombie"}[person_status.role],
+            "status": {"h": "Human", "a": "Admin", "z": "Zombie", "m": "Mod", "v": "Human", "o": "Zombie", "n": "NonPlayer"}[person_status.status],
             "team": None if person.team is None else (f"""<a href="/team/{person.team.name}/" class="dt_team_link">person.team.name</a>""" if (person.team is None or person.team.picture is None) else f"""<a href="/team/{person.team.name}/" class="dt_team_link"><img src='{person.team.picture.url}' class='dt_teampic' alt='{person.team}' /><span class="dt_teamname">{person.team}</span></a>"""),
             "team_pic": None if (person.team is None or person.team.picture is None) else person.team.picture.url,
             "tags": Tag.objects.filter(tagger=person,game=game).count(),
-            "DT_RowClass": {"h": "dt_human", "a": "dt_human", "z": "dt_zombie"}[person_status.role],
+            "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer"}[person_status.status],
             "DT_RowData": {"person_url": f"/player/{person.player_uuid}/", "team_url": f"/team/{person.team.name}/" if person.team is not None else ""}
         })
     data = {
