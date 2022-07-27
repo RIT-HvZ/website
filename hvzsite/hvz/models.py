@@ -17,7 +17,7 @@ class Team(models.Model):
         return self.name
 
 def get_person_upload_path(instance, filename):
-    return os.path.join("static","profile_pictures",str(instance.zombie_uuid), filename)
+    return os.path.join("static","profile_pictures",str(instance.player_uuid), filename)
 
 class PersonFullNameManager(models.Manager):
     def get_queryset(self):
@@ -83,7 +83,7 @@ class Tag(models.Model):
         return f"{self.tagger} tagged {self.taggee} at {self.timestamp}"
 
 def get_blaster_upload_path(instance, filename):
-        return os.path.join("static","blaster_pictures",str(instance.owner.zombie_uuid), filename)
+        return os.path.join("static","blaster_pictures",str(instance.owner.player_uuid), filename)
 
 class Blaster(models.Model):
     name = models.CharField(max_length=100, default="No name given")
