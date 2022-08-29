@@ -164,11 +164,6 @@ LOGOUT_REDIRECT_URL = '/'
 AUTH_USER_MODEL = 'hvz.Person'
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost"]
-# Client ID
-#645627505873-maklq6cq85u8oqhncl9oe3q16hsn5tv4.apps.googleusercontent.com
-# Client Secret
-#GOCSPX-LNE1l2hqYIBoXCyPFn7dhL0vWi
-
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
