@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
+{% block title %} HvZ @ RIT - Register Tag {% endblock %}
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        $("#id_tagger_id").attr('size',36);
+        $("#id_taggee_id").attr('size',36);
+    });
+    </script>
+{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Register Tag </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        {% if tagcomplete %}
+            <h2 class="tagnotification">Successfully registered Tag of {{tag.taggee}} by {{tag.tagger}}!</h2>
+        {% endif %}
+        <form method="post" id="tagform" class="center">{% csrf_token %}
+            {% if form.non_field_errors|length > 0 %}<div class="tagformerrors mb-3">{{ form.non_field_errors }}</div>{% endif %}
+            <div class="mb-3">
+                {{ form.tagger_id.errors }}
+                <label for="{{ form.tagger_id.id_for_label }}" class="form-label">Tagger (Zombie) ID</label>
+                {{ form.tagger_id }}
+            </div>
+            <div class="mb-3">
+                {{ form.taggee_id.errors }}
+                <label for="{{ form.taggee_id.id_for_label }}" class="form-label">Taggee (Human) ID</label>
+                {{ form.taggee_id }}
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

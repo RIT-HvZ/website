@@ -1,6 +1,15 @@
 body {
-    background-color: #020202;
+    background-color: #111;
     padding-top: 75px;
+}
+
+h1 {
+    color: #aaa;
+    text-shadow: #000 2px 2px 3px;
+}
+
+form {
+    color: #aaa;
 }
 
 .logout-link {
@@ -8,7 +17,7 @@ body {
 }
 .container {
     border-radius: 2em;
-    background-color: #4d4d4d;
+    background-color: #000;
 }
 
 .logo-img {
@@ -40,6 +49,17 @@ body {
     background-color: rgba(16, 185, 1, 0.527);
 }
 
+.dt_mod td{
+    background-color: rgba(9, 111, 228, 0.644);
+}
+
+.dt_admin td{
+    background-color: rgba(255, 238, 0, 0.8);
+}
+
+th, label {
+    color: #aaa;
+}
 #maincontainer.zombiecontainer {
     background-color: rgba(16, 185, 1, 0.527);
 }
@@ -47,6 +67,15 @@ body {
 #maincontainer.humancontainer {
     background-color: rgba(201, 119, 13, 0.5);
 }
+
+#maincontainer.modcontainer {
+    background-color: rgba(9, 111, 228, 0.644);
+}
+
+#maincontainer.admincontainer {
+    background-color: rgba(255, 238, 0, 0.8);
+}
+
 .dt_name_link, .dt_team_link{
     text-decoration: none;
     color: rgb(30,30,30);
@@ -134,4 +163,27 @@ body {
 
 .playermainrow h1 {
     text-decoration: underline;
+}
+
+#tagform input {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.tagnotification {
+    background-color: #1f1;
+    border-radius: 10px;
+    color: #111;
+    padding: 10px;
+    text-align: center;
+    vertical-align:middle;
+}
+
+.tagformerrors {
+    background-color: #822;
+    border-radius: 10px;
+    color: #111;
+    text-align: center;
+    padding:10px;
+    vertical-align:middle;
 }

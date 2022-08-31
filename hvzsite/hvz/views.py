@@ -1,14 +1,16 @@
-from webbrowser import get
+from datetime import datetime
 from django.shortcuts import render
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from rest_framework.response import Response
 from django.db.models import Count
+from django.utils import timezone
 from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game
+from .forms import TagForm, AVForm
 from rest_framework.decorators import api_view
 import json 
 
@@ -21,6 +23,70 @@ def me(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
     return player_view(request, request.user.player_uuid)
+
+def missions_view(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+    if request.user.current_status.is_zombie():
+        missions = Mission.objects.filter(game=get_latest_game(), team='z', go_live_time__lt=timezone.now())
+    elif request.user.current_status.is_human():
+        missions = Mission.objects.filter(game=get_latest_game(), team='h', go_live_time__lt=timezone.now())
+    elif request.user.current_status.is_staff():
+        missions = Mission.objects.filter(game=get_latest_game(), go_live_time__lt=timezone.now())
+    missions.order_by("go_live_time")
+    return render(request, "missions.html", {'missions':missions})
+
+def tag(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+    if request.method == "GET":     
+        form = TagForm()
+    else:
+        form = TagForm(request.POST)
+        if form.is_valid():
+            tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, taggee=form.cleaned_data['taggee'].player, game=get_latest_game())
+            tag.save()
+            form.cleaned_data['taggee'].status = 'z'
+            form.cleaned_data['taggee'].save()
+            form = TagForm()
+            return render(request, "tag.html", {'form':form, 'tagcomplete': True, 'tag': tag})
+    return render(request, "tag.html", {'form':form, 'tagcomplete': False})
+
+def av(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+    if request.method == "GET":     
+        form = AVForm()
+    else:
+        form = AVForm(request.POST)
+        if form.is_valid():
+            form.cleaned_data['player'].status = 'v'
+            form.cleaned_data['player'].save()
+            form.cleaned_data['av'].used_by = form.cleaned_data['player'].player
+            form.cleaned_data['av'].time_used = datetime.now()
+            form.cleaned_data['av'].save()
+            newform = AVForm()
+            return render(request, "av.html", {'form':newform, 'tagcomplete': True, 'av': form.cleaned_data['av']})
+    return render(request, "av.html", {'form':form, 'tagcomplete': False})
+
+def blasterapproval(request):
+    pass
+#    if (not request.user.is_authenticated) or (not request.user.current_status.is_admin()):
+#        return HttpResponseRedirect("/")
+#    if request.method == "GET":     
+#        form = AVForm()
+#    else:
+#        form = AVForm(request.POST)
+#        if form.is_valid():
+#            form.cleaned_data['player'].status = 'v'
+#            form.cleaned_data['player'].save()
+#            form.cleaned_data['av'].used_by = form.cleaned_data['player'].player
+#            form.cleaned_data['av'].time_used = datetime.now()
+#            form.cleaned_data['av'].save()
+#            newform = AVForm()
+#            return render(request, "av.html", {'form':newform, 'tagcomplete': True, 'av': form.cleaned_data['av']})
+#    return render(request, "av.html", {'form':form, 'tagcomplete': False})
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """

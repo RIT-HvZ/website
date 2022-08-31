@@ -11,6 +11,12 @@ $(document).ready(function () {
     if ("{{player.current_status.is_zombie}}" == "True") {
         $('#maincontainer').addClass("zombiecontainer");
     }
+    if ("{{player.current_status.is_mod}}" == "True") {
+        $('#maincontainer').addClass("modcontainer");
+    }
+    if ("{{player.current_status.is_admin}}" == "True") {
+        $('#maincontainer').addClass("admincontainer");
+    }
 });
 </script>
 {% endblock %}
@@ -30,7 +36,7 @@ $(document).ready(function () {
         <div class="row">
             <div class="col" id="player_role">
                 <h1> Status </h1>
-                <h5>{{player.get_role_display}}</h5>
+                <h5>{{player.current_status.get_status_display}}</h5>
             </div>
         </div>
         <div class="row">

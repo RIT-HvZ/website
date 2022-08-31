@@ -34,7 +34,25 @@
                   <li class="nav-item">
                     <a class="nav-link" href="#">Infections</a>
                   </li>
-                </ul>
+                  {% if user.is_authenticated and user.active_this_game %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="/missions/">Missions</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/tag/">Register Tag</a>
+                  </li>
+                  {% endif %}
+                  {% if user.is_authenticated and user.current_status.is_zombie %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="/av/">Register AV</a>
+                  </li>
+                  {% endif %}
+                  {% if user.is_authenticated and user.current_status.is_admin %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="/blasterapproval/">Approve Blasters</a>
+                  </li>
+                  {% endif %}
+              </ul>
                 <ul class="navbar-nav ms-auto">
                   <li class="nav-item">
                     {% if user.is_authenticated %}

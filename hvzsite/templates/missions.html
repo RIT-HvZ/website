@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
+{% block title %} HvZ @ RIT - Register AV {% endblock %}
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        $("#id_av_id").attr('size',36);
+        $("#id_player_id").attr('size',36);
+    });
+    </script>
+{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Missions </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        {% for mission in missions %}
+        <div class="row missionrow">
+            <div class="col missioncol">
+                <h1 class="missiontitle">{{ mission.mission_name }}</h1>
+                <div class="missiontext">{{ mission.mission_text|safe }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
