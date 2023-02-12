@@ -76,6 +76,10 @@ class TagForm(forms.Form):
         # Validation complete
         return cd
 
+class AVCreateForm(forms.ModelForm):
+    class Meta:
+        model = AntiVirus
+        fields='__all__'
 
 class AVForm(forms.Form):
     player_id = forms.CharField(label='Player (Zombie) ID', max_length=36)
