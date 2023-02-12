@@ -74,3 +74,8 @@ class AVForm(forms.Form):
         cd["av"] = av
         # Validation complete
         return cd
+
+class AVCreateForm(forms.ModelForm):
+    class Meta:
+        model = AntiVirus
+        fields='__all__'

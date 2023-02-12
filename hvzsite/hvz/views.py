@@ -11,6 +11,7 @@ from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
 from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game
 from .forms import TagForm, AVForm
+from .forms import AVCreateForm
 from rest_framework.decorators import api_view
 import json 
 
@@ -86,6 +87,24 @@ def blasterapproval(request):
 #            newform = AVForm()
 #            return render(request, "av.html", {'form':newform, 'tagcomplete': True, 'av': form.cleaned_data['av']})
 #    return render(request, "av.html", {'form':form, 'tagcomplete': False})
+
+def admin_create_av(request):
+    # if not request.user.is_authenticated:
+    #     return HttpResponseRedirect("/")
+
+    # if not request.user.admin_this_game():
+    #     return HttpResponseRedirect("/")
+    
+    if request.method == "GET":     
+        form = AVCreateForm()
+    else:
+        form = AVCreateForm(request.POST)
+
+        if form.is_valid():
+            av = form.save()
+            newform = AVCreateForm()
+            return render(request, "create_av.html", {'form':newform, 'createcomplete': True})
+    return render(request, "create_av.html", {'form':form, 'createcomplete': False})
 
 
 class UserViewSet(viewsets.ModelViewSet):

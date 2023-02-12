@@ -26,4 +26,6 @@ urlpatterns = [
     path('', views.index),
     path('accounts/', include('allauth.urls')),
     path('logout', LogoutView.as_view()),
+
+    path('admin/create-av', views.admin_create_av),
 ]

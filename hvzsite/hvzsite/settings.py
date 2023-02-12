@@ -27,7 +27,7 @@ with open(os.path.join(BASE_DIR,"secret.txt"),'r') as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.1.200", "localhost"]
+ALLOWED_HOSTS = ["192.168.1.200", "localhost", "127.0.0.1"]
 
 
 # Application definition

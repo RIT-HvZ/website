@@ -7,6 +7,8 @@ from django.db.models import CharField
 import datetime
 import uuid
 import os
+import random
+import string
 
 def get_team_upload_path(instance, filename):
         return os.path.join("static","team_pictures",str(instance.name), filename)
@@ -73,6 +75,11 @@ class Person(AbstractUser):
     def active_this_game(self):
         return not self.current_status.is_nonplayer()
 
+    @property
+    def admin_this_game(self):
+        return self.current_status.is_admin()
+
+
 class PlayerStatus(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE)
     tag1_uuid = models.UUIDField(verbose_name="Tag #1 ID",   editable=True, default=uuid.uuid4)
@@ -102,11 +109,16 @@ class PlayerStatus(models.Model):
     def is_nonplayer(self):
         return self.status == 'n'
 
+def gen_default_code():
+    return ''.join(random.choices(string.ascii_letters, k=10))
+
 class AntiVirus(models.Model):
-    av_id = models.UUIDField(verbose_name="AV ID", editable=True, default=uuid.uuid4, primary_key=True)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    av_uuid = models.UUIDField(verbose_name="AV UUID (Unique)", editable=False, default=uuid.uuid4, primary_key=True)
+    av_code = models.CharField(verbose_name="AV Code", editable=True, default=gen_default_code, max_length=30)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, default=get_latest_game)
     used_by = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)
     time_used = models.DateTimeField(null=True, blank=True)
+    expiration_time = models.DateTimeField(null=True, blank=True)
 
 class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)
