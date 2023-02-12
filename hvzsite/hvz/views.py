@@ -86,19 +86,25 @@ def tag(request):
 def av(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
+
+    user_status = request.user.current_status
+
+    if user_status.is_nonplayer():
+        return HttpResponseRedirect("/")
+    
     if request.method == "GET":     
-        form = AVForm()
+        form = AVForm(initial={'player_id': user_status.zombie_uuid})
     else:
-        form = AVForm(request.POST)
+        form = AVForm(request.POST, initial={'player_id': user_status.zombie_uuid})
         if form.is_valid():
             form.cleaned_data['player'].status = 'v'
             form.cleaned_data['player'].save()
             form.cleaned_data['av'].used_by = form.cleaned_data['player'].player
             form.cleaned_data['av'].time_used = datetime.now()
             form.cleaned_data['av'].save()
-            newform = AVForm()
-            return render(request, "av.html", {'form':newform, 'tagcomplete': True, 'av': form.cleaned_data['av']})
-    return render(request, "av.html", {'form':form, 'tagcomplete': False})
+            newform = AVForm(initial={'player_id': user_status.zombie_uuid})
+            return render(request, "av.html", {'form':newform, 'avcomplete': True, 'av': form.cleaned_data['av']})
+    return render(request, "av.html", {'form':form, 'avcomplete': False})
 
 def blasterapproval(request):
     pass

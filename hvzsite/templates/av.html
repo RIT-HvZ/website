@@ -4,7 +4,7 @@
 {% block extrahead %}
 <script>
     $(document).ready(function () {
-        $("#id_av_id").attr('size',36);
+        $("#id_av_code").attr('size',36);
         $("#id_player_id").attr('size',36);
     });
     </script>
@@ -17,20 +17,20 @@
 </div>
 <div class="row">
     <div class="col">
-        {% if tagcomplete %}
-            <h2 class="tagnotification">Successfully registered AV of {{av.used_by}}!</h2>
+        {% if avcomplete %}
+            <h2 class="avnotification">Successfully registered AV of {{av.used_by}}!</h2>
         {% endif %}
-        <form method="post" id="tagform" class="center">{% csrf_token %}
-            {% if form.non_field_errors|length > 0 %}<div class="tagformerrors mb-3">{{ form.non_field_errors }}</div>{% endif %}
+        <form method="post" id="avform" class="center">{% csrf_token %}
+            {% if form.non_field_errors|length > 0 %}<div class="avformerrors mb-3">{{ form.non_field_errors }}</div>{% endif %}
             <div class="mb-3">
                 {{ form.player_id.errors }}
                 <label for="{{ form.player_id.id_for_label }}" class="form-label">Player (Zombie) ID</label>
                 {{ form.player_id }}
             </div>
             <div class="mb-3">
-                {{ form.av_id.errors }}
-                <label for="{{ form.av_id.id_for_label }}" class="form-label">AV ID</label>
-                {{ form.av_id }}
+                {{ form.av_code.errors }}
+                <label for="{{ form.av_code.id_for_label }}" class="form-label">AV Code</label>
+                {{ form.av_code }}
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

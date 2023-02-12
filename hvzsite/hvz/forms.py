@@ -5,7 +5,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Person
-
+from datetime import datetime
+from pytz import timezone
 
 # Create your forms here.
 class LoginForm(forms.Form):
@@ -83,20 +84,20 @@ class AVCreateForm(forms.ModelForm):
 
 class AVForm(forms.Form):
     player_id = forms.CharField(label='Player (Zombie) ID', max_length=36)
-    av_id = forms.CharField(label='AV ID', max_length=36)
-
+    av_code = forms.CharField(label='AV Code', max_length=36)    
+    
     def clean(self):
         cd = self.cleaned_data
 
         player = cd.get("player_id")
-        av = cd.get("av_id")
+        av = cd.get("av_code")
         this_game = get_latest_game()
         try:
             player_status = PlayerStatus.objects.get(zombie_uuid=player, game=this_game)
         except:
             raise ValidationError("No Player with that Zombie ID found")
         try:
-            av = AntiVirus.objects.get(av_id=av, game=this_game)
+            av = AntiVirus.objects.get(av_code=av, game=this_game)
         except:
             raise ValidationError("No AntiVirus with that ID found")
         
@@ -106,6 +107,9 @@ class AVForm(forms.Form):
             raise ValidationError("AntiVirus already used!")
         if len(AntiVirus.objects.filter(game=this_game, used_by=player_status.player)) > 0:
             raise ValidationError("Player has already used an AV this game!")
+
+        if datetime.now(tz=timezone('EST')) > av.expiration_time:
+            raise ValidationError("Sorry, this AV has expired")
         
         cd["player"] = player_status
         cd["av"] = av
