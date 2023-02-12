@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
+import json
 import os
 from pathlib import Path
 
@@ -24,6 +25,10 @@ SECRET_KEY = ""
 with open(os.path.join(BASE_DIR,"secret.txt"),'r') as f:
     SECRET_KEY = f.readline().strip()
 
+DB_SECRETS = {}
+with open(os.path.join(BASE_DIR,"secrets.json"),'r') as f:
+    DB_SECRETS = json.load(f)
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -38,31 +43,17 @@ REST_FRAMEWORK = {
 
 INSTALLED_APPS = [
     'hvz',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
     'django_extensions',
     'rest_framework',
+    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "verify_email.apps.VerifyEmailConfig",
 ]
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    }
-}
 
 SITE_ID = 2
 
@@ -82,7 +73,7 @@ ROOT_URLCONF = 'hvzsite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates', os.path.join(BASE_DIR, 'templates', 'allauth')],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -105,10 +96,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'hvzdb',
-        'USER': 'django',
-        'PASSWORD': 'djangohvz123',
-        'HOST': '127.0.0.1',
-        'PORT': '5432'
+        'USER': DB_SECRETS['user'],
+        'PASSWORD': DB_SECRETS['pass'],
+        'HOST': DB_SECRETS['host'],
+        'PORT': DB_SECRETS['port']
     }
 }
 
@@ -156,7 +147,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend'
 ]
 
 
@@ -170,3 +160,12 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost"]
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_ID') 
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
+
+DEFAULT_FROM_EMAIL = 'noreply<no_reply@hvz.rit.edu>'

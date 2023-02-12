@@ -3,12 +3,12 @@ body {
     padding-top: 75px;
 }
 
-h1 {
+h1, h2, h3, h4, h5 {
     color: #aaa;
     text-shadow: #000 2px 2px 3px;
 }
 
-form {
+p, form {
     color: #aaa;
 }
 
@@ -187,3 +187,29 @@ th, label {
     padding:10px;
     vertical-align:middle;
 }
+
+.missionscroller, .missionscrollercol {
+    max-width: fit-content;
+}
+
+.missionscrollercol {
+    margin: 10px;
+}
+a.missionlink {
+    text-decoration: none;
+    font-weight: bold;
+    color: #888;
+}
+
+.missioncol {
+    border-radius: 10px;
+    background-color: #111;
+    margin: 20px;
+    padding: 20px;
+}
+
+@media only screen and (max-width: 800px) {
+    .missionscrollercol {
+      display: none;
+    }
+  }

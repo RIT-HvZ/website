@@ -1,6 +1,39 @@
 from django import forms
 from django.forms import ValidationError
 from .models import AntiVirus, PlayerStatus, get_latest_game
+from django.contrib.auth import authenticate
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from .models import Person
+
+
+# Create your forms here.
+class LoginForm(forms.Form):
+    email = forms.CharField(label='Email', max_length=100)
+    password = forms.CharField(widget=forms.PasswordInput())
+    class Meta:
+        model = Person
+
+class NewUserForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["first_name"].required = True
+        self.fields["last_name"].required = True
+
+    class Meta:
+        model = Person
+        fields = ("email", "first_name", "last_name", "password1", "password2")
+
+    def save(self, commit=True):
+        user = super(NewUserForm, self).save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.username = self.cleaned_data['email']
+        if commit:
+            user.save()
+        return user
+
 
 class TagForm(forms.Form):
     tagger_id = forms.CharField(label='Tagger (Zombie) ID', max_length=36)
@@ -74,8 +107,3 @@ class AVForm(forms.Form):
         cd["av"] = av
         # Validation complete
         return cd
-
-class AVCreateForm(forms.ModelForm):
-    class Meta:
-        model = AntiVirus
-        fields='__all__'

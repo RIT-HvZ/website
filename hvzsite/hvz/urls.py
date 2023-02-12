@@ -24,8 +24,8 @@ urlpatterns = [
     path('missions/', views.missions_view),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('', views.index),
-    path('accounts/', include('allauth.urls')),
     path('logout', LogoutView.as_view()),
-
-    path('admin/create-av', views.admin_create_av),
+    path('login/', views.login_view),
+    path('register/', views.register),
+    path('admin/create-av', views.admin_create_av)
 ]

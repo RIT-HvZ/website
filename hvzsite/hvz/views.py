@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from rest_framework.response import Response
@@ -10,9 +10,10 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
 from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game
-from .forms import TagForm, AVForm
-from .forms import AVCreateForm
+from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm
 from rest_framework.decorators import api_view
+from django.contrib import messages
+from django.contrib.auth import login, authenticate
 import json 
 
 # Create your views here.
@@ -24,6 +25,35 @@ def me(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
     return player_view(request, request.user.player_uuid)
+
+def login_view(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password'])
+            if user is not None:
+                login(request, user)
+                messages.success(request, "Login successful.")
+                return index(request)
+            else:
+                messages.error(request, "Unsuccessful login.")
+        else:
+            messages.error(request, "Unsuccessful login.")
+    form = LoginForm()
+    context = {"login_form": form}
+    return render(request, "login.html", context)
+
+def register(request):
+	if request.method == "POST":
+		form = NewUserForm(request.POST)
+		if form.is_valid():
+			user = form.save()
+			login(request, user)
+			messages.success(request, "Registration successful." )
+			return index(request)
+		messages.error(request, "Unsuccessful registration. Invalid information.")
+	form = NewUserForm()
+	return render (request=request, template_name="register.html", context={"register_form":form})
 
 def missions_view(request):
     if not request.user.is_authenticated:

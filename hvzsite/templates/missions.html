@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load socialaccount %}
 {% load static %}
 {% block title %} HvZ @ RIT - Register AV {% endblock %}
 {% block extrahead %}
@@ -17,9 +16,16 @@
     </div>
 </div>
 <div class="row">
+    <div class="col missionscrollercol">
+        <div class="missionscroller">
+            {% for mission in missions %}
+            <a class="missionlink" href="#mission_{{mission.id}}">{{mission.mission_name}}</a>
+            {% endfor %}
+        </div>
+    </div>
     <div class="col">
         {% for mission in missions %}
-        <div class="row missionrow">
+        <div class="row missionrow" id="mission_{{mission.id}}">
             <div class="col missioncol">
                 <h1 class="missiontitle">{{ mission.mission_name }}</h1>
                 <div class="missiontext">{{ mission.mission_text|safe }}</div>

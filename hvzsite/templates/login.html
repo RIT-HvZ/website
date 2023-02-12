@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body %}
+
+{% load crispy_forms_tags %}       
+
+{% if user.is_authenticated %}
+  <div class="login_alreadylogged">You are already logged in. <a href="/">Return home</a></div>
+{% else %}
+  <div class="row">
+    <div class="col center">
+        <h1>RIT HvZ Login</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col login-button  center">
+      <form method="post">
+        {% csrf_token %}
+		{{ login_form | crispy }}    
+        <button class="btn btn-primary" type="submit">{% trans "Continue" %}</button>
+      </form>
+      
+      If you don't already have an account, you can <a href="/register">Register Here</a>
+    </div>
+  </div>
+
+{% endif %}
+{% endblock %}
