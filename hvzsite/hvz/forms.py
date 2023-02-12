@@ -66,7 +66,7 @@ class TagForm(forms.Form):
         if taggee_status is None:
             raise ValidationError("No player with that Human ID found")
         
-        if not tagger_status.is_zombie():
+        if not (tagger_status.is_zombie() or tagger_status.is_admin()):
             raise ValidationError("Tagger is not a Zombie!")
         if not taggee_status.is_human():
             raise ValidationError("Taggee is not a Human!")
