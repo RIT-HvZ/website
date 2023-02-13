@@ -6,8 +6,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Person
 from datetime import datetime
-from pytz import timezonefrom
-django_registration.forms import RegistrationForm
+from pytz import timezone
+from django_registration.forms import RegistrationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
 
