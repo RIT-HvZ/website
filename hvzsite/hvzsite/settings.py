@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'crispy_forms',
+    'django_registration',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -162,10 +163,12 @@ STATICFILES_DIRS = [
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_ID') 
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
+EMAIL_HOST = DB_SECRETS['email_host']
+EMAIL_PORT = DB_SECRETS['email_port']
+EMAIL_USE_TLS = DB_SECRETS['email_use_tls']
+EMAIL_HOST_USER = DB_SECRETS['email']
+EMAIL_HOST_PASSWORD = DB_SECRETS['email_password']
 
-DEFAULT_FROM_EMAIL = 'noreply<no_reply@hvz.rit.edu>'
+DEFAULT_FROM_EMAIL = DB_SECRETS['email_from']
+
+ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window

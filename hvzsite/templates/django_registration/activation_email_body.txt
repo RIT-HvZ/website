@@ -1,0 +1,4 @@
+Welcome to RIT HvZ!
+To complete your registration, activate your account by following the link:
+{{scheme}}://{{site}}/accounts/activate/{{activation_key}}
+Note: the window to active your account will expire in {{expiration_days}} days.

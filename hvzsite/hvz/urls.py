@@ -26,6 +26,5 @@ urlpatterns = [
     path('', views.index),
     path('logout', LogoutView.as_view()),
     path('login/', views.login_view),
-    path('register/', views.register),
     path('admin/create-av', views.admin_create_av)
 ]

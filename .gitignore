@@ -1,7 +1,7 @@
 hvzsite/secret.txt
+hvzsite/secrets.json
 hvzvenv
 *.pyc
-*secret*
 hvzsite/hvz/migrations
 hvzsite/static/profile_pictures/*
 hvzsite/static/blaster_pictures/*

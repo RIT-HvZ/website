@@ -10,18 +10,12 @@
 {% else %}
   <div class="row">
     <div class="col center">
-        <h1>RIT HvZ Login</h1>
+        <h1>RIT HvZ Registration</h1>
     </div>
   </div>
   <div class="row">
     <div class="col login-button  center">
-      <form method="post">
-        {% csrf_token %}
-		{{ login_form | crispy }}    
-        <button class="btn btn-primary" type="submit">{% trans "Continue" %}</button>
-      </form>
-      
-      If you don't already have an account, you can <a href="/accounts/register">Register Here</a>
+      <p class="registration_info">Registration is presently closed. See you next game!</p>
     </div>
   </div>
 

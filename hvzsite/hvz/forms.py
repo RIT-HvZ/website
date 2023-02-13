@@ -5,6 +5,48 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Person
+from django_registration.forms import RegistrationForm
+from django.utils.translation import gettext_lazy as _
+from django_registration import validators
+
+class HVZRegistrationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = Person
+        fields = (
+            User.USERNAME_FIELD,
+            User.get_email_field_name(),
+            "first_name", "last_name", "password1", "password2")
+        
+    error_css_class = "error"
+    required_css_class = "required"
+
+    tos = forms.BooleanField(
+        widget=forms.CheckboxInput,
+        label=_("I have read and agree to the Terms of Service"),
+        error_messages={"required": validators.TOS_REQUIRED},
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[User.USERNAME_FIELD].hidden = True
+        email_field = User.get_email_field_name()
+        if hasattr(self, "reserved_names"):
+            reserved_names = self.reserved_names
+        else:
+            reserved_names = validators.DEFAULT_RESERVED_NAMES
+        username_validators = [
+            validators.ReservedNameValidator(reserved_names),
+            validators.validate_confusables,
+        ]
+        self.fields[User.USERNAME_FIELD].validators.extend(username_validators)
+        self.fields[email_field].validators.extend(
+            (validators.HTML5EmailValidator(), validators.validate_confusables_email)
+        )
+        self.fields[email_field].required = True
+
+    def clean(self):
+        cd = self.cleaned_data
+        cd['username'] = cd['email']
 
 
 # Create your forms here.

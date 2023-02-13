@@ -15,10 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from hvz.forms import HVZRegistrationForm
+from django_registration.backends.activation.views import RegistrationView
+
 
 urlpatterns = [
     path("", include('hvz.urls')),    
     path('admin/', admin.site.urls),
+    path('accounts/register/',
+        RegistrationView.as_view(
+            form_class=HVZRegistrationForm
+        ),
+        name='django_registration_register',
+    ),
+    path('accounts/', include('django_registration.backends.activation.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('verification/', include('verify_email.urls'))
 ]
