@@ -272,7 +272,7 @@ def player_activation_api(request, game=None):
     result = []
     for person in query[start:limit]:
         try:
-            person_status = PlayerStatus.objects.get(player=person, game=game)
+            person_status = PlayerStatus.objects.get_or_create(player=person, game=game)[0]
         except:
             continue
         if person.active_this_game:
@@ -300,6 +300,8 @@ def player_activation_rest(request):
         print("Not admin")
         return JsonResponse({"status":"error","error":"Not Authorized"})
     print(request.POST["activated_player"])
+    import time
+    time.sleep(1)
     try:
         requested_player = Person.objects.get(player_uuid=request.POST["activated_player"])
         person_status = PlayerStatus.objects.get(player=requested_player, game=game)
@@ -318,7 +320,6 @@ def teams(request):
 @api_view(["GET"])
 def teams_api(request):
     r = request.query_params
-    print(json.dumps(r, indent=4))
     try:
         order_column = int(r.get("order[0][column]"))
         assert order_column in [1,2]

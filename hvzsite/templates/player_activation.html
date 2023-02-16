@@ -20,7 +20,9 @@
                 {"className": "dt_activate", "name": "activation_link"  , "data": "activation_link", "orderable": false},
             ],
         } );
-
+        setInterval( function () {
+           datatable.ajax.reload( null, false ); // user paging is not reset on reload
+        }, 2000 );
         var exampleModal = document.getElementById('activationmodal');
         exampleModal.addEventListener('show.bs.modal', function (event) {
           // Button that triggered the modal
@@ -52,7 +54,7 @@
               else {
                 $("#modal_status").html("Error activating: "+ data.error);
               }
-              datatable.ajax.reload();
+              datatable.ajax.reload(null, false);
             })
           });
           
