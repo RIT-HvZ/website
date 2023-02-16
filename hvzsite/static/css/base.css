@@ -8,6 +8,11 @@ h1, h2, h3, h4, h5 {
     text-shadow: #000 2px 2px 3px;
 }
 
+.modal-title {
+    text-shadow: none;
+    color: black;
+}
+
 p, form {
     color: #aaa;
 }
@@ -17,7 +22,7 @@ p, form {
 }
 .container {
     border-radius: 2em;
-    background-color: #000;
+    background-color: none;
 }
 
 .logo-img {
@@ -57,6 +62,10 @@ p, form {
     background-color: rgba(255, 238, 0, 0.8);
 }
 
+.dt_nonplayer td{
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
 th, label {
     color: #aaa;
 }
@@ -75,6 +84,7 @@ th, label {
 #maincontainer.admincontainer {
     background-color: rgba(255, 238, 0, 0.8);
 }
+
 
 .dt_name_link, .dt_team_link{
     text-decoration: none;

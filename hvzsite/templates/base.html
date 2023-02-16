@@ -13,6 +13,7 @@
         {% block extrahead %}{% endblock %}
     </head>
     <body>
+        {% block prebody %}{% endblock %}
         <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
               <a class="navbar-brand" href="#"><img class="logo-img" src="{% static 'images/hvzlogo_small.png' %}" /></a>
@@ -49,6 +50,9 @@
                   {% if user.is_authenticated and user.current_status.is_admin %}
                   <li class="nav-item">
                     <a class="nav-link" href="/blasterapproval/">Approve Blasters</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/player_activation/">Activate Players</a>
                   </li>
                   {% endif %}
               </ul>

@@ -192,7 +192,6 @@ def players_api(request, game=None):
     if game is None:
         game = get_latest_game()
     r = request.query_params
-    print(json.dumps(r, indent=4))
     try:
         order_column = int(r.get("order[0][column]"))
         assert order_column in [1,2,3,4]
@@ -237,6 +236,79 @@ def players_api(request, game=None):
         "data": result
     }
     return JsonResponse(data)
+
+
+def player_activation(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect('/')
+    context = {}
+    return render(request, "player_activation.html", context)
+
+@api_view(["GET"])
+def player_activation_api(request, game=None):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        print("Not admin")
+        return JsonResponse({})
+
+    if game is None:
+        game = get_latest_game()
+    r = request.query_params
+    try:
+        order_column = int(r.get("order[0][column]"))
+        assert order_column == 1
+        order_column_name = r.get(f"columns[{order_column}][name]")
+        assert order_column_name in ("name",)
+        order_direction = r.get("order[0][dir]")
+        assert order_direction in ("asc","desc")
+        limit = int(request.query_params["length"])
+        start = int(request.query_params["start"])
+        search = r["search[value]"] 
+    except AssertionError:
+        raise
+    query = Person.full_name_objects.all()
+    if search != "":
+        query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(team__name__icontains=search))
+    query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name"}[order_column_name]}""")
+    result = []
+    for person in query[start:limit]:
+        try:
+            person_status = PlayerStatus.objects.get(player=person, game=game)
+        except:
+            continue
+        if person.active_this_game:
+            continue
+        result.append({
+            "name": f"""{person.first_name} {person.last_name}""",
+            "pic": f"""<img src='{person.picture.url}' class='dt_profile' />""",
+            "email": f"""{person.email}""",
+            "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer"}[person_status.status],
+            "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{person.first_name} {person.last_name}" data-bs-activationid="{person.player_uuid}">Activate</button>"""
+        })
+    data = {
+        "draw": int(r['draw']),
+        "recordsTotal": Person.objects.all().count(),
+        "recordsFiltered": len(result),
+        "data": result
+    }
+    return JsonResponse(data)
+
+
+@api_view(["POST"])
+def player_activation_rest(request):
+    game = get_latest_game()
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        print("Not admin")
+        return JsonResponse({"status":"error","error":"Not Authorized"})
+    print(request.POST["activated_player"])
+    try:
+        requested_player = Person.objects.get(player_uuid=request.POST["activated_player"])
+        person_status = PlayerStatus.objects.get(player=requested_player, game=game)
+        person_status.status = 'h'
+        person_status.save()
+        return JsonResponse({"status":"success"})
+    except Exception as e:
+        return JsonResponse({"status":"error", "error": str(e)})
+
 
 def teams(request):
     context = {}

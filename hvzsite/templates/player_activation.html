@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Player Activation {% endblock %}
+
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable = $('#players').DataTable( {
+            "serverSide": true,
+            "ajax": {
+                "url": '/api/player_activation_api',
+                "type": 'GET'
+            },
+            "scrollX": true,
+            "order": [[1, 'asc']],
+            "columns": [
+                {"className": "dt_profilepic", "name": "picture", "data": "pic", "orderable": false},
+                {"className": "dt_name", "name": "name"  , "data": "name"},
+                {"className": "dt_email", "name": "email"  , "data": "email", "orderable": false},
+                {"className": "dt_activate", "name": "activation_link"  , "data": "activation_link", "orderable": false},
+            ],
+        } );
+
+        var exampleModal = document.getElementById('activationmodal');
+        exampleModal.addEventListener('show.bs.modal', function (event) {
+          // Button that triggered the modal
+          var button = event.relatedTarget
+          // Extract info from data-bs-* attributes
+          var activationid = button.getAttribute('data-bs-activationid')
+          var activated_name = button.getAttribute('data-bs-activationname')
+          $("#modal_status").html("");
+          // If necessary, you could initiate an AJAX request here
+          var modal_button = exampleModal.querySelector("#confirmactivation")
+          var new_button = modal_button.cloneNode(true);
+          new_button.disabled = false;
+          modal_button.parentNode.replaceChild(new_button, modal_button);
+          new_button.addEventListener("click", function(event){
+            event.preventDefault()
+            new_button.disabled = true;
+            $("#modal_status").html("Activating...");
+            $.ajax('/api/player_activation_rest',{
+              method: "POST",
+              data: {
+                activated_player: activationid,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+              }
+            }).done( function (data) {
+              console.log(data);
+              if (data.status == "success") {
+                $("#modal_status").html("Successfully activated!");
+              }
+              else {
+                $("#modal_status").html("Error activating: "+ data.error);
+              }
+              datatable.ajax.reload();
+            })
+          });
+          
+          // and then do the updating in a callback.
+          //
+          // Update the modal's content.
+          var modal_name = exampleModal.querySelector('#activation_name')
+          modal_name.textContent = activated_name
+          
+        })
+    });
+    
+
+</script>
+{% endblock %}
+
+{% block prebody %}
+<div class="modal fade" id="activationmodal" tabindex="-1" role="dialog" aria-labelledby="activationmodal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">User Activation Confirmation</h3>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Activate user <span id="activation_name"></span>?
+        </div>
+        <div class="modal-footer">
+          <span id="modal_status"></span>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button id="confirmactivation" type="button" class="btn btn-primary">Activate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block body %}
+
+
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Player Activation </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="players" class="table table-striped display">
+            <thead>
+                <tr>
+                    <th class="foo">Picture</th>
+                    <th class="foo">Name</th>
+                    <th class="email">Email</th>
+                    <th class="activate">Activate?</th>
+            </thead>
+        </table>
+    </div>
+</div>
+{% endblock %}
