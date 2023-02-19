@@ -161,6 +161,6 @@ class Blaster(models.Model):
     avg_chrono = models.FloatField(verbose_name="Average Chronograph velocity", default=0)
 
     def __str__(self) -> str:
-        return f"Blaster \"{self.name}\" owned by {self.owner}. Avg. FPS: {self.avg_chrono}. Approved by {', '.join([str(p) for p in self.approved_by.all()])}"
+        return f"Blaster \"{self.name}\" owned by {self.owner}. Avg. FPS: {self.avg_chrono if self.avg_chrono != 0 else 'N/A'}. Approved by {', '.join([str(p) for p in self.approved_by.all()])}"
 
         

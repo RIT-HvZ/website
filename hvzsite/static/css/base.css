@@ -25,6 +25,13 @@ p, form {
     background-color: none;
 }
 
+.admin-only {
+    background-color: rgba(255, 238, 0, 0.4);
+    border-radius: 0.4em;
+    margin-left: .4em;
+    margin-right: .4em;
+}
+
 .logo-img {
     position:relative;
     width: 59px;

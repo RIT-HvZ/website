@@ -10,7 +10,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
 from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game
-from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm
+from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -107,22 +107,30 @@ def av(request):
     return render(request, "av.html", {'form':form, 'avcomplete': False})
 
 def blasterapproval(request):
-    pass
-#    if (not request.user.is_authenticated) or (not request.user.current_status.is_admin()):
-#        return HttpResponseRedirect("/")
-#    if request.method == "GET":     
-#        form = AVForm()
-#    else:
-#        form = AVForm(request.POST)
-#        if form.is_valid():
-#            form.cleaned_data['player'].status = 'v'
-#            form.cleaned_data['player'].save()
-#            form.cleaned_data['av'].used_by = form.cleaned_data['player'].player
-#            form.cleaned_data['av'].time_used = datetime.now()
-#            form.cleaned_data['av'].save()
-#            newform = AVForm()
-#            return render(request, "av.html", {'form':newform, 'tagcomplete': True, 'av': form.cleaned_data['av']})
-#    return render(request, "av.html", {'form':form, 'tagcomplete': False})
+    if (not request.user.is_authenticated) or (not request.user.admin_this_game):
+        return HttpResponseRedirect("/")
+    if request.method == "GET":     
+        form = BlasterApprovalForm()
+        form.fields['owner'].queryset = Person.objects.filter(playerstatus__game=get_latest_game()) \
+                                                      .filter(playerstatus__status__in=['h','v','z','o']) \
+                                                      .annotate(num_status=Count('playerstatus')) \
+                                                      .filter(num_status=1)
+    else:
+        form = BlasterApprovalForm(request.POST, request.FILES)
+        if form.is_valid():
+            print("AHHH")
+            blaster = Blaster()
+            blaster.name = form.cleaned_data['name']
+            blaster.owner = form.cleaned_data['owner']
+            blaster.game_approved_in = get_latest_game()
+            blaster.picture = form.cleaned_data['picture']
+            blaster.avg_chrono = form.cleaned_data['avg_chrono']
+            blaster.save()
+            blaster.approved_by.add(request.user)
+            blaster.save()
+            newform = BlasterApprovalForm()
+            return render(request, "blasterapproval.html", {'form':newform, 'approvalcomplete': True})
+    return render(request, "blasterapproval.html", {'form':form, 'approvalcomplete': False})
 
 def admin_create_av(request):
     # if not request.user.is_authenticated:
