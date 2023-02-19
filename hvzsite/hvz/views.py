@@ -358,3 +358,6 @@ def teams_api(request):
         "data": result
     }
     return JsonResponse(data)
+
+def rules(request):
+    return render(request, "rules.html", {})

@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager, BaseUserManager
 from django.db.models.functions import Concat
 from django.db.models import CharField
+from django_resized import ResizedImageField
 
 import datetime
 import uuid
@@ -15,7 +16,7 @@ def get_team_upload_path(instance, filename):
 
 class Team(models.Model):
     name = models.CharField(max_length=100, primary_key=True)
-    picture = models.ImageField(upload_to=get_team_upload_path, null=True)
+    picture = ResizedImageField(size=[400, None], keep_meta=False, force_format="jpeg", upload_to=get_team_upload_path, null=True)
     def __str__(self) -> str:
         return self.name
 
@@ -54,7 +55,7 @@ class Mission(models.Model):
 class Person(AbstractUser):
     player_uuid = models.UUIDField(verbose_name="Player UUID", default=uuid.uuid4, unique=True)
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, blank=True, null=True, related_name="team_members")
-    picture = models.ImageField(upload_to=get_person_upload_path, null=False, default="/static/images/noprofile.png")
+    picture = ResizedImageField(size=[400,None], keep_meta=False, force_format="jpeg", upload_to=get_person_upload_path, null=False, default="/static/images/noprofile.png")
     objects = UserManager()
     full_name_objects = PersonFullNameManager()
     discord_id = models.CharField(max_length=100, blank=True, null=True)
@@ -128,7 +129,7 @@ class AntiVirus(models.Model):
 
 class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)
-    picture = models.ImageField(upload_to="static/badge_icons/", null=True)
+    picture = ResizedImageField(size=[400,None], force_format="PNG", keep_meta=False, upload_to="static/badge_icons/", null=True)
     badge_type = models.CharField(verbose_name="Badge Type", choices=[('a','Account (persistent)'),('g','Game (resets after each game)')], max_length=1, null=False, default='g')
     def __str__(self) -> str:
         return f"{self.badge_name}"
@@ -157,7 +158,7 @@ class Blaster(models.Model):
     owner = models.ForeignKey(Person, on_delete=models.CASCADE, null=False, related_name="owned_blasters")
     game_approved_in = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     approved_by = models.ManyToManyField(Person, related_name="approved_blasters", limit_choices_to={'is_staff': True})
-    picture = models.ImageField(upload_to=get_blaster_upload_path, null=True)
+    picture = ResizedImageField(size=[400, None], quality=75, keep_meta=False, force_format="jpeg", upload_to=get_blaster_upload_path, null=True)
     avg_chrono = models.FloatField(verbose_name="Average Chronograph velocity", default=0)
 
     def __str__(self) -> str:
