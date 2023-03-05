@@ -41,10 +41,14 @@ $(document).ready(function () {
         <div class="row">
             <div class="col" id="player_role">
                 <h1> Team </h1>
+                {% if player.team %}
                 <a href="/team/{{player.team}}/" class="team_link">
                     {% if player.team.picture %}<img src="/{{player.team.picture}}"/>{% endif %}
                     <h5>{{player.team}}</h5>
                 </a>
+                {% else %}
+                    <h5>None</h5>
+                {% endif %}
             </div>
         </div>
     </div>
