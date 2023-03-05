@@ -10,6 +10,7 @@ import uuid
 import os
 import random
 import string
+from django.utils import timezone
 
 def get_team_upload_path(instance, filename):
         return os.path.join("static","team_pictures",str(instance.name), filename)
@@ -38,19 +39,16 @@ class Game(models.Model):
 def get_latest_game():
     return Game.objects.latest("start_date")
 
-class MissionSurvey(models.Model):
-    pass
     
 class Mission(models.Model):
     mission_name = models.CharField(max_length=100)
     mission_text = models.TextField()
-    mission_survey = models.ForeignKey(MissionSurvey, null=True, on_delete=models.SET_NULL, blank=True)
     team = models.CharField(max_length=1,choices=[('h','Human'),('z','Zombie'),('s',"Staff")])
     game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the mission")
 
     def __str__(self) -> str:
-        return f"{self.mission_name} - {str(self.game)}"
+        return f"{self.mission_name} - {str(self.game)} - { {'h':'Human','z':'Zombie','s':'Staff'}[self.team]}"
 
 class Person(AbstractUser):
     player_uuid = models.UUIDField(verbose_name="Player UUID", default=uuid.uuid4, unique=True)
@@ -93,13 +91,13 @@ class PlayerStatus(models.Model):
     tag2_uuid = models.UUIDField(verbose_name="Tag #2 ID",   editable=True, default=uuid.uuid4)
     zombie_uuid = models.UUIDField(verbose_name="Zombie ID", editable=True, default=uuid.uuid4)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('z','Zombie'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='n', null=False)
+    status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('z','Zombie'),('x','Zombie (used AV)'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='n', null=False)
 
     def __str__(self) -> str:
         return f"Status of {self.player} during game \"{self.game}\" ({self.get_status_display()})"
 
     def is_zombie(self):
-        return self.status in ['z','o']
+        return self.status in ['z','o','x']
 
     def is_human(self):
         return self.status in ['h','v']
@@ -164,4 +162,33 @@ class Blaster(models.Model):
     def __str__(self) -> str:
         return f"Blaster \"{self.name}\" owned by {self.owner}. Avg. FPS: {self.avg_chrono if self.avg_chrono != 0 else 'N/A'}. Approved by {', '.join([str(p) for p in self.approved_by.all()])}"
 
-        
+class PostGameSurvey(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, default=get_latest_game)
+    mission = models.ForeignKey(Mission, on_delete=models.CASCADE)
+    team = models.CharField(max_length=1,choices=[('h','Human'),('z','Zombie'),('s',"Staff")])
+    go_live_time = models.DateTimeField(verbose_name="Date/Time that players can take the survey")
+    lock_time = models.DateTimeField(verbose_name="Date/Time that players can no longer the survey")
+    survey_text = models.TextField()
+
+    @property
+    def is_open(self):
+        return self.go_live_time < timezone.now() and self.lock_time > timezone.now()
+
+    def __str__(self) -> str:
+        return f"Survey for mission {self.mission}"
+
+class PostGameSurveyOption(models.Model):
+    survey = models.ForeignKey(PostGameSurvey, on_delete=models.CASCADE)
+    option_name = models.CharField(max_length=50, null=True, blank=True)
+    option_text = models.TextField()
+
+    def __str__(self) -> str:
+        return f"Option {self.option_name} for mission {self.survey}"
+
+class PostGameSurveyResponse(models.Model):
+    player = models.ForeignKey(Person, on_delete=models.CASCADE)
+    survey = models.ForeignKey(PostGameSurvey, on_delete=models.CASCADE)
+    response = models.ForeignKey(PostGameSurveyOption, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"Response of {self.player} for survey {self.survey} - {self.response}"

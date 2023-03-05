@@ -156,7 +156,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'hvz.Person'
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "https://hvz.henderson.codes"]
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",

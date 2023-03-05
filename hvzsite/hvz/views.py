@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game, PostGameSurvey, PostGameSurveyResponse
 from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -26,23 +26,6 @@ def me(request):
         return HttpResponseRedirect("/")
     return player_view(request, request.user.player_uuid)
 
-def login_view(request):
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            user = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password'])
-            if user is not None:
-                login(request, user)
-                messages.success(request, "Login successful.")
-                return index(request)
-            else:
-                messages.error(request, "Unsuccessful login.")
-        else:
-            messages.error(request, "Unsuccessful login.")
-    form = LoginForm()
-    context = {"login_form": form}
-    return render(request, "login.html", context)
-
 def register(request):
 	if request.method == "POST":
 		form = NewUserForm(request.POST)
@@ -58,14 +41,30 @@ def register(request):
 def missions_view(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
+    this_game = get_latest_game()
     if request.user.current_status.is_zombie():
-        missions = Mission.objects.filter(game=get_latest_game(), team='z', go_live_time__lt=timezone.now())
+        missions = Mission.objects.filter(game=this_game, team='z', go_live_time__lt=timezone.now())
+        surveys = PostGameSurvey.objects.filter(game=this_game, team='z', go_live_time__lt=timezone.now(), lock_time__gt=timezone.now())
+        survey_list = []
+        for survey in surveys:
+            responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
+            survey_list.append({"survey":survey, "responses": responses})
     elif request.user.current_status.is_human():
-        missions = Mission.objects.filter(game=get_latest_game(), team='h', go_live_time__lt=timezone.now())
+        missions = Mission.objects.filter(game=this_game, team='h', go_live_time__lt=timezone.now())
+        surveys = PostGameSurvey.objects.filter(game=this_game, team='h', go_live_time__lt=timezone.now(), lock_time__gt=timezone.now())
+        survey_list = []
+        for survey in surveys:
+            responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
+            survey_list.append({"survey":survey, "responses": responses})
     elif request.user.current_status.is_staff():
-        missions = Mission.objects.filter(game=get_latest_game(), go_live_time__lt=timezone.now())
+        missions = Mission.objects.filter(game=this_game, go_live_time__lt=timezone.now())
+        surveys = PostGameSurvey.objects.filter(game=this_game, go_live_time__lt=timezone.now(), lock_time__gt=timezone.now())
+        survey_list = []
+        for survey in surveys:
+            responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
+            survey_list.append({"survey":survey, "responses": responses})
     missions.order_by("go_live_time")
-    return render(request, "missions.html", {'missions':missions})
+    return render(request, "missions.html", {'missions':missions, 'surveys':survey_list})
 
 def tag(request):
     if not request.user.is_authenticated:
