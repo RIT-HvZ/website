@@ -23,15 +23,15 @@ class HVZRegistrationForm(UserCreationForm):
     error_css_class = "error"
     required_css_class = "required"
 
-    tos = forms.BooleanField(
-        widget=forms.CheckboxInput,
-        label=_("I have read and agree to the Terms of Service"),
-        error_messages={"required": validators.TOS_REQUIRED},
-    )
+    #tos = forms.BooleanField(
+    #    widget=forms.CheckboxInput,
+    #    label=_("I have read and agree to the Terms of Service"),
+    #    error_messages={"required": validators.TOS_REQUIRED},
+    #)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields[User.USERNAME_FIELD].hidden = True
+        self.fields.pop(User.USERNAME_FIELD)
         email_field = User.get_email_field_name()
         if hasattr(self, "reserved_names"):
             reserved_names = self.reserved_names
@@ -41,11 +41,11 @@ class HVZRegistrationForm(UserCreationForm):
             validators.ReservedNameValidator(reserved_names),
             validators.validate_confusables,
         ]
-        self.fields[User.USERNAME_FIELD].validators.extend(username_validators)
-        self.fields[email_field].validators.extend(
-            (validators.HTML5EmailValidator(), validators.validate_confusables_email)
-        )
+        #self.fields[User.USERNAME_FIELD].validators.extend(username_validators)
+        self.fields[email_field].validators.extend(username_validators)
         self.fields[email_field].required = True
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
 
     def clean(self):
         cd = self.cleaned_data
