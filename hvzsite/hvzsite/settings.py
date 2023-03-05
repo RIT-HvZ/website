@@ -32,7 +32,7 @@ with open(os.path.join(BASE_DIR,"secrets.json"),'r') as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.1.200", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["192.168.1.200", "localhost", "127.0.0.1", "hvz.henderson.codes"]
 
 
 # Application definition
@@ -172,3 +172,5 @@ EMAIL_HOST_PASSWORD = DB_SECRETS['email_password']
 DEFAULT_FROM_EMAIL = DB_SECRETS['email_from']
 
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
+
+SECURE_REFERRER_POLICY = "no-referrer-when-downgrade"
