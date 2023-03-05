@@ -1,11 +1,10 @@
 from django import forms
 from django.forms import ValidationError
 from django.db.models import Count, Q
-from .models import AntiVirus, PlayerStatus, get_latest_game
+from .models import Person, Blaster, BodyArmor, AntiVirus, PlayerStatus, get_latest_game
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Person, Blaster
 from datetime import datetime
 from pytz import timezone
 from django_registration.forms import RegistrationForm
@@ -165,3 +164,8 @@ class AVForm(forms.Form):
         cd["av"] = av
         # Validation complete
         return cd
+
+class BodyArmorCreateForm(forms.ModelForm):
+    class Meta:
+        model = BodyArmor
+        fields='__all__'

@@ -164,4 +164,7 @@ class Blaster(models.Model):
     def __str__(self) -> str:
         return f"Blaster \"{self.name}\" owned by {self.owner}. Avg. FPS: {self.avg_chrono if self.avg_chrono != 0 else 'N/A'}. Approved by {', '.join([str(p) for p in self.approved_by.all()])}"
 
-        
+class BodyArmor(models.Model):
+    armor_uuid = models.UUIDField(verbose_name="Armor UUID (Unique)", editable=False, default=uuid.uuid4, primary_key=True)
+    expiration_time = models.DateTimeField()
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, default=get_latest_game)
