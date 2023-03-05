@@ -25,7 +25,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('', views.index),
     path('logout', LogoutView.as_view()),
-    path('login/', views.login_view),
     path('admin/create-av', views.admin_create_av),
     path('api/player_activation_api', views.player_activation_api),
     path('player_activation/', views.player_activation),
