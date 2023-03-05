@@ -13,7 +13,7 @@
         {% block extrahead %}{% endblock %}
     </head>
     <body>
-        {% block prebody %}{% endblock %}
+      {% block prebody %}{% endblock %}
         <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
               <a class="navbar-brand" href="#"><img class="logo-img" src="{% static 'images/hvzlogo_small.png' %}" /></a>
@@ -21,7 +21,7 @@
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav mr-auto">
                   <li class="nav-item">
                     <a class="nav-link" href="/">Status</a>
                   </li>
@@ -51,15 +51,16 @@
                   </li>
                   {% endif %}
                   {% if user.is_authenticated and user.current_status.is_admin %}
-                  <li class="nav-item">
-                    <a class="nav-link admin-only" href="/blasterapproval/">Approve Blasters</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link admin-only" href="/player_activation/">Activate Players</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link admin-only" href="/admin/create-av">Create an AV</a>
-                  </li>
+		  <li class="nav-item dropdown">
+		    <a class="nav-link dropdown-toggle admin-only" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+		      Admin Tools
+		    </a>
+		    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+		      <li><a class="dropdown-item" href="/blasterapproval/">Approve Blasters</a></li>
+		      <li><a class="dropdown-item" href="/player_activation/">Activate Players</a></li>
+		      <li><a class="dropdown-item" href="/admin/create-av">Create an AV</a></li>
+		    </ul>
+		  </li>
                   {% endif %}
 		</ul>
                 <ul class="navbar-nav ms-auto">
