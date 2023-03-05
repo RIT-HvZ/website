@@ -10,7 +10,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
 from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game, PostGameSurvey, PostGameSurveyResponse
-from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm
+from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -132,11 +132,11 @@ def blasterapproval(request):
     return render(request, "blasterapproval.html", {'form':form, 'approvalcomplete': False})
 
 def admin_create_av(request):
-    # if not request.user.is_authenticated:
-    #     return HttpResponseRedirect("/")
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
 
-    # if not request.user.admin_this_game():
-    #     return HttpResponseRedirect("/")
+    if not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
     
     if request.method == "GET":     
         form = AVCreateForm()
@@ -148,6 +148,25 @@ def admin_create_av(request):
             newform = AVCreateForm()
             return render(request, "create_av.html", {'form':newform, 'createcomplete': True})
     return render(request, "create_av.html", {'form':form, 'createcomplete': False})
+
+
+def admin_create_body_armor(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+
+    if not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    
+    if request.method == "GET":     
+        form = BodyArmorCreateForm()
+    else:
+        form = BodyArmorCreateForm(request.POST)
+
+        if form.is_valid():
+            bodyarmor = form.save()
+            newform = BodyArmorCreateForm()
+            return render(request, "create_body_armor.html", {'form':newform, 'createcomplete': True})
+    return render(request, "create_body_armor.html", {'form':form, 'createcomplete': False})
 
 
 class UserViewSet(viewsets.ModelViewSet):
