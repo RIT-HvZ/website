@@ -234,6 +234,34 @@ def player_view(request, player_id, is_me=False, game=None):
     }
     return render(request, "player.html", context)
 
+def player_admin_tools(request, player_id, command):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect('/')
+
+    try:
+        player = Person.objects.get(player_uuid = player_id)
+        playerstatus = PlayerStatus.objects.get(player = player, game = get_latest_game())
+    except:
+        return HttpResponseRedirect('/')
+
+    if command == "make_oz":
+        playerstatus.status = 'o'
+    if command == "make_nonplayer":
+        playerstatus.status = 'n'
+    if command == "make_human":
+        playerstatus.status = 'h'
+    if command == "make_human_av":
+        playerstatus.status = 'v'
+    if command == "make_zombie":
+        playerstatus.status = 'z'
+    if command == "make_zombie_av":
+        playerstatus.status = 'x'
+    if command == "make_mod":
+        playerstatus.status = 'm'
+    playerstatus.save()
+
+    return player_view(request, player_id, False)
+
 def team_view(request, team_name):
     team = Team.objects.get(name=team_name)
     context = {
