@@ -92,6 +92,10 @@ th, label {
     background-color: rgba(255, 238, 0, 0.8);
 }
 
+#maincontainer.armorcontainer {
+    background-color: transparent;
+}
+
 
 .dt_name_link, .dt_team_link{
     text-decoration: none;
@@ -142,6 +146,22 @@ th, label {
     vertical-align: middle;
 }
 
+#bodyarmors tbody tr.odd td {
+    background-color: rgb(200,200,200);
+}
+
+#bodyarmors tbody tr.even td {
+    background-color: rgb(160,160,160);
+}
+
+#bodyarmors tbody tr td.ba-returned-False {
+    background-color: #822;
+}
+
+#bodyarmors tbody tr td.ba-returned-True {
+    background-color: #1f1;
+}
+
 #qr_url {
     display: none;
 }
@@ -171,7 +191,7 @@ th, label {
     width: 100% !important;
 }
 
-.playermainrow, .playeradmintools {
+.playermainrow, .playeradmintools, .armormainrow {
     text-align: center;
 }
 
@@ -229,6 +249,7 @@ th, label {
     vertical-align:middle;
     text-shadow: #000 1px 1px 2px;
 }
+
 
 .tagformerrors {
     background-color: #822;

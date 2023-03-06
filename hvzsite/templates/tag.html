@@ -7,7 +7,9 @@
 <script>
     $(document).ready(function () {
         $("#id_tagger_id").attr('size',36);
+        $("#id_tagger_id").css('vertical-align',"middle");
         $("#id_taggee_id").attr('size',36);
+        $("#id_taggee_id").css('vertical-align',"middle");
     });
     </script>
 {% endblock %}
@@ -17,8 +19,8 @@
 var html5QrCode = new Html5Qrcode("qr-reader");
 const stop = () => {
     html5QrCode.stop().then((ignore) => {}).catch((err) => {});
-    document.getElementById('human_qr').innerHTML = "QR";
-    document.getElementById('zombie_qr').innerHTML = "QR";
+    document.getElementById('human_qr').innerHTML = "Scan QR";
+    document.getElementById('zombie_qr').innerHTML = "Scan QR";
     document.getElementById('human_qr').onclick = launch_human_qr;
     document.getElementById('zombie_qr').onclick = launch_zombie_qr;
 }
@@ -63,13 +65,13 @@ function launch_human_qr() {
                 {{ form.tagger_id.errors }}
                 <label for="{{ form.tagger_id.id_for_label }}" class="form-label">Tagger (Zombie) ID</label>
                 {{ form.tagger_id }}
-                <button id="zombie_qr" type="button" class="qrlaunch" onclick="launch_zombie_qr()">QR</button>
+                <button id="zombie_qr" type="button" class="btn btn-outline-light" onclick="launch_zombie_qr()">Scan QR</button>
             </div>
             <div class="mb-3">
                 {{ form.taggee_id.errors }}
                 <label for="{{ form.taggee_id.id_for_label }}" class="form-label">Taggee (Human) ID / Body Armor ID</label>
                 {{ form.taggee_id }}
-                <button id="human_qr" type="button" class="qrlaunch" onclick="launch_human_qr()">QR</button>
+                <button id="human_qr" type="button" class="btn btn-outline-light" onclick="launch_human_qr()">Scan QR</button>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
@@ -79,7 +81,7 @@ function launch_human_qr() {
 <div class="row">
     <div class="col center">
         <h1>Tag QR Code</h1>
-        <h5>Have the other party scan this QR code to quickly fill both fields above</h5>
+        <h5>Have the other party scan this QR code to quickly fill the fields above</h5>
         <div class="qrcontainer center">
             <span id="qr_url">{{qr}}</span>
             <canvas id="qrcode"></canvas>
@@ -90,11 +92,43 @@ function launch_human_qr() {
                     backgroundAlpha: 0,
                     foreground: '#00aa00',
                     foregroundAlpha: 1,
-                    level: 'L',
-                    padding: 10,
-                    size: 400,
+                    level: 'H',
+                    padding: 0,
+                    size: 450,
                     value: document.getElementById('qr_url').innerText
                 });
+                const ctx = document.getElementById("qrcode").getContext("2d");
+                ctx.fillRect(150, 150, 150, 150);
+                ctx.clearRect(155,155,10,55); // H left vert
+                ctx.clearRect(155,180,40,10); // H middle
+                ctx.clearRect(190,155,10,55); // H right vert
+                ctx.clearRect(205,170,10,20); // v left vert
+                ctx.clearRect(213,190,10,10); // v left diag
+                ctx.clearRect(240,170,10,20); // v right vert
+                ctx.clearRect(232,190,10,10); // v right diag
+                ctx.clearRect(223,200,9,10); // v middle bottom
+                ctx.clearRect(255,155,40,10); // Z top
+                ctx.clearRect(255,200,40,10); // Z bottom
+                ctx.clearRect(255,190,10,10); // Z bottom-left
+                ctx.clearRect(265,180,10,10); // Z mid-left
+                ctx.clearRect(275,170,10,10); // Z mid-right
+                ctx.clearRect(285,160,10,10); // Z top-right
+                ctx.clearRect(155,240,10,55); // R left
+                ctx.clearRect(155,240,45,10); // R top
+                ctx.clearRect(190,240,10,20); // R right
+                ctx.clearRect(155,260,35,10); // R underside
+                ctx.clearRect(190,270,10,25); // R bottom right
+                ctx.clearRect(208,240,40,10); // I top
+                ctx.clearRect(223,240,10,55); // I vert
+                ctx.clearRect(208,285,40,10); // I bottom
+                ctx.clearRect(255,240,40,10); // T top
+                ctx.clearRect(270,240,10,55); // T vert
+                ctx.clearRect(200,221,6,14); // a left vert
+                ctx.clearRect(215,221,6,14); // a right vert
+                ctx.clearRect(206,215,8,6); // a top
+                ctx.clearRect(200,223,20,6); // a middle
+                ctx.clearRect(230,215,20,6); // t top
+                ctx.clearRect(237,215,6,20); // t vert
                 $('#qrcode > img').css({'margin':'auto'});
             </script>
         </div>

@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game, PostGameSurvey, PostGameSurveyResponse
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game, PostGameSurvey, PostGameSurveyResponse, BodyArmor
 from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -442,3 +442,20 @@ def teams_api(request):
 
 def rules(request):
     return render(request, "rules.html", {})
+
+def bodyarmors(request):
+    game = get_latest_game()
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    body_armors = BodyArmor.objects.filter(game=game)
+    context = {"bodyarmors": body_armors}
+    return render(request, "bodyarmors.html", context)
+
+def bodyarmor_view(request, armor_id):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    armor = BodyArmor.objects.get(armor_uuid=armor_id)
+    context = {
+        'armor': armor,
+    }
+    return render(request, "bodyarmor.html", context)

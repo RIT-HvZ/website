@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Body Armor List {% endblock %}
+
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable = $('#bodyarmors').DataTable();
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Body Armors </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="bodyarmors" class="table table-striped display">
+            <thead>
+                <tr>
+                    <th class="foo">Armor UUID</th>
+                    <th class="foo">Expiration Time</th>
+                    <th class="foo">Status</th>
+                    <th class="foo">Tagged By</th>
+                    <th class="foo">Loaned To</th>
+                    <th class="foo">Loaned At</th>
+                    <th class="foo">Returned</th>
+            </thead>
+            <tbody>
+                {% for ba in bodyarmors %}
+                <tr onclick="window.location.href='/admin/bodyarmor/{{ba.armor_uuid}}/'">
+                    <td>{{ba.armor_uuid}}</td>
+                    <td>{{ba.expiration_time}}</td>
+                    <td>{{ba.get_status}}</td>
+                    <td>{% if ba.used %}{{ba.get_tag.tagger}}{% endif %}</td>
+                    <td>{% if ba.loaned_to %}{{ ba.loaned_to }}{% endif %}</td>
+                    <td>{% if ba.loaned_at %}{{ ba.loaned_at }}{% endif %}</td>
+                    <td class="ba-returned-{{ba.returned}}">{% if ba.returned %}Yes{% else %}No{% endif %}</td>
+                </tr>
+                {% empty %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

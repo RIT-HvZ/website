@@ -31,6 +31,7 @@ urlpatterns = [
     path('player_activation/', views.player_activation),
     path('api/player_activation_rest', views.player_activation_rest),
     path('rules/', views.rules),
-    path('admin/player_admin/tools/<player_id>/<command>', views.player_admin_tools)
-    #path('/admin/body-armors', views.bodyarmors)
+    path('admin/player_admin/tools/<player_id>/<command>', views.player_admin_tools),
+    path('admin/bodyarmors', views.bodyarmors),
+    path('admin/bodyarmor/<armor_id>/', views.bodyarmor_view),
 ]

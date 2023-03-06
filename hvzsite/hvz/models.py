@@ -11,6 +11,7 @@ import os
 import random
 import string
 from django.utils import timezone
+from pytz import timezone as pytz_timezone
 
 def get_team_upload_path(instance, filename):
         return os.path.join("static","team_pictures",str(instance.name), filename)
@@ -196,7 +197,26 @@ class PostGameSurveyResponse(models.Model):
 class BodyArmor(models.Model):
     armor_uuid = models.UUIDField(verbose_name="Armor UUID (Unique)", editable=False, default=uuid.uuid4, primary_key=True)
     expiration_time = models.DateTimeField()
+    loaned_to = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)
+    loaned_at = models.DateTimeField(null=True, blank=True)
+    returned = models.BooleanField(default=False)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)#, default=get_latest_game)
+
+    @property
+    def used(self):
+        return len(Tag.objects.filter(armor_taggee=self)) > 0
+    
+    @property
+    def get_tag(self):
+        return Tag.objects.get(armor_taggee=self)
+    
+    @property
+    def get_status(self):
+        if self.used:
+            return "Tagged"
+        if datetime.datetime.now(tz=pytz_timezone('EST')) > self.expiration_time:
+            return "Expired"
+        return "Active"
 
     def __str__(self) -> str:
         return f"Body Armor {self.armor_uuid}. Expires {self.expiration_time}. From game {self.game}"

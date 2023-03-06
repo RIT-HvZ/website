@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - {{ player }} {% endblock %}
+{% block extrahead %}
+<script>
+$(document).ready(function () {
+    $('#maincontainer').addClass("armorcontainer");
+});
+
+function admintools(command) {
+    window.location.href = "/admin/bodyarmor/tools/{{armor.armor_uuid}}/" + command;
+}
+</script>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-md-center armortitle">
+    <div class="col col-lg-8" style="display:inline-block;text-align: center;">
+        <h1>Body Armor Detail</h1>
+    </div>
+</div>
+<div class="row justify-content-md-center armormainrow">
+    <div class="col col-md-2">
+        Armor UUID: {{armor.armor_uuid}}
+    </div>
+    <div class="col col-md-2">
+        Expiration Time: {{armor.expiration_time}}
+    </div>
+    <div class="col col-md-4">
+        {% if loaned_at %}
+        Loaned To: {{armor.loaned_to}} at {{armor.loaned_at}}
+        {% else %}
+        Loaned: False
+        <button>Loan</button>
+        {% endif %}
+    </div> 
+    <div class="col col-md-2">
+        Returned: {{armor.returned}}
+        {% if not armor.returned %}
+        <button onclick="admintools('mark_returned')">Mark Returned</button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
