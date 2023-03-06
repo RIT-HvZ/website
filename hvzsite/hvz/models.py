@@ -88,14 +88,24 @@ class Person(AbstractUser):
     def admin_this_game(self):
         return self.current_status.is_admin()
 
+def generate_tag_id(length=10):
+    import string
+    import secrets
+    alphabet = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(alphabet) for i in range(length))
 
 class PlayerStatus(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE)
-    tag1_uuid = models.UUIDField(verbose_name="Tag #1 ID",   editable=True, default=uuid.uuid4)
-    tag2_uuid = models.UUIDField(verbose_name="Tag #2 ID",   editable=True, default=uuid.uuid4)
-    zombie_uuid = models.UUIDField(verbose_name="Zombie ID", editable=True, default=uuid.uuid4)
+    tag1_uuid =   models.CharField(verbose_name="Tag #1 ID", editable=True, default=generate_tag_id, max_length=36)
+    tag2_uuid =   models.CharField(verbose_name="Tag #2 ID", editable=True, default=generate_tag_id, max_length=36)
+    zombie_uuid = models.CharField(verbose_name="Zombie ID", editable=True, default=generate_tag_id, max_length=36)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('z','Zombie'),('x','Zombie (used AV)'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='n', null=False)
+
+    class Meta:
+        unique_together = (('tag1_uuid', 'game'),
+                           ('tag2_uuid', 'game'),
+                           ('zombie_uuid', 'game'))
 
     def __str__(self) -> str:
         return f"Status of {self.player} during game \"{self.game}\" ({self.get_status_display()})"
@@ -196,11 +206,15 @@ class PostGameSurveyResponse(models.Model):
 
 class BodyArmor(models.Model):
     armor_uuid = models.UUIDField(verbose_name="Armor UUID (Unique)", editable=False, default=uuid.uuid4, primary_key=True)
+    armor_code = models.CharField(verbose_name="Armor Code", editable=True, default=gen_default_code, max_length=30)
     expiration_time = models.DateTimeField()
     loaned_to = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)
     loaned_at = models.DateTimeField(null=True, blank=True)
     returned = models.BooleanField(default=False)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)#, default=get_latest_game)
+
+    class Meta:
+        unique_together = ('armor_code', 'game',)
 
     @property
     def used(self):
@@ -219,7 +233,7 @@ class BodyArmor(models.Model):
         return "Active"
 
     def __str__(self) -> str:
-        return f"Body Armor {self.armor_uuid}. Expires {self.expiration_time}. From game {self.game}"
+        return f"Body Armor {self.armor_code}. Expires {datetime.datetime.strftime(self.expiration_time, '%Y-%m-%d %H:%M')}. From game {self.game}"
 
 class Tag(models.Model):
     tagger = models.ForeignKey(Person, null=False, on_delete=models.CASCADE, related_name="taggers")

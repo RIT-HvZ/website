@@ -196,7 +196,8 @@ def admin_create_body_armor(request):
         form = BodyArmorCreateForm(request.POST)
 
         if form.is_valid():
-            bodyarmor = form.save()
+            bodyarmor = BodyArmor.objects.create(armor_code=form.cleaned_data['armor_code'], expiration_time=form.cleaned_data['expiration_time'], game = get_latest_game())
+            bodyarmor.save()
             newform = BodyArmorCreateForm()
             return render(request, "create_body_armor.html", {'form':newform, 'createcomplete': True, 'bodyarmor': bodyarmor})
     return render(request, "create_body_armor.html", {'form':form, 'createcomplete': False})

@@ -122,6 +122,10 @@ class TagForm(forms.Form):
             armor = BodyArmor.objects.get(armor_uuid=taggee, game=this_game)
         except:
             pass
+        try:
+            armor = BodyArmor.objects.get(armor_code=taggee, game=this_game)
+        except:
+            pass
 
         if armor is not None:
             cd['type'] = "armor"
@@ -173,4 +177,10 @@ class AVForm(forms.Form):
 class BodyArmorCreateForm(forms.ModelForm):
     class Meta:
         model = BodyArmor
-        fields='__all__'
+        fields=['armor_code','expiration_time']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['expiration_time'].label = "Expiration Date/Time (YYYY/mm/dd HH:MM)"
+        self.fields['expiration_time'].input_formats = ["%Y/%m/%d %H:%M"]
+

@@ -1,39 +1,43 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %} HvZ @ RIT - Create Body Armor (Admin) {% endblock %}
+{% block extrahead %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+<script>
+  
+  $(document).ready(function () {
+    $("#id_expiration_time").attr("autocomplete","off");
+    $("#id_armor_code").attr("autocomplete","off");
+    $("#id_expiration_time").datetimepicker();
+  });
+</script>
+{% endblock %}
 {% block body %}
+{% load crispy_forms_tags %}
+
 <div class="row">
-    <div class="col">
-        <h1 class="center"> Create a New Body Armor Code </h1>
-    </div>
+  <div class="col">
+    <h1 class="center"> Create a New Body Armor Code </h1>
+  </div>
 </div>
 <div class="row">
-    <div class="col">
-        {% if createcomplete %}
-            <h2 class="tagnotification">Successfully created Body Armor code!<br>UUID: {{ bodyarmor.armor_uuid }}</h2>
-        {% endif %}
-        <form method="post" id="create-bodyarmor-form" class="center">{% csrf_token %}
-          {% if form.non_field_errors|length > 0 %}
-	    <div class="tagformerrors mb-3">
-	      {{ form.non_field_errors }}
-	    </div>
-	  {% endif %}
+  <div class="col">
+    {% if createcomplete %}
+    <h2 class="tagnotification">Successfully created Body Armor code!<br>Code: {{ bodyarmor.armor_code }}</h2>
+    {% endif %}
+    <form method="post" id="create-bodyarmor-form" class="center">{% csrf_token %}
+      {% if form.non_field_errors|length > 0 %}
+      <div class="tagformerrors mb-3">
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
 
-	  <div class="mb-3">
-	    {{ form.errors }}
-	    <br />
-	    {{ form.expiration_time.errors }}
-            <label for="{{ form.expiration_time.id_for_label }}" class="form-label">Expires (YYYY-MM-DD hh:mm)</label>
-            {{ form.expiration_time }}
-
-	    <br />
-	    {{ form.game.errors }}
-            <label for="{{ form.game.id_for_label }}" class="form-label">Game</label>
-            {{ form.game }}
-          </div>
-	  
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
+      <div class="mb-3">
+        {{ form.errors }}
+        {{ form | crispy }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
 </div>
 {% endblock %}

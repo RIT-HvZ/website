@@ -21,7 +21,7 @@
         <table id="bodyarmors" class="table table-striped display">
             <thead>
                 <tr>
-                    <th class="foo">Armor UUID</th>
+                    <th class="foo">Armor Code</th>
                     <th class="foo">Expiration Time</th>
                     <th class="foo">Status</th>
                     <th class="foo">Tagged By</th>
@@ -32,7 +32,7 @@
             <tbody>
                 {% for ba in bodyarmors %}
                 <tr onclick="window.location.href='/admin/bodyarmor/{{ba.armor_uuid}}/'">
-                    <td>{{ba.armor_uuid}}</td>
+                    <td>{{ba.armor_code}}</td>
                     <td>{{ba.expiration_time}}</td>
                     <td>{{ba.get_status}}</td>
                     <td>{% if ba.used %}{{ba.get_tag.tagger}}{% endif %}</td>
