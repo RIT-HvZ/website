@@ -142,6 +142,18 @@ th, label {
     vertical-align: middle;
 }
 
+#qr_url {
+    display: none;
+}
+
+#qr-reader {
+    width: auto;
+}
+
+#qr-reader-holder {
+    width:100%;
+    text-align: center;
+}
 #players {
     width: 100% !important;
 }

@@ -24,7 +24,7 @@ def index(request):
 def me(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
-    return player_view(request, request.user.player_uuid)
+    return player_view(request, request.user.player_uuid, is_me=True)
 
 def register(request):
 	if request.method == "POST":
@@ -69,8 +69,33 @@ def missions_view(request):
 def tag(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
-    if request.method == "GET":     
-        form = TagForm()
+    player = request.user
+    if player.current_status.is_zombie():
+        qr = player.current_status.zombie_uuid
+    elif player.current_status.status == 'h':
+        qr = player.current_status.tag1_uuid
+    elif player.current_status.status == 'v':
+        qr = player.current_status.tag2_uuid
+    else:
+        qr = None
+    if request.method == "GET":
+        data = {}
+        player = request.user
+        status = player.current_status
+        if status.is_zombie():
+            data['tagger_id'] = status.zombie_uuid
+        elif status.is_human():
+            if status.status == 'h':
+                data['taggee_id'] = status.tag1_uuid
+            elif status.status == 'v':
+                data['taggee_id'] = status.tag2_uuid
+        prefilled_zombie = request.GET.get('z',None)
+        prefilled_human = request.GET.get('h',None)
+        if prefilled_zombie:
+            data['tagger_id'] = prefilled_zombie
+        if prefilled_human:
+            data["taggee_id"] = prefilled_human
+        form = TagForm(initial=data)
     else:
         form = TagForm(request.POST)
         if form.is_valid():
@@ -86,8 +111,9 @@ def tag(request):
                 tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, armor_taggee=form.cleaned_data['taggee'], game=get_latest_game())
                 tag.save()
             form = TagForm()
-            return render(request, "tag.html", {'form':form, 'tagcomplete': True, 'tag': tag})
-    return render(request, "tag.html", {'form':form, 'tagcomplete': False})
+            return render(request, "tag.html", {'form':form, 'tagcomplete': True, 'tag': tag, 'qr': qr})
+    
+    return render(request, "tag.html", {'form':form, 'tagcomplete': False, 'qr': qr})
 
 def av(request):
     if not request.user.is_authenticated:
@@ -193,16 +219,18 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-def player_view(request, player_id, game=None):
+def player_view(request, player_id, is_me=False, game=None):
     player = Person.objects.get(player_uuid=player_id)
     if game is None:
         game = get_latest_game()
     context = {
         'player': player,
+        'is_me': is_me,
         'badges': BadgeInstance.objects.filter(player=player), 
         'tags': Tag.objects.filter(tagger=player, game=game),
         'status': PlayerStatus.objects.get_or_create(player=player, game=game)[0],
-        'blasters': Blaster.objects.filter(owner=player, game_approved_in=game)
+        'blasters': Blaster.objects.filter(owner=player, game_approved_in=game),
+        'domain': request.build_absolute_uri('/tag/')
     }
     return render(request, "player.html", context)
 
