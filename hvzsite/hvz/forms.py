@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ValidationError
 from django.db.models import Count, Q
-from .models import Person, Blaster, BodyArmor, AntiVirus, PlayerStatus, get_latest_game
+from .models import Person, Blaster, BodyArmor, AntiVirus, PlayerStatus, get_latest_game, Tag
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -81,7 +81,7 @@ class NewUserForm(UserCreationForm):
 
 class TagForm(forms.Form):
     tagger_id = forms.CharField(label='Tagger (Zombie) ID', max_length=36)
-    taggee_id = forms.CharField(label='Taggee (Human) ID', max_length=36)
+    taggee_id = forms.CharField(label='Taggee (Human) ID / Body Armor ID', max_length=36)
 
     def clean(self):
         cd = self.cleaned_data
@@ -97,26 +97,42 @@ class TagForm(forms.Form):
         taggee_status = None
         try:
             taggee_status = PlayerStatus.objects.get(tag1_uuid=taggee, game=this_game)
-            #if taggee_status.status != "h":
-            #    raise ValidationError("Taggee Human ID #1 given, but that ID was already tagged!")
         except:
             pass
         try:
             taggee_status = PlayerStatus.objects.get(tag2_uuid=taggee, game=this_game)
-            #if taggee_status.status != "v":
-            #    raise ValidationError("Taggee Human ID #2 given, but ID #1 wasn't used yet!")
         except:
             pass
-        if taggee_status is None:
-            raise ValidationError("No player with that Human ID found")
-        
+
         if not (tagger_status.is_zombie() or tagger_status.is_admin()):
             raise ValidationError("Tagger is not a Zombie!")
-        if not taggee_status.is_human():
-            raise ValidationError("Taggee is not a Human!")
+
+        if taggee_status is not None:
+            cd['type'] = "player"
+            if not taggee_status.is_human():
+                raise ValidationError("Taggee is not a Human!")
+            if taggee_status.status == "v" and taggee != str(taggee_status.tag2_uuid):
+                raise ValidationError("Tag #1 UUID given, but player has already used AV!")
+            if taggee_status.status == "h" and taggee != str(taggee_status.tag1_uuid):
+                raise ValidationError("Tag #2 UUID given, but player has not yet used AV!")
+            cd["taggee"] = taggee_status
+
+        armor = None
+        try:
+            armor = BodyArmor.objects.get(armor_uuid=taggee, game=this_game)
+        except:
+            pass
+
+        if armor is not None:
+            cd['type'] = "armor"
+            if datetime.now(tz=timezone('EST')) > armor.expiration_time:
+                raise ValidationError("Armor is expired!")
+            previous_tags = Tag.objects.filter(armor_taggee = armor, game=this_game)
+            if len(previous_tags) > 0:
+                raise ValidationError("Armor already used!")
+            cd["taggee"] = armor
         
         cd["tagger"] = tagger_status
-        cd["taggee"] = taggee_status
         # Validation complete
         return cd
 

@@ -37,8 +37,11 @@ class Game(models.Model):
         return f"{self.game_name}: {datetime.datetime.strftime(self.start_date, '%Y/%m/%d')}-{datetime.datetime.strftime(self.end_date, '%Y/%m/%d')}"
 
 def get_latest_game():
-    return Game.objects.latest("start_date")
-
+    if Game.objects.count() > 0:
+        return Game.objects.latest("start_date")
+    dummy_game = Game.objects.create(game_name="Dummy game", start_date=datetime.date.today(), end_date=datetime.date.today())
+    dummy_game.save()
+    return dummy_game
     
 class Mission(models.Model):
     mission_name = models.CharField(max_length=100)
@@ -120,7 +123,7 @@ def gen_default_code():
 class AntiVirus(models.Model):
     av_uuid = models.UUIDField(verbose_name="AV UUID (Unique)", editable=False, default=uuid.uuid4, primary_key=True)
     av_code = models.CharField(verbose_name="AV Code", editable=True, default=gen_default_code, max_length=30)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, default=get_latest_game)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)#, default=get_latest_game)
     used_by = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)
     time_used = models.DateTimeField(null=True, blank=True)
     expiration_time = models.DateTimeField(null=True, blank=True)
@@ -140,13 +143,6 @@ class BadgeInstance(models.Model):
     def __str__(self) -> str:
         return f"{self.badge_type.badge_name} earned by {self.player} at {self.timestamp}"
 
-class Tag(models.Model):
-    tagger = models.ForeignKey(Person, null=False, on_delete=models.CASCADE, related_name="taggers")
-    taggee = models.ForeignKey(Person, null=False, on_delete=models.CASCADE, related_name="taggees")
-    timestamp = models.DateTimeField(verbose_name="Tag Timestamp", auto_now=True)
-    game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
-    def __str__(self) -> str:
-        return f"{self.tagger} tagged {self.taggee} at {self.timestamp}"
 
 def get_blaster_upload_path(instance, filename):
         return os.path.join("static","blaster_pictures",str(instance.owner.player_uuid), filename)
@@ -163,7 +159,7 @@ class Blaster(models.Model):
         return f"Blaster \"{self.name}\" owned by {self.owner}. Avg. FPS: {self.avg_chrono if self.avg_chrono != 0 else 'N/A'}. Approved by {', '.join([str(p) for p in self.approved_by.all()])}"
 
 class PostGameSurvey(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, default=get_latest_game)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)#, default=get_latest_game)
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE)
     team = models.CharField(max_length=1,choices=[('h','Human'),('z','Zombie'),('s',"Staff")])
     go_live_time = models.DateTimeField(verbose_name="Date/Time that players can take the survey")
@@ -192,7 +188,25 @@ class PostGameSurveyResponse(models.Model):
 
     def __str__(self) -> str:
         return f"Response of {self.player} for survey {self.survey} - {self.response}"
+
 class BodyArmor(models.Model):
     armor_uuid = models.UUIDField(verbose_name="Armor UUID (Unique)", editable=False, default=uuid.uuid4, primary_key=True)
     expiration_time = models.DateTimeField()
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, default=get_latest_game)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)#, default=get_latest_game)
+
+    def __str__(self) -> str:
+        return f"Body Armor {self.armor_uuid}. Expires {self.expiration_time}. From game {self.game}"
+
+class Tag(models.Model):
+    tagger = models.ForeignKey(Person, null=False, on_delete=models.CASCADE, related_name="taggers")
+    taggee = models.ForeignKey(Person, null=True, blank=True, on_delete=models.CASCADE, related_name="taggees")
+    armor_taggee = models.ForeignKey(BodyArmor, null=True, blank=True, on_delete=models.CASCADE, related_name="armor_taggees")
+    timestamp = models.DateTimeField(verbose_name="Tag Timestamp", auto_now=True)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    def __str__(self) -> str:
+        if self.taggee:
+            return f"{self.tagger} tagged {self.taggee} at {self.timestamp}"
+        elif self.armor_taggee:
+            return f"{self.tagger} tagged {self.armor_taggee} at {self.timestamp}"
+        else:
+            return f"{self.tagger} tagged nothing at {self.timestamp}"

@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col">
         {% if createcomplete %}
-            <h2 class="tagnotification">Successfully created Body Armor code!</h2>
+            <h2 class="tagnotification">Successfully created Body Armor code!<br>UUID: {{ bodyarmor.armor_uuid }}</h2>
         {% endif %}
         <form method="post" id="create-bodyarmor-form" class="center">{% csrf_token %}
           {% if form.non_field_errors|length > 0 %}

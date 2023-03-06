@@ -74,10 +74,17 @@ def tag(request):
     else:
         form = TagForm(request.POST)
         if form.is_valid():
-            tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, taggee=form.cleaned_data['taggee'].player, game=get_latest_game())
-            tag.save()
-            form.cleaned_data['taggee'].status = 'z'
-            form.cleaned_data['taggee'].save()
+            if form.cleaned_data['type'] == "player":
+                tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, taggee=form.cleaned_data['taggee'].player, game=get_latest_game())
+                tag.save()
+                if form.cleaned_data['taggee'].status == 'v':
+                    form.cleaned_data['taggee'].status = 'x'
+                else:
+                    form.cleaned_data['taggee'].status = 'z'
+                form.cleaned_data['taggee'].save()
+            else:
+                tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, armor_taggee=form.cleaned_data['taggee'], game=get_latest_game())
+                tag.save()
             form = TagForm()
             return render(request, "tag.html", {'form':form, 'tagcomplete': True, 'tag': tag})
     return render(request, "tag.html", {'form':form, 'tagcomplete': False})
@@ -111,7 +118,7 @@ def blasterapproval(request):
     if request.method == "GET":     
         form = BlasterApprovalForm()
         form.fields['owner'].queryset = Person.objects.filter(playerstatus__game=get_latest_game()) \
-                                                      .filter(playerstatus__status__in=['h','v','z','o']) \
+                                                      .filter(playerstatus__status__in=['h','v','z','o','x']) \
                                                       .annotate(num_status=Count('playerstatus')) \
                                                       .filter(num_status=1)
     else:
@@ -165,7 +172,7 @@ def admin_create_body_armor(request):
         if form.is_valid():
             bodyarmor = form.save()
             newform = BodyArmorCreateForm()
-            return render(request, "create_body_armor.html", {'form':newform, 'createcomplete': True})
+            return render(request, "create_body_armor.html", {'form':newform, 'createcomplete': True, 'bodyarmor': bodyarmor})
     return render(request, "create_body_armor.html", {'form':form, 'createcomplete': False})
 
 
@@ -230,13 +237,13 @@ def players_api(request, game=None):
         search = r["search[value]"] 
     except AssertionError:
         raise
-    query = Person.full_name_objects.all()
+    query = Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','z','o','x','a','m'])
     if search != "":
         query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(team__name__icontains=search))
     if order_column_name != "tags":
-        query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "status": "status", "team": "team__name"}[order_column_name]}""")
+        query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "status": "playerstatus__status", "team": "team__name"}[order_column_name]}""")
     else:
-        query = query.annotate(num_tags=Count('taggers', filter=Q(game=game))).order_by(f"""{'-' if order_direction == 'asc' else ''}num_tags""")
+        query = query.annotate(n_tags=Count('taggers', filter=Q(taggers__game=game))).order_by(f"""{'-' if order_direction == 'asc' else ''}n_tags""")
     result = []
     for person in query[start:limit]:
         try:
@@ -248,11 +255,11 @@ def players_api(request, game=None):
         result.append({
             "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
             "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture.url}' class='dt_profile' /></a>""",
-            "status": {"h": "Human", "a": "Admin", "z": "Zombie", "m": "Mod", "v": "Human", "o": "Zombie", "n": "NonPlayer"}[person_status.status],
+            "status": {"h": "Human", "a": "Admin", "z": "Zombie", "m": "Mod", "v": "Human", "o": "Zombie", "n": "NonPlayer", "x": "Zombie"}[person_status.status],
             "team": None if person.team is None else (f"""<a href="/team/{person.team.name}/" class="dt_team_link">person.team.name</a>""" if (person.team is None or person.team.picture is None) else f"""<a href="/team/{person.team.name}/" class="dt_team_link"><img src='{person.team.picture.url}' class='dt_teampic' alt='{person.team}' /><span class="dt_teamname">{person.team}</span></a>"""),
             "team_pic": None if (person.team is None or person.team.picture is None) else person.team.picture.url,
             "tags": Tag.objects.filter(tagger=person,game=game).count(),
-            "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer"}[person_status.status],
+            "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie"}[person_status.status],
             "DT_RowData": {"person_url": f"/player/{person.player_uuid}/", "team_url": f"/team/{person.team.name}/" if person.team is not None else ""}
         })
     data = {

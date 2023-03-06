@@ -30,5 +30,6 @@ urlpatterns = [
     path('api/player_activation_api', views.player_activation_api),
     path('player_activation/', views.player_activation),
     path('api/player_activation_rest', views.player_activation_rest),
-    path('rules/', views.rules)
+    path('rules/', views.rules),
+    #path('/admin/body-armors', views.bodyarmors)
 ]

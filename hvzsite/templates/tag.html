@@ -18,7 +18,7 @@
 <div class="row">
     <div class="col">
         {% if tagcomplete %}
-            <h2 class="tagnotification">Successfully registered Tag of {{tag.taggee}} by {{tag.tagger}}!</h2>
+            <h2 class="tagnotification">Successfully registered Tag of {% if tag.taggee %}{{tag.taggee}}{% else %}Body Armor{% endif %} by {{tag.tagger}}!</h2>
         {% endif %}
         <form method="post" id="tagform" class="center">{% csrf_token %}
             {% if form.non_field_errors|length > 0 %}<div class="tagformerrors mb-3">{{ form.non_field_errors }}</div>{% endif %}
