@@ -17,6 +17,10 @@
 var html5QrCode = new Html5Qrcode("qr-reader");
 const stop = () => {
     html5QrCode.stop().then((ignore) => {}).catch((err) => {});
+    document.getElementById('human_qr').innerHTML = "QR";
+    document.getElementById('zombie_qr').innerHTML = "QR";
+    document.getElementById('human_qr').onclick = launch_human_qr;
+    document.getElementById('zombie_qr').onclick = launch_zombie_qr;
 }
 const fillZombie = (decodedText, decodedResult) => {
     document.getElementById("id_tagger_id").value = decodedText;
@@ -27,25 +31,19 @@ const fillHuman = (decodedText, decodedResult) => {
     stop();
 };
 const config = { fps: 10, qrbox: { width: 350, height: 350 } };
-function humanstop() {
-    stop();
-    document.getElementById('human_qr').innerHTML = "QR";
-    document.getElementById('human_qr').onclick = launch_human_qr;
-}
-function zombiestop() {
-    stop();
-    document.getElementById('zombie_qr').innerHTML = "QR";
-    document.getElementById('zombie_qr').onclick = launch_zombie_qr;
+const preparebuttons = () => {
+    document.getElementById('zombie_qr').innerHTML = "Stop";
+    document.getElementById('human_qr').innerHTML = "Stop";
+    document.getElementById('human_qr').onclick = stop;
+    document.getElementById('zombie_qr').onclick = stop;
 }
 function launch_zombie_qr() {
     html5QrCode.start({ facingMode: "environment" }, config, fillZombie);
-    document.getElementById('zombie_qr').innerHTML = "Stop";
-    document.getElementById('zombie_qr').onclick = zombiestop;
+    preparebuttons();
 }
 function launch_human_qr() {      
     html5QrCode.start({ facingMode: "environment" }, config, fillHuman);
-    document.getElementById('human_qr').innerHTML = "Stop";
-    document.getElementById('human_qr').onclick = humanstop;
+    preparebuttons();
 }
 </script>
 <div class="row">

@@ -150,6 +150,19 @@ th, label {
     width: auto;
 }
 
+.qrlaunch {
+    background-color: rgba(0,0,0,0);
+    border-radius: 4px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #ddd;
+    font-weight: bold;
+    border-width: 2px;
+    border-color: #ddd;
+}
+
 #qr-reader-holder {
     width:100%;
     text-align: center;
