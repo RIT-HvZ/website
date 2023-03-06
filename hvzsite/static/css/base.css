@@ -208,7 +208,7 @@ th, label {
     max-height: 100px;
 }
 
-.team_link, .login_alreadylogged a, #player_tags a {
+.team_link, .login_alreadylogged a, #player_tags a, .player_tag_div {
     text-decoration: none;
     color: rgb(30,30,30);
 }
