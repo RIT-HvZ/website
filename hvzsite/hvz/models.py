@@ -116,6 +116,10 @@ class PlayerStatus(models.Model):
 
     def is_nonplayer(self):
         return self.status == 'n'
+    
+    @property
+    def can_av(self):
+        return self.status == "z"
 
 def gen_default_code():
     return ''.join(random.choices(string.ascii_letters, k=10))

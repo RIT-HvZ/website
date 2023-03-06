@@ -220,7 +220,7 @@ th, label {
     margin-bottom: 10px;
 }
 
-.tagnotification {
+.tagnotification, .avnotification {
     background-color: #1f1;
     border-radius: 10px;
     color: #111;

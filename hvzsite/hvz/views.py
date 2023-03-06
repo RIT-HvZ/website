@@ -121,20 +121,20 @@ def av(request):
 
     user_status = request.user.current_status
 
-    if user_status.is_nonplayer():
+    if not user_status.can_av:
         return HttpResponseRedirect("/")
     
     if request.method == "GET":     
-        form = AVForm(initial={'player_id': user_status.zombie_uuid})
+        form = AVForm()
     else:
-        form = AVForm(request.POST, initial={'player_id': user_status.zombie_uuid})
+        form = AVForm(request.POST)
         if form.is_valid():
-            form.cleaned_data['player'].status = 'v'
-            form.cleaned_data['player'].save()
-            form.cleaned_data['av'].used_by = form.cleaned_data['player'].player
+            user_status.status = 'v'
+            user_status.save()
+            form.cleaned_data['av'].used_by = request.user
             form.cleaned_data['av'].time_used = datetime.now()
             form.cleaned_data['av'].save()
-            newform = AVForm(initial={'player_id': user_status.zombie_uuid})
+            newform = AVForm()
             return render(request, "av.html", {'form':newform, 'avcomplete': True, 'av': form.cleaned_data['av']})
     return render(request, "av.html", {'form':form, 'avcomplete': False})
 
