@@ -20,6 +20,23 @@ $(document).ready(function () {
 </script>
 {% endblock %}
 {% block body %}
+{% if user.is_authenticated and user.current_status.is_admin %}
+<div class="row justify-content-md-center playeradmintools">
+    <div class="col col-md-2">
+        <div class="row justify-content-md-center">
+            <h2>Admin Tools</h2>
+        </div>
+    </div>
+    <div class="col col-md-4">
+        <div class="row justify-content-md-center">
+            <button class="playeradmintool">Make OZ</button>
+            <button class="playeradmintool">Make Nonplayer</button>
+            <button class="playeradmintool">Make Human</button>
+            <button class="playeradmintool">Make Zombie</button>
+        </div>
+    </div>
+</div>
+{% endif %}
 <div class="row justify-content-md-center playermainrow">
     <div class="col col-md-4">
         <div class="row justify-content-md-center">
@@ -62,7 +79,7 @@ $(document).ready(function () {
         <div id="player_tags" class="row">
             <div class="col">
                 <h1> Tags </h1>
-                {% for tag in tags %} <div class="player_tag_div"><a href="/player/{{tag.taggee.zombie_uuid}}/"><div><img src="{{ tag.taggee.picture.url }}" class="player_tag_img" /></div><div>{{tag.taggee}}</div></a></div>
+                {% for tag in tags %} <div class="player_tag_div">{% if tag.taggee %}<a href="/player/{{tag.taggee.player_uuid}}/"><div><img src="{{ tag.taggee.picture.url }}" class="player_tag_img" /></div><div>{{tag.taggee}}</div></a></div>{% else %}<div><img src="/static/images/bodyarmor.png" class="player_tag_img" /></div><div>Body Armor</div></a></div>{% endif %}
                 {% empty %}<span class="notags">No tags to show</span>{% endfor %}
             </div>
         </div>
