@@ -18,8 +18,10 @@ import json
 
 # Create your views here.
 def index(request):
-    context = {}
-    return render(request, "index.html", context)
+    game = get_latest_game()
+    humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v')).count()
+    zombiecount = PlayerStatus.objects.filter(game=game).filter(Q(status='z') | Q(status='x') | Q(status='o')).count()
+    return render(request, "index.html", {'humancount': humancount, 'zombiecount': zombiecount})
 
 def me(request):
     if not request.user.is_authenticated:

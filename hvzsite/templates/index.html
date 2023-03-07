@@ -3,7 +3,35 @@
 {% block body %}
 <div class="row">
   <div class="col">
-    <h1> HvZ </h1>
+    <h1 class="center"> HvZ @ RIT</h1>
+  </div>
+</div>
+<div class="row center">
+  <div class="col humancount">
+    <div class="row">
+      <div class="col">
+        <span class=humancountlabel>Humans</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <span class=humancountnumber>{{humancount}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="col zombiecount">
+    <div class="row">
+      <div class="col">
+        <span class=humancountlabel>Zombies</span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <span class=humancountnumber>{{zombiecount}}</span>
+      </div>
+    </div>
+    
   </div>
 </div>
 {% endblock %}

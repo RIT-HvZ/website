@@ -96,6 +96,31 @@ th, label {
     background-color: transparent;
 }
 
+div.humancount, div.zombiecount {
+    padding: 4em;
+    border-radius: 2em;
+    margin: 2em;
+}
+
+div.humancount {
+    background-color: rgb(201, 119, 13);
+}
+
+div.zombiecount {
+    background-color: rgb(16,185,1);
+}
+
+.humancountnumber, .zombiecountnumber {
+    font-size: 60pt;
+    font-weight: bold;
+    color: black;
+}
+
+.humancountlabel, .zombiecountlabel {
+    font-size: 24pt;
+    font-weight: bold;
+    color: black;
+}
 
 .dt_name_link, .dt_team_link{
     text-decoration: none;
