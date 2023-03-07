@@ -205,7 +205,7 @@ class PostGameSurveyResponse(models.Model):
         return f"Response of {self.player} for survey {self.survey} - {self.response}"
 
 class BodyArmor(models.Model):
-    armor_uuid = models.UUIDField(verbose_name="Armor UUID (Unique)", editable=False, default=uuid.uuid4, primary_key=True)
+    armor_uuid = models.CharField(verbose_name="Armor UUID (Unique)", max_length=36, editable=False, default=uuid.uuid4, primary_key=True)
     armor_code = models.CharField(verbose_name="Armor Code", editable=True, default=gen_default_code, max_length=30)
     expiration_time = models.DateTimeField()
     loaned_to = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)

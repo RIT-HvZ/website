@@ -93,49 +93,38 @@ class TagForm(forms.Form):
             tagger_status = PlayerStatus.objects.get(zombie_uuid=tagger, game=this_game)
         except:
             raise ValidationError("No Player with that Zombie ID found")
-        
-        taggee_status = None
-        try:
-            taggee_status = PlayerStatus.objects.get(tag1_uuid=taggee, game=this_game)
-        except:
-            pass
-        try:
-            taggee_status = PlayerStatus.objects.get(tag2_uuid=taggee, game=this_game)
-        except:
-            pass
-
         if not (tagger_status.is_zombie() or tagger_status.is_admin()):
             raise ValidationError("Tagger is not a Zombie!")
 
-        if taggee_status is not None:
+        taggee_statuses = PlayerStatus.objects.filter(game=this_game).filter(Q(tag1_uuid=taggee) | Q(tag2_uuid=taggee))
+        armors = BodyArmor.objects.filter(game=this_game).filter(Q(armor_uuid=taggee) | Q(armor_code=taggee))
+        if len(armors) > 0 and len(taggee_statuses) > 0:
+            raise ValidationError("Oh dear, that code matches a tag AND an armor")
+        elif len(taggee_statuses) > 0:
             cd['type'] = "player"
+            if len(taggee_statuses) > 1:
+                raise ValidationError("Oh dear, that tag matches more than one player")
+            taggee_status = taggee_statuses[0]
             if not taggee_status.is_human():
                 raise ValidationError("Taggee is not a Human!")
             if taggee_status.status == "v" and taggee != str(taggee_status.tag2_uuid):
-                raise ValidationError("Tag #1 UUID given, but player has already used AV!")
+                raise ValidationError("Tag #1 ID given, but player has already used AV!")
             if taggee_status.status == "h" and taggee != str(taggee_status.tag1_uuid):
-                raise ValidationError("Tag #2 UUID given, but player has not yet used AV!")
+                raise ValidationError("Tag #2 ID given, but player has not yet used AV!")
             cd["taggee"] = taggee_status
-
-        armor = None
-        try:
-            armor = BodyArmor.objects.get(armor_uuid=taggee, game=this_game)
-        except:
-            pass
-        try:
-            armor = BodyArmor.objects.get(armor_code=taggee, game=this_game)
-        except:
-            pass
-
-        if armor is not None:
+        elif len(armors) > 0:
             cd['type'] = "armor"
+            if len(armors) > 1:
+                raise ValidationError("Oh dear, that tag matches more than one armor")
+            armor = armors[0]
             if datetime.now(tz=timezone('EST')) > armor.expiration_time:
                 raise ValidationError("Armor is expired!")
             previous_tags = Tag.objects.filter(armor_taggee = armor, game=this_game)
             if len(previous_tags) > 0:
                 raise ValidationError("Armor already used!")
             cd["taggee"] = armor
-        
+        else:
+            raise ValidationError("No Human or Armor with that ID")
         cd["tagger"] = tagger_status
         # Validation complete
         return cd
