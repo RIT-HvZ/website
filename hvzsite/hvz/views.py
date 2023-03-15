@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game, PostGameSurvey, PostGameSurveyResponse, BodyArmor
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor
 from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -50,29 +50,43 @@ def missions_view(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
     this_game = get_latest_game()
+    if request.method == "POST":
+        survey_option = request.POST.get("survey_option")
+        if not survey_option or not str(survey_option).isnumeric():
+            return HttpResponseRedirect('/')
+        response = PostGameSurveyOption.objects.get(id=survey_option)
+        print(f"Chosen response: {response}")
+        survey = response.survey
+        if not survey.is_open:
+            return HttpResponseRedirect("/")
+        status = request.user.current_status
+        # See if we have an existing Response for this survey
+        existing_responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
+        if (survey.mission.team == 'h' and status.is_human()) or (survey.mission.team == "z" and status.is_zombie()) or status.is_admin():
+            # All authorization steps complete
+            print("Authorized")
+            if existing_responses.count() > 0:
+                # A response for this survey for this user already exists. Update it.
+                existing_response = existing_responses[0]
+                print(f"Existing response: {existing_response}")
+                existing_response.response = response
+                existing_response.save()
+                print(f"Updated response: {existing_response}")
+            else:
+                # No response for this survey for this user exists. Create one.
+                print("No response.")
+                new_response = PostGameSurveyOption.objects.create(player=request.user, survey=survey, response=response)
+                new_response.save()
+                print(f"New response: {new_response}")
+        else:
+            return HttpResponseRedirect("/")
     if request.user.current_status.is_zombie():
-        missions = Mission.objects.filter(game=this_game, team='z', go_live_time__lt=timezone.now())
-        surveys = PostGameSurvey.objects.filter(game=this_game, team='z')
-        survey_list = []
-        for survey in surveys:
-            responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
-            survey_list.append({"survey":survey, "responses": responses})
+        missions = Mission.objects.filter(game=this_game, team='z', story_form_go_live_time__lt=timezone.now())
     elif request.user.current_status.is_human():
-        missions = Mission.objects.filter(game=this_game, team='h', go_live_time__lt=timezone.now())
-        surveys = PostGameSurvey.objects.filter(game=this_game, team='h')
-        survey_list = []
-        for survey in surveys:
-            responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
-            survey_list.append({"survey":survey, "responses": responses})
+        missions = Mission.objects.filter(game=this_game, team='h', story_form_go_live_time__lt=timezone.now())
     elif request.user.current_status.is_staff():
-        missions = Mission.objects.filter(game=this_game, go_live_time__lt=timezone.now())
-        surveys = PostGameSurvey.objects.filter(game=this_game)
-        survey_list = []
-        for survey in surveys:
-            responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
-            survey_list.append({"survey":survey, "responses": responses})
-    missions.order_by("go_live_time")
-    return render(request, "missions.html", {'missions':missions, 'surveys':survey_list})
+        missions = Mission.objects.filter(game=this_game, story_form_go_live_time__lt=timezone.now())
+    return render(request, "missions.html", {'missions':missions.order_by("-go_live_time")})
 
 def editmissions(request):
     if not request.user.is_authenticated or not request.user.admin_this_game:

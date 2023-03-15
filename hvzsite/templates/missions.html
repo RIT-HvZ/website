@@ -18,15 +18,26 @@
         <h1 class="center"> Missions </h1>
     </div>
 </div>
-<div class="row">
+<div class="row totalcontainer">
     <div class="col missionscrollercol">
         <div class="missionscroller">
             {% for mission in missions %}
-            <a class="missionlink" href="#mission_{{mission.id}}">{{mission.mission_name}}</a>
+            
+                {% for survey in mission.postgamesurvey_set.all %}
+                    {% if survey.is_viewable %}
+                        <a class="missionlink" href="#survey_{{survey.id}}">Post-Mission Survey - {{ survey.mission.mission_name }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if mission.non_story_viewable %}
+                    <a class="missionlink" href="#mission_{{mission.id}}_nonstory">{{mission.mission_name}} - Non-Story Form</a>
+                {% endif %}
+                {% if mission.story_viewable %}
+                    <a class="missionlink" href="#mission_{{mission.id}}_story">{{mission.mission_name}} - Story Form</a>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
-    <div class="col">
+    <div class="col missionscontainer">
         {% for mission in missions %}
             {% for survey in mission.postgamesurvey_set.all %}
                 {% if survey.is_viewable %}
@@ -35,20 +46,23 @@
                             <h1 class="missiontitle">Post-Mission Survey - {{ survey.mission.mission_name }}</h1>
                             <div class="missiontext">{{ survey.survey_text|safe }}</div>
                             {% get_player_response request.user survey as player_response %}
-
                             {% if survey.is_open %}
-                                {% if player_response is not None %}
-                                    <h3 class="selectedresponse">
-                                        Your response is currently:{{player_response.response.option_name}}
-                                    </h3>
-                                    <h5 class="responsetimeoutwarning">You may change this response until {{survey.lock_time}}</h5>
-                                {% endif %}
-                                {% for option in survey.postgamesurveyoption_set.all %}                                
-                                    <div class="surveyoption livesurvey">
-                                        <span class="surveyoptionname">{{option.option_name}}:</span>
-                                        <span class="surveyoptiontext">{{option.option_text}}</span>
-                                    </div>
-                                {% endfor %}
+                                <form method="post" id="survey_{{survey.id}}">{% csrf_token %}
+                                    {% if player_response is not None %}
+                                        <h3 class="selectedresponse">
+                                            Your response is currently: {{player_response.response.option_name}}
+                                        </h3>
+                                        <h5 class="responsetimeoutwarning">You may change this response until {{survey.lock_time}}</h5>
+                                    {% endif %}
+                                    {% for option in survey.postgamesurveyoption_set.all %}
+                                        <div class="surveyoption livesurvey">
+                                            <input type="radio" id="{{option.id}}" name="survey_option" value="{{option.id}}">
+                                            <span class="surveyoptionname">{{option.option_name}}:</span>
+                                            <span class="surveyoptiontext">{{option.option_text}}</span>
+                                        </div>
+                                    {% endfor %}
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </form>
                             {% else %}
                                 {% if player_response is not None %}
                                     <h3 class="selectedresponse">
@@ -66,12 +80,22 @@
                     </div>
                 {% endif %}
             {% endfor %}
-        <div class="row missionrow" id="mission_{{mission.id}}">
+        {% if mission.non_story_viewable %}
+        <div class="row missionrow" id="mission_{{mission.id}}_nonstory">
             <div class="col missioncol">
-                <h1 class="missiontitle">{{ mission.mission_name }}</h1>
+                <h1 class="missiontitle">{{ mission.mission_name }} - Non-Story Form</h1>
                 <div class="missiontext">{{ mission.mission_text|safe }}</div>
             </div>
         </div>
+        {% endif %}
+        {% if mission.story_viewable %}
+        <div class="row missionrow" id="mission_{{mission.id}}_story">
+            <div class="col missioncol">
+                <h1 class="missiontitle">{{ mission.mission_name }} - Story Form</h1>
+                <div class="missiontext">{{ mission.story_form|safe }}</div>
+            </div>
+        </div>
+        {% endif %}
         {% endfor %}
     </div>
 </div>

@@ -47,13 +47,24 @@ def get_latest_game():
     
 class Mission(models.Model):
     mission_name = models.CharField(max_length=100)
-    mission_text = models.TextField()
+    mission_text = models.TextField(verbose_name="Non-Story Form")
+    story_form = models.TextField(verbose_name="Story Form")
     team = models.CharField(max_length=1,choices=[('h','Human'),('z','Zombie'),('s',"Staff")])
     game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
-    go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the mission")
+    go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Non-Story form of the mission")
+    story_form_go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Story form of the mission")
 
     def __str__(self) -> str:
         return f"{self.mission_name} - {str(self.game)} - { {'h':'Human','z':'Zombie','s':'Staff'}[self.team]}"
+
+    @property
+    def story_viewable(self):
+        return self.story_form_go_live_time < timezone.now()
+    
+    @property
+    def non_story_viewable(self):
+        return self.go_live_time < timezone.now()
+
 
 class Person(AbstractUser):
     player_uuid = models.UUIDField(verbose_name="Player UUID", default=uuid.uuid4, unique=True)
