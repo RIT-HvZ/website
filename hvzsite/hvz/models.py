@@ -16,6 +16,7 @@ from pytz import timezone as pytz_timezone
 def get_team_upload_path(instance, filename):
         return os.path.join("static","team_pictures",str(instance.name), filename)
 
+
 class Team(models.Model):
     name = models.CharField(max_length=100, primary_key=True)
     picture = ResizedImageField(size=[400, None], keep_meta=False, force_format="jpeg", upload_to=get_team_upload_path, null=True)
@@ -176,7 +177,6 @@ class Blaster(models.Model):
 class PostGameSurvey(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)#, default=get_latest_game)
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE)
-    team = models.CharField(max_length=1,choices=[('h','Human'),('z','Zombie'),('s',"Staff")])
     go_live_time = models.DateTimeField(verbose_name="Date/Time that players can take the survey")
     lock_time = models.DateTimeField(verbose_name="Date/Time that players can no longer the survey")
     survey_text = models.TextField()
@@ -184,6 +184,10 @@ class PostGameSurvey(models.Model):
     @property
     def is_open(self):
         return self.go_live_time < timezone.now() and self.lock_time > timezone.now()
+    
+    @property
+    def is_viewable(self):
+        return self.go_live_time < timezone.now()
 
     def __str__(self) -> str:
         return f"Survey for mission {self.mission}"

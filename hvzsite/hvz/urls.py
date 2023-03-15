@@ -34,4 +34,6 @@ urlpatterns = [
     path('admin/player_admin/tools/<player_id>/<command>', views.player_admin_tools),
     path('admin/bodyarmors', views.bodyarmors),
     path('admin/bodyarmor/<armor_id>/', views.bodyarmor_view),
+    path('infections/', views.infection),
+    path('admin/editmissions', views.editmissions),
 ]

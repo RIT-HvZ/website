@@ -28,6 +28,12 @@ def me(request):
         return HttpResponseRedirect("/")
     return player_view(request, request.user.player_uuid, is_me=True)
 
+def infection(request):
+    game = get_latest_game()
+    ozs = PlayerStatus.objects.filter(game=game, status='o')
+    tags = Tag.objects.filter(game=game)
+    return render(request, "infection.html", {'ozs':ozs, 'tags':tags})
+
 def register(request):
 	if request.method == "POST":
 		form = NewUserForm(request.POST)
@@ -46,27 +52,37 @@ def missions_view(request):
     this_game = get_latest_game()
     if request.user.current_status.is_zombie():
         missions = Mission.objects.filter(game=this_game, team='z', go_live_time__lt=timezone.now())
-        surveys = PostGameSurvey.objects.filter(game=this_game, team='z', go_live_time__lt=timezone.now(), lock_time__gt=timezone.now())
+        surveys = PostGameSurvey.objects.filter(game=this_game, team='z')
         survey_list = []
         for survey in surveys:
             responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
             survey_list.append({"survey":survey, "responses": responses})
     elif request.user.current_status.is_human():
         missions = Mission.objects.filter(game=this_game, team='h', go_live_time__lt=timezone.now())
-        surveys = PostGameSurvey.objects.filter(game=this_game, team='h', go_live_time__lt=timezone.now(), lock_time__gt=timezone.now())
+        surveys = PostGameSurvey.objects.filter(game=this_game, team='h')
         survey_list = []
         for survey in surveys:
             responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
             survey_list.append({"survey":survey, "responses": responses})
     elif request.user.current_status.is_staff():
         missions = Mission.objects.filter(game=this_game, go_live_time__lt=timezone.now())
-        surveys = PostGameSurvey.objects.filter(game=this_game, go_live_time__lt=timezone.now(), lock_time__gt=timezone.now())
+        surveys = PostGameSurvey.objects.filter(game=this_game)
         survey_list = []
         for survey in surveys:
             responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
             survey_list.append({"survey":survey, "responses": responses})
     missions.order_by("go_live_time")
     return render(request, "missions.html", {'missions':missions, 'surveys':survey_list})
+
+def editmissions(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    this_game = get_latest_game()
+    missions = Mission.objects.filter(game=this_game)
+    missions.order_by("go_live_time")
+    surveys = PostGameSurvey.objects.filter(game=this_game)
+    return render(request, "editmissions.html", {'missions':missions, 'surveys':surveys})
+
 
 def tag(request):
     if not request.user.is_authenticated:
