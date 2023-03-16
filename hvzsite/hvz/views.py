@@ -10,7 +10,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
 from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor
-from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm
+from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -93,9 +93,62 @@ def editmissions(request):
         return HttpResponseRedirect("/")
     this_game = get_latest_game()
     missions = Mission.objects.filter(game=this_game)
-    missions.order_by("go_live_time")
+    return render(request, "editmissions.html", {'missions':missions.order_by("-go_live_time")})
+
+
+def editmission(request, mission_id):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    
+    if request.method == "GET":
+        if mission_id == "new":
+            form = MissionForm()
+        else:
+            form = MissionForm(instance=Mission.objects.get(id=mission_id))
+    else:
+        if mission_id == "new":
+            form = MissionForm(request.POST)
+            if form.is_valid():
+                mission = form.save()
+        else:
+            form = MissionForm(request.POST, instance=Mission.objects.get(id=mission_id))
+            if form.is_valid():
+                mission = form.save()
+
+        return HttpResponseRedirect("/admin/editmissions/")
+    return render(request, "editmission.html", {'form': form, 'mission': mission_id})
+
+
+def editpostgamesurvey(request, postgamesurvey_id):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    if request.method == "GET":
+        if postgamesurvey_id == "new":
+            form = PostGameSurveyForm()
+        else:
+            form = PostGameSurveyForm(instance=PostGameSurvey.objects.get(id=postgamesurvey_id))
+    else:
+        if postgamesurvey_id == "new":
+            form = PostGameSurveyForm(request.POST)
+            if form.is_valid():
+                form.save()
+        else:
+            form = PostGameSurveyForm(request.POST, instance=PostGameSurvey.objects.get(id=postgamesurvey_id))
+            if form.is_valid():
+                form.save()
+
+        return HttpResponseRedirect("/admin/editpostgamesurveys/")
+    return render(request, "editpostgamesurvey.html", {'form': form, 'postgamesurvey': postgamesurvey_id})
+
+
+def editpostgamesurveys(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    this_game = get_latest_game()
     surveys = PostGameSurvey.objects.filter(game=this_game)
-    return render(request, "editmissions.html", {'missions':missions, 'surveys':surveys})
+    return render(request, "editpostgamesurveys.html", {'surveys':surveys.order_by("-go_live_time")})
+
+
 
 
 def tag(request):

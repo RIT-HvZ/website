@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'crispy_forms',
+    'grappelli',
+    'filebrowser',
+    'tinymce',
     'django_registration',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,7 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "verify_email.apps.VerifyEmailConfig",
+    "verify_email.apps.VerifyEmailConfig"
 ]
 
 SITE_ID = 2
@@ -78,6 +81,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.request',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -104,6 +108,8 @@ DATABASES = {
     }
 }
 
+STATIC_ROOT = os.path.join(BASE_DIR,"static_root")
+MEDIA_ROOT = os.path.join(BASE_DIR,"media")
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -174,3 +180,9 @@ DEFAULT_FROM_EMAIL = DB_SECRETS['email_from']
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
 
 SECURE_REFERRER_POLICY = "no-referrer-when-downgrade"
+
+TINYMCE_DEFAULT_CONFIG = {
+    "skin": "oxide-dark",
+    "content_css": "dark",
+    'height': 500,
+}

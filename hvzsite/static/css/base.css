@@ -25,6 +25,27 @@ p, form {
     background-color: none;
 }
 
+.options {
+    padding: 5px;
+    margin: 5px;
+    background-color: rgba(255,255,255,0.1);
+}
+.optionpair {
+    display: block;
+    border-radius: 2px;
+    border-color: white;
+    border-width: 1px;
+    padding: 10px;
+    margin: 10px
+}
+
+.optionpair.option_name input {
+    display: inline;
+}
+
+.option_name, .option_text, .option_delete {
+    display: inline-block;
+}
 .admin-only {
     background-color: rgba(255, 238, 0, 0.4);
     border-radius: 0.4em;
@@ -277,7 +298,41 @@ border-radius: 4px;
     max-height: 100px;
 }
 
+#surveys thead tr, #surveys tbody tr td {
+    color: #ddd;
+}
 
+#surveys ul {
+    list-style-type: none;
+}
+
+#surveys {
+    background-color: #222;
+}
+
+#surveys tr td {
+    vertical-align: middle;
+}
+
+.surveyclosed, .surveynotopen, .surveyopen {
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.surveyopen {
+    background-color: #088808;
+}
+
+.surveyclosed {
+    background-color: rgb(85, 12, 12);
+}
+
+.surveynotopen {
+    background-color: rgb(4, 121, 199);
+}
+.hoverhand {
+    cursor:pointer; 
+}
 .player_blaster_div, .player_tag_div {
     display: inline-block;
 }

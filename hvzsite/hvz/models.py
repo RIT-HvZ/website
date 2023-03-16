@@ -12,6 +12,7 @@ import random
 import string
 from django.utils import timezone
 from pytz import timezone as pytz_timezone
+from tinymce import models as tinymce_models
 
 def get_team_upload_path(instance, filename):
         return os.path.join("static","team_pictures",str(instance.name), filename)
@@ -47,15 +48,15 @@ def get_latest_game():
     
 class Mission(models.Model):
     mission_name = models.CharField(max_length=100)
-    mission_text = models.TextField(verbose_name="Non-Story Form")
-    story_form = models.TextField(verbose_name="Story Form")
+    story_form = tinymce_models.HTMLField(verbose_name="Story Form")
+    story_form_go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Story form of the mission")
+    mission_text = tinymce_models.HTMLField(verbose_name="Non-Story Form")
+    go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Non-Story form of the mission")
     team = models.CharField(max_length=1,choices=[('h','Human'),('z','Zombie'),('s',"Staff")])
     game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
-    go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Non-Story form of the mission")
-    story_form_go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Story form of the mission")
 
     def __str__(self) -> str:
-        return f"{self.mission_name} - {str(self.game)} - { {'h':'Human','z':'Zombie','s':'Staff'}[self.team]}"
+        return f"{self.mission_name} - { {'h':'Human','z':'Zombie','s':'Staff'}[self.team]} - {str(self.game)}"
 
     @property
     def story_viewable(self):
@@ -190,7 +191,7 @@ class PostGameSurvey(models.Model):
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE)
     go_live_time = models.DateTimeField(verbose_name="Date/Time that players can take the survey")
     lock_time = models.DateTimeField(verbose_name="Date/Time that players can no longer the survey")
-    survey_text = models.TextField()
+    survey_text = tinymce_models.HTMLField()
 
     @property
     def is_open(self):
@@ -206,10 +207,10 @@ class PostGameSurvey(models.Model):
 class PostGameSurveyOption(models.Model):
     survey = models.ForeignKey(PostGameSurvey, on_delete=models.CASCADE)
     option_name = models.CharField(max_length=50, null=True, blank=True)
-    option_text = models.TextField()
+    option_text = tinymce_models.HTMLField()
 
     def __str__(self) -> str:
-        return f"Option {self.option_name} for mission {self.survey}"
+        return f"Option {self.option_name} for survey {self.survey}"
 
 class PostGameSurveyResponse(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE)

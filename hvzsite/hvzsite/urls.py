@@ -17,11 +17,14 @@ from django.contrib import admin
 from django.urls import path,include
 from hvz.forms import HVZRegistrationForm
 from django_registration.backends.activation.views import RegistrationView
-
+from filebrowser.sites import site
 
 urlpatterns = [
-    path("", include('hvz.urls')),    
+    path("", include('hvz.urls')),
+    path('admin/filebrowser/', site.urls),
+    path('grappelli/', include('grappelli.urls')), # grappelli URLS 
     path('admin/', admin.site.urls),
+    path('tinymce/', include('tinymce.urls')),
     path('accounts/register/',
         RegistrationView.as_view(
             form_class=HVZRegistrationForm

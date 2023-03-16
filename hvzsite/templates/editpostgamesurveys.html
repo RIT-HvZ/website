@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load hvztags %}
+{% block title %} HvZ @ RIT - Edit Post-Game Surveys {% endblock %}
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable = $('#surveys').DataTable({ "ordering": false});
+    });
+</script>
+{% endblock %}
+{% block body %}
+
+
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Edit Post-Game Surveys </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col center">
+        <button class="btn btn-primary" onclick="window.location.href='/admin/editpostgamesurvey/new/';">Create New Post-Game Survey</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="surveys" class="table display table-striped hover">
+            <thead>
+                <tr>
+                    <th>Mission</th>
+                    <th>Team</th>
+                    <th>Options</th>
+                    <th>Go-Live Time</th>
+                    <th>Lock Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for survey in surveys %}
+                <tr onclick="window.location = '/admin/editpostgamesurvey/{{survey.id}}/'" class="hoverhand">
+                    <td>{{survey.mission.mission_name}}</td>
+                    <td>{% if survey.mission.team == 'h' %}Human{% else %}Zombie{% endif %}</td>
+                    <td><ul>{% for option in survey.postgamesurveyoption_set.all %}<li>{{option.postgamesurveyresponse_set.all.count}}: {{option.option_name}}</li>{% endfor %}</ul></td>
+                    <td>{{survey.go_live_time}}</td>
+                    <td>{{survey.lock_time}}</td>
+                    <td>{% if survey.is_viewable %}{% if survey.is_open %}<span class="surveyopen">Open</span>{% else %}<span class="surveyclosed">Closed</span>{% endif %}{% else %}<span class="surveynotopen">Not yet open{% endif %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

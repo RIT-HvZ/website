@@ -35,5 +35,8 @@ urlpatterns = [
     path('admin/bodyarmors', views.bodyarmors),
     path('admin/bodyarmor/<armor_id>/', views.bodyarmor_view),
     path('infections/', views.infection),
-    path('admin/editmissions', views.editmissions),
+    path('admin/editmissions/', views.editmissions),
+    path('admin/editmission/<mission_id>/', views.editmission),
+    path('admin/editpostgamesurvey/<postgamesurvey_id>/', views.editpostgamesurvey),
+    path('admin/editpostgamesurveys/', views.editpostgamesurveys),
 ]

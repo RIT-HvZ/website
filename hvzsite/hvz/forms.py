@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ValidationError
 from django.db.models import Count, Q
-from .models import Person, Blaster, BodyArmor, AntiVirus, PlayerStatus, get_latest_game, Tag
+from .models import Person, Blaster, BodyArmor, AntiVirus, PlayerStatus, get_latest_game, Tag, Mission, PostGameSurvey, PostGameSurveyOption
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -171,5 +171,93 @@ class BodyArmorCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['expiration_time'].label = "Expiration Date/Time (YYYY/mm/dd HH:MM)"
-        self.fields['expiration_time'].input_formats = ["%Y/%m/%d %H:%M"]
 
+class MissionForm(forms.ModelForm):
+    class Meta:
+        model = Mission
+        fields = "__all__"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['go_live_time'].label = "When can players read the Non-Story form of the mission?"
+        self.fields['story_form_go_live_time'].label =  "When can players read the Story form of the mission?"
+
+class PostGameSurveyForm(forms.ModelForm):
+    class Meta:
+        model = PostGameSurvey
+        fields = "__all__"
+
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if len(args) > 0:
+            for key in args[0].keys():
+                if key.startswith("option_text_") and not key.startswith("option_text_id") or \
+                      key.startswith("option_name_") and not key.startswith("option_name_id"):
+                    self.fields[key] = forms.CharField()
+    
+        options = PostGameSurveyOption.objects.filter(
+            survey=self.instance
+        )
+        for option in options:
+            option_name_field = f'option_name_id_{option.id}'
+            option_text_field = f"option_text_id_{option.id}"
+            if len(args) > 0 and option_name_field not in args[0].keys():
+                continue
+            self.fields[option_name_field] = forms.CharField(required=False, label="")
+            self.fields[option_text_field] = forms.CharField(required=False, label="", widget=forms.TextInput(attrs={'size':80}))
+            try:
+                self.initial[option_name_field] = option.option_name
+            except IndexError:
+                self.initial[option_name_field] = ""
+            try:
+                self.initial[option_text_field] = option.option_text
+            except IndexError:
+                self.initial[option_text_field] = ""
+
+    def clean(self):
+        options = []
+        #print(self.cleaned_data.keys())
+        option_text_field_names = [key for key in self.cleaned_data.keys() if "option_text" in key]
+        for option_text_field_name in option_text_field_names:
+            option_name_field_name = option_text_field_name.replace('option_text','option_name')
+            if option_name_field_name not in self.cleaned_data.keys():
+                self.add_error(option_text_field_name, "no matching field name")
+            option = {
+                "name": self.cleaned_data[option_name_field_name],
+                "text": self.cleaned_data[option_text_field_name]
+            }
+            if "_id_" in option_text_field_name:
+                option['id'] = int(option_text_field_name.split('_')[-1])
+            else:
+                option['id'] = None
+            options.append(option)
+        self.cleaned_data["options"] = options
+
+                         
+    def save(self):
+        survey = self.instance
+        survey.save()
+        existing_options = set([option.id for option in PostGameSurveyOption.objects.filter(survey=survey)])
+        for option in self.cleaned_data["options"]:
+            if option.get("id") is not None:
+                # Existing option
+                existing_options.remove(option.get('id'))
+                existing_option = PostGameSurveyOption.objects.get(id=option.get('id'))
+                existing_option.option_name = option.get('name')
+                existing_option.option_text = option.get('text')
+                print(f"Update: Option {option.get('id')}")
+                existing_option.save()
+            else:
+                new_option = PostGameSurveyOption.objects.create(option_name=option.get('name'), option_text=option.get('text'), survey=survey)
+                print(f"New: Option {new_option.id}")
+                new_option.save()
+        for option_to_delete in existing_options:
+            print(f"Delete: Option {option_to_delete}")
+            PostGameSurveyOption.objects.get(id=option_to_delete).delete()
+
+    def get_options(self):
+        for field_name in self.fields:
+            if field_name.startswith("option_name"):
+                opposite_field = field_name.replace('name','text')
+                yield (self[field_name], self[opposite_field])

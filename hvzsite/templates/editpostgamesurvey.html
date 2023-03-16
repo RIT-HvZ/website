@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Edit Post-Mission Survey (Admin) {% endblock %}
+{% block extrahead %}
+{{ form.media }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+<script>
+  $(document).ready(function () {
+    $("#id_go_live_time").attr("autocomplete","off");
+    $("#id_lock_time").attr("autocomplete","off");
+    $("#id_story_form_go_live_time").attr("autocomplete","off");
+    $("#id_go_live_time").datetimepicker({format:'Y-m-d H:i'});
+    $("#id_lock_time").datetimepicker({format:'Y-m-d H:i'});
+  });
+  var newresponse_index = 0;
+  function addResponse() {
+    let new_row = "<div class='optionpair'><div class='option_name'><span class='optionlabel'>Name: </span><input type='text' name='' value='' id=''></div><div class='option_text'><span class='optionlabel'>Text: </span><input type='text' name='' value='' size='80' id=''></div><div class='option_delete'><button type='button' class='btn btn-danger' onclick='removeResponse(this)'>X</button></div></div>";
+    $("#optionpaircontainer").append(new_row);
+    new_row = $("#optionpaircontainer .optionpair").last();
+    new_row.find('.option_name').find('input').attr('id','id_option_name_'+newresponse_index);
+    new_row.find('.option_name').find('input').attr('name','option_name_'+newresponse_index);
+    new_row.find('.option_name').find('input').val('');
+    new_row.find('.option_text').find('input').attr('id','id_option_text_'+newresponse_index);
+    new_row.find('.option_text').find('input').attr('name','option_text_'+newresponse_index);
+    new_row.find('.option_text').find('input').val('');
+    newresponse_index += 1;
+    
+
+  }
+  function removeResponse(object) {
+    target = $(object).closest(".optionpair");
+    target.remove();
+  }
+</script>
+{% endblock %}
+{% block body %}
+{% load crispy_forms_tags %}    
+<div class="row">
+  <div class="col">
+    <h1 class="center"> Edit Post-Mission Survey </h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <form method="post" id="edit-postmissionsurvey-form" class="center">{% csrf_token %}
+      {% if form.non_field_errors|length > 0 %}
+      <div class="tagformerrors mb-3">
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
+      <div class="mb-3">
+        {{ form.errors }}
+      </div>
+      <div class="mb-3">
+        <label for="{{ form.game.id_for_label }}" class="form-label">Game: </label>
+        {{ form.game }}
+      </div>
+      <div class="mb-3">
+        <label for="{{ form.mission.id_for_label }}" class="form-label">Mission: </label>
+        {{ form.mission }}
+      </div>
+      <div class="mb-3">
+        <label for="{{ form.go_live_time.id_for_label }}" class="form-label">Date/Time that players can take the survey: </label>
+        {{ form.go_live_time }}
+      </div>
+      <div class="mb-3">
+        <label for="{{ form.lock_time.id_for_label }}" class="form-label">Date/Time that players can no longer take the survey: </label>
+        {{ form.lock_time }}
+      </div>
+      <div class="mb-3">
+        <label for="{{ form.survey_text.id_for_label }}" class="form-label">Survey Text</label>
+        {{ form.survey_text }}
+      </div>
+      <div class="options" id="options">
+        <h3>Response Options</h3>
+      <div id="optionpaircontainer">
+        {% for option_pair in form.get_options %}
+          <div class="optionpair">
+            <div class="option_name"><span class="optionlabel">Name: </span>{{ option_pair.0 }}</div>
+            <div class="option_text"><span class="optionlabel">Text: </span>{{ option_pair.1 }}</div>
+            <div class="option_delete"><button type="button" class="btn btn-danger" onclick="removeResponse(this)">X</button></div>
+          </div>
+        {% endfor %}
+      </div>
+      <button type="button" class="btn btn-primary" id="addresponse" onclick="addResponse()">Add Option</button>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
