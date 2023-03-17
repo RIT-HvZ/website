@@ -628,3 +628,27 @@ class ApiDiscordId(APIView):
             'player-name': str(player)
         }
         return JsonResponse(data)
+
+class ApiPlayerId(APIView):
+    permission_classes = [HasAPIKey]
+
+    def get(self, request):
+        r = request.query_params
+
+        if 'uuid' not in r:
+            return HttpResponse(status=400, reason='Bad request, missing field: "uuid"')
+        player_id = r.get('uuid')
+
+        try:
+            player = Person.objects.get(player_uuid=player_id)
+        except Person.DoesNotExist:
+            return HttpResponse(status=404, reason='No player with the given user id')
+
+        data = {
+            'uuid': player.player_uuid,
+            'team': player.team,
+            'email': player.email,
+            'name': str(player),
+            'status': player.current_status.status,
+        }
+        return JsonResponse(data)
