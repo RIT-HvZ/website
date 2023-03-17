@@ -42,4 +42,5 @@ urlpatterns = [
     path('admin/editpostgamesurveys/', views.editpostgamesurveys),
     path('admin/reports/', views.reports),
     path('admin/report/<report_id>/', views.report),
+    path('api/discord-id', views.discord_id_api),
 ]
