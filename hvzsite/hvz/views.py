@@ -652,3 +652,12 @@ class ApiPlayerId(APIView):
             'status': player.current_status.status,
         }
         return JsonResponse(data)
+
+class ApiTeams(APIView):
+    def get(self, request):
+        t = list(Team.objects.values_list('name', flat=True))
+
+        data = {
+            'teams': t
+        }
+        return JsonResponse(data)
