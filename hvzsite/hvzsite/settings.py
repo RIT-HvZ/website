@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'hvz',
     'django_extensions',
     'rest_framework',
+    'rest_framework_api_key',
     'crispy_forms',
     'grappelli',
     'filebrowser',

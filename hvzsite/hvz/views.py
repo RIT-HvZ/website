@@ -14,6 +14,9 @@ from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, Blaste
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
+from rest_framework.views import APIView
+from rest_framework_api_key.models import APIKey
+from rest_framework_api_key.permissions import HasAPIKey
 import json 
 
 # Create your views here.
@@ -526,26 +529,6 @@ def teams_api(request):
     }
     return JsonResponse(data)
 
-@api_view(["GET"])
-def discord_id_api(request):
-    r = request.query_params
-
-    if 'id' not in r:
-        return HttpResponse(status=400, reason='Bad request, missing field: "id"')
-    discord_id = r.get('id')
-
-    try:
-        player = Person.objects.get(discord_id=discord_id)
-    except Person.DoesNotExist:
-        return HttpResponse(status=404, reason='No player with the given discord id')
-
-    data = {
-        'discord-id': discord_id,
-        'player-id': player.player_uuid,
-        'player-name': str(player)
-    }
-    return JsonResponse(data)
-
 def rules(request):
     return render(request, "rules.html", {})
 
@@ -620,3 +603,28 @@ def report(request, report_id):
         'form': form
     }
     return render(request, "report.html", context)
+
+
+## REST API endpoints
+
+class ApiDiscordId(APIView):
+    permission_classes = [HasAPIKey]
+
+    def get(self, request):
+        r = request.query_params
+
+        if 'id' not in r:
+            return HttpResponse(status=400, reason='Bad request, missing field: "id"')
+        discord_id = r.get('id')
+
+        try:
+            player = Person.objects.get(discord_id=discord_id)
+        except Person.DoesNotExist:
+            return HttpResponse(status=404, reason='No player with the given discord id')
+
+        data = {
+            'discord-id': discord_id,
+            'player-id': player.player_uuid,
+            'player-name': str(player)
+        }
+        return JsonResponse(data)
