@@ -10,8 +10,10 @@ django-crispy-forms==1.14.0
 django-extensions==3.1.5
 django-filebrowser==4.0.2
 django-grappelli==3.0.4
+django-ranged-response==0.2.0
 django-registration==3.3
 django-resized==1.0.2
+django-simple-captcha==0.5.17
 django-tinymce==3.5.0
 Django-Verify-Email==2.0.3
 djangorestframework==3.13.1
