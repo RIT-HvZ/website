@@ -14,6 +14,7 @@ urlpatterns = [
     path('me/', views.me),
     path('team/<team_name>/', views.team_view),
     path('players/', views.players),
+    path('report/', views.create_report),
     path('teams/', views.teams),
     path('api/players', views.players_api),
     path('api/teams', views.teams_api),
@@ -39,4 +40,6 @@ urlpatterns = [
     path('admin/editmission/<mission_id>/', views.editmission),
     path('admin/editpostgamesurvey/<postgamesurvey_id>/', views.editpostgamesurvey),
     path('admin/editpostgamesurveys/', views.editpostgamesurveys),
+    path('admin/reports/', views.reports),
+    path('admin/report/<report_id>/', views.report),
 ]

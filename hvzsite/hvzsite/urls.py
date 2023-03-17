@@ -18,6 +18,8 @@ from django.urls import path,include
 from hvz.forms import HVZRegistrationForm
 from django_registration.backends.activation.views import RegistrationView
 from filebrowser.sites import site
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path("", include('hvz.urls')),
@@ -33,5 +35,6 @@ urlpatterns = [
     ),
     path('accounts/', include('django_registration.backends.activation.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('verification/', include('verify_email.urls'))
-]
+    path('verification/', include('verify_email.urls')),
+    path('captcha/', include('captcha.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

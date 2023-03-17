@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ValidationError
 from django.db.models import Count, Q
-from .models import Person, Blaster, BodyArmor, AntiVirus, PlayerStatus, get_latest_game, Tag, Mission, PostGameSurvey, PostGameSurveyOption
+from .models import Person, Blaster, BodyArmor, AntiVirus, PlayerStatus, get_latest_game, Tag, Mission, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -10,6 +10,7 @@ from pytz import timezone
 from django_registration.forms import RegistrationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
+from captcha.fields import CaptchaField
 
 class HVZRegistrationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -170,7 +171,7 @@ class BodyArmorCreateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['expiration_time'].label = "Expiration Date/Time (YYYY/mm/dd HH:MM)"
+        self.fields['expiration_time'].label = "Expiration Date/Time (YYYY-mm-dd HH:MM)"
 
 class MissionForm(forms.ModelForm):
     class Meta:
@@ -261,3 +262,31 @@ class PostGameSurveyForm(forms.ModelForm):
             if field_name.startswith("option_name"):
                 opposite_field = field_name.replace('name','text')
                 yield (self[field_name], self[opposite_field])
+
+
+class ReportForm(forms.ModelForm):
+    class Meta:
+        model = Report
+        fields = ["report_text", "reporter_email", "picture"]
+    
+    def __init__(self, *args, **kwargs):
+        authenticated = kwargs.pop("authenticated", None)
+        super().__init__(*args, **kwargs)
+        self.fields['picture'].required = False
+        self.fields['report_text'].widget.attrs['cols'] = 80
+        if authenticated:
+            self.fields.pop("reporter_email")
+        else:
+            self.fields["reporter_email"].label = "Your email address (optional)"
+            self.fields['captcha'] = CaptchaField()
+
+class ReportUpdateForm(forms.ModelForm):
+    update_status = forms.ChoiceField(choices=(('x','No change'),('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
+    class Meta:
+        model = ReportUpdate
+        fields = ['note']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['note'].widget.attrs['cols'] = 80
+

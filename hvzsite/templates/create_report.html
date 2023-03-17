@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Report {% endblock %}
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        $("#id_av_code").attr('size',36);
+        $("#id_player_id").attr('size',36);
+    });
+    </script>
+{% endblock %}
+{% block body %}
+{% load crispy_forms_tags %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Report Player/Incident </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        {% if reportcomplete %}
+            <h2 class="avnotification">Report successfully submitted! Your report ID: #{{report_id}}</h2>
+        {% endif %}
+        <p class = "description center">
+            Use this form to submit a report on a badly-behaving player or on an incident you believe
+            that the RIT HvZ administration should know about.
+            {% if not request.user.is_authenticated %}
+            <br />
+            You may submit this form anonymously if you wish, however it is recommended to include your
+            email address so that the admins can follow up with you if necessary.
+            {% endif %}
+        </p>
+        <form method="post" id="reportcreateform" class="center" enctype="multipart/form-data">{% csrf_token %}
+            {% if form.non_field_errors|length > 0 %}<div class="avformerrors mb-3">{{ form.non_field_errors }}</div>{% endif %}
+            {{ form | crispy}}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

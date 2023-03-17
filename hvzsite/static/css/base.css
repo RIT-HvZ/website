@@ -306,6 +306,16 @@ border-radius: 4px;
     list-style-type: none;
 }
 
+.reportupdatediv, .reporttext {
+    background-color: #555;
+    border-radius: 10px;
+    display: block;
+    padding: 10px;
+    margin: 10px;
+    word-wrap: break-word;
+}
+
+
 #surveys {
     background-color: #222;
 }

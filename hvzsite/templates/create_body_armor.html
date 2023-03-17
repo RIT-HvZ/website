@@ -9,7 +9,7 @@
   $(document).ready(function () {
     $("#id_expiration_time").attr("autocomplete","off");
     $("#id_armor_code").attr("autocomplete","off");
-    $("#id_expiration_time").datetimepicker();
+    $("#id_expiration_time").datetimepicker({format:'Y-m-d H:i'});
   });
 </script>
 {% endblock %}

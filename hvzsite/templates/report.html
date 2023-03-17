@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Report {% endblock %}
+{% block extrahead %}
+<script>
+$(document).ready(function () {
+    $('#maincontainer').addClass("armorcontainer");
+});
+
+function admintools(command) {
+    window.location.href = "/admin/bodyarmor/tools/{{armor.armor_uuid}}/" + command;
+}
+</script>
+{% endblock %}
+{% block body %}
+{% load crispy_forms_tags %}
+<div class="row justify-content-md-center armortitle">
+    <div class="col col-lg-8" style="display:inline-block;text-align: center;">
+        <h1>Report Detail</h1>
+    </div>
+</div>
+<div class="row justify-content-md-center armormainrow">
+    <div class="col col-md-3">
+        Reporter: {{report.get_reporter}}
+    </div>
+    <div class="col col-md-3">
+        Reported Party: {{report.get_reportee}}
+    </div> 
+    <div class="col col-md-3">
+        Timestamp: {{report.timestamp}}
+    </div>
+    <div class="col col-md-3">
+        Status: {{report.status_text}}
+    </div>
+</div>
+<div class="row justify-content-md-center">
+    <div class="col center">
+        <h3 class="reportupdatetitle">Report Text</h3>
+        <div class="reporttext">
+            {{report.report_text}}
+        </div>
+    </div>
+</div>
+{% if report.picture %}
+<div class="row justify-content-md-center">
+    <div class="col center">
+        <div class="reportimage">
+            <h3 class="reportupdatetitle">Report Image</h3>
+            <a href="{{report.picture.url}}"><img src="{{report.picture.url}}" height="300"/></a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% for update in report.reportupdate_set.all %}
+<div class="row justify-content-md-center">
+    <div class="col center">
+        <div class="reportupdatediv">
+            <h3 class="reportupdatetitle">Update by {{update.note_creator}} on {{update.get_timestamp}}</h3>
+            {{update.note}}
+        </div>
+    </div>
+</div>
+{% endfor %}
+<div class="row justify-content-md-center">
+    <div class="col center">
+        <h3 class="reportupdatetitle">Add Note</h3>
+        <div class="reportnewnote">
+            <form method="post">{% csrf_token %}
+                {{form | crispy}}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

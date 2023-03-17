@@ -3,7 +3,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager, BaseUserManager
 from django.db.models.functions import Concat
 from django.db.models import CharField
+from django.conf import settings
 from django_resized import ResizedImageField
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 import datetime
 import uuid
@@ -15,7 +18,7 @@ from pytz import timezone as pytz_timezone
 from tinymce import models as tinymce_models
 
 def get_team_upload_path(instance, filename):
-        return os.path.join("static","team_pictures",str(instance.name), filename)
+        return os.path.join("media","team_pictures",str(instance.name), filename)
 
 
 class Team(models.Model):
@@ -25,7 +28,7 @@ class Team(models.Model):
         return self.name
 
 def get_person_upload_path(instance, filename):
-    return os.path.join("static","profile_pictures",str(instance.player_uuid), filename)
+    return os.path.join("media","profile_pictures",str(instance.player_uuid), filename)
 
 class PersonFullNameManager(models.Manager):
     def get_queryset(self):
@@ -60,11 +63,11 @@ class Mission(models.Model):
 
     @property
     def story_viewable(self):
-        return self.story_form_go_live_time < timezone.now()
+        return self.story_form_go_live_time < timezone.localtime()
     
     @property
     def non_story_viewable(self):
-        return self.go_live_time < timezone.now()
+        return self.go_live_time < timezone.localtime()
 
 
 class Person(AbstractUser):
@@ -100,6 +103,10 @@ class Person(AbstractUser):
     @property
     def admin_this_game(self):
         return self.current_status.is_admin()
+    
+    @property
+    def mod_this_game(self):
+        return self.current_status.is_mod()
 
 def generate_tag_id(length=10):
     import string
@@ -173,7 +180,7 @@ class BadgeInstance(models.Model):
 
 
 def get_blaster_upload_path(instance, filename):
-        return os.path.join("static","blaster_pictures",str(instance.owner.player_uuid), filename)
+        return os.path.join("media","blaster_pictures",str(instance.owner.player_uuid), filename)
 
 class Blaster(models.Model):
     name = models.CharField(max_length=100, default="No name given")
@@ -195,11 +202,11 @@ class PostGameSurvey(models.Model):
 
     @property
     def is_open(self):
-        return self.go_live_time < timezone.now() and self.lock_time > timezone.now()
+        return self.go_live_time < timezone.localtime() and self.lock_time > timezone.localtime()
     
     @property
     def is_viewable(self):
-        return self.go_live_time < timezone.now()
+        return self.go_live_time < timezone.localtime()
 
     def __str__(self) -> str:
         return f"Survey for mission {self.mission}"
@@ -244,12 +251,12 @@ class BodyArmor(models.Model):
     def get_status(self):
         if self.used:
             return "Tagged"
-        if datetime.datetime.now(tz=pytz_timezone('EST')) > self.expiration_time:
+        if timezone.localtime() > self.expiration_time:
             return "Expired"
         return "Active"
 
     def __str__(self) -> str:
-        return f"Body Armor {self.armor_code}. Expires {datetime.datetime.strftime(self.expiration_time, '%Y-%m-%d %H:%M')}. From game {self.game}"
+        return f"Body Armor {self.armor_code}. Expires {self.expiration_time.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}. From game {self.game}"
 
 class Tag(models.Model):
     tagger = models.ForeignKey(Person, null=False, on_delete=models.CASCADE, related_name="taggers")
@@ -264,3 +271,76 @@ class Tag(models.Model):
             return f"{self.tagger} tagged {self.armor_taggee} at {self.timestamp}"
         else:
             return f"{self.tagger} tagged nothing at {self.timestamp}"
+
+def get_report_upload_path(instance, filename):
+    return os.path.join("media","report_images",str(instance.id), filename)
+
+
+class Report(models.Model):
+    report_text = models.TextField(verbose_name="Report Description")
+    reporter_email = models.EmailField(verbose_name="Reporter Email", null=True, blank=True)
+    reporter = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="reporters")
+    reportee = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="reportees")
+    timestamp = models.DateTimeField(auto_now_add=True, editable=True)
+    status = models.CharField(max_length=1, null=False, default='n', choices=(('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
+    game = models.ForeignKey(Game, null=False, on_delete=models.CASCADE)
+    picture = ResizedImageField(size=[1000,None], force_format="jpeg", keep_meta=False, upload_to='media/report_images/', null=True)
+
+    @property
+    def get_reporter(self):
+        if self.reporter:
+            return self.reporter
+        elif self.reporter_email:
+            return self.reporter_email
+        else:
+            return "Anonymous"
+        
+    @property
+    def has_picture(self):
+        return self.picture is not None
+
+    @property
+    def status_text(self):
+        options = {'n':'New', 'i':'Investigating','d':'Dismissed','c':'Closed', '':'Unknown'}
+        return options[self.status]
+    
+    @property
+    def is_mod_report(self):
+        return self.reporter is not None and self.reporter.mod_this_game
+
+    @property
+    def last_updated(self):
+        updates = ReportUpdate.objects.filter(report=self).order_by('-timestamp')
+        if len(updates) == 0:
+            return None
+        return updates[0].timestamp
+    
+    @property
+    def get_reportee(self):
+        return self.reportee if self.reportee else "N/A"
+
+    def __str__(self):
+        return f"Report #{self.id}, made by {self.get_reporter} on {self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}. Status: {self.status_text}"
+
+@receiver(post_save, sender=Report)
+def update_file_path(instance, created, **kwargs):
+    if created:
+        initial_path = instance.picture.path
+        new_path = settings.MEDIA_ROOT + f'/report_images/{instance.id}.jpeg'
+        os.makedirs(os.path.dirname(new_path), exist_ok=True)
+        os.rename(initial_path, new_path)
+        instance.picture = new_path
+        instance.save()
+
+class ReportUpdate(models.Model):
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    note_creator = models.ForeignKey(Person, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    note = models.TextField()
+
+    @property
+    def get_timestamp(self):
+        return self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')
+    
+    def __str__(self):
+        return f"Update on Report #{self.report.id} by {self.note_creator} at {self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}"

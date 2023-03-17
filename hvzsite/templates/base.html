@@ -51,6 +51,9 @@
                     <a class="nav-link" href="/av/">Register AV</a>
                   </li>
                   {% endif %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="/report/">Report Player/Incident</a>
+                  </li>
                   {% if user.is_authenticated and user.current_status.is_admin %}
 		  <li class="nav-item dropdown">
 		    <a class="nav-link dropdown-toggle admin-only" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -59,11 +62,12 @@
 		    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 		      <li><a class="dropdown-item" href="/blasterapproval/">Approve Blasters</a></li>
 		      <li><a class="dropdown-item" href="/player_activation/">Activate Players</a></li>
-		      <li><a class="dropdown-item" href="/admin/create-av">Create an AV</a></li>
 		      <li><a class="dropdown-item" href="/admin/create-body-armor">Create a Body Armor</a></li>
-		      <li><a class="dropdown-item" href="/admin/bodyarmors">View Body Armors</a></li>
+		      <li><a class="dropdown-item" href="/admin/create-av">Create an AV</a></li>
           <li><a class="dropdown-item" href="/admin/editmissions/">Edit Missions</a></li>
           <li><a class="dropdown-item" href="/admin/editpostgamesurveys/">Edit Post-Game Surveys</a></li>
+		      <li><a class="dropdown-item" href="/admin/bodyarmors">View Body Armors</a></li>
+		      <li><a class="dropdown-item" href="/admin/reports/">View Reports</a></li>
 		    </ul>
 		  </li>
                   {% endif %}

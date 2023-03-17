@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'grappelli',
     'filebrowser',
     'tinymce',
+    'captcha',
     'django_registration',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -135,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'EST'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
@@ -186,3 +187,5 @@ TINYMCE_DEFAULT_CONFIG = {
     "content_css": "dark",
     'height': 500,
 }
+
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Reports {% endblock %}
+
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable = $('#surveys').DataTable({'ordering':false});
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Body Armors </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="surveys" class="table table-striped display">
+            <thead>
+                <tr>
+                    <th class="foo">Reporter</th>
+                    <th class="foo">Timestamp</th>
+                    <th class="foo">Status</th>
+                    <th class="foo">Last Updated</th>
+                    <th class="foo">Reportee</th>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr onclick="window.location.href='/admin/report/{{report.id}}/'">
+                    <td>{{report.get_reporter}}</td>
+                    <td>{{report.timestamp}}</td>
+                    <td>{{report.status_text}}</td>
+                    <td>{% if report.last_updated %}{{report.last_updated}}{% endif %}</td>
+                    <td>{% if report.reportee %}{{ report.reportee }}{% endif %}</td>
+                </tr>
+                {% empty %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

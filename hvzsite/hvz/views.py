@@ -9,8 +9,8 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Game, get_latest_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor
-from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Report, ReportUpdate, Game, get_latest_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor
+from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -35,16 +35,16 @@ def infection(request):
     return render(request, "infection.html", {'ozs':ozs, 'tags':tags})
 
 def register(request):
-	if request.method == "POST":
-		form = NewUserForm(request.POST)
-		if form.is_valid():
-			user = form.save()
-			login(request, user)
-			messages.success(request, "Registration successful." )
-			return index(request)
-		messages.error(request, "Unsuccessful registration. Invalid information.")
-	form = NewUserForm()
-	return render (request=request, template_name="register.html", context={"register_form":form})
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Registration successful." )
+            return index(request)
+        messages.error(request, "Unsuccessful registration. Invalid information.")
+    form = NewUserForm()
+    return render (request=request, template_name="register.html", context={"register_form":form})
 
 def missions_view(request):
     if not request.user.is_authenticated:
@@ -534,7 +534,7 @@ def bodyarmors(request):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
     body_armors = BodyArmor.objects.filter(game=game)
-    context = {"bodyarmors": body_armors}
+    context = {"bodyarmors": body_armors.order_by("-expiration_time")}
     return render(request, "bodyarmors.html", context)
 
 def bodyarmor_view(request, armor_id):
@@ -545,3 +545,58 @@ def bodyarmor_view(request, armor_id):
         'armor': armor,
     }
     return render(request, "bodyarmor.html", context)
+
+def create_report(request):
+    report_complete = False
+    report_id = None
+    if request.method == "POST":
+        form = ReportForm(request.POST, request.FILES, authenticated=request.user.is_authenticated)
+        print(form.fields)
+        if form.is_valid():
+            report = form.instance
+            report.game = get_latest_game()
+            if request.user.is_authenticated:
+                report.reporter = request.user
+            report.status = "n"
+            report.save()
+            report_complete = True
+            report_id = report.id
+            form = ReportForm(authenticated=request.user.is_authenticated)
+        else:
+            messages.error(request, "Unsuccessful report. Invalid information.")
+    else:
+        form = ReportForm(authenticated=request.user.is_authenticated)
+    return render(request=request, template_name="create_report.html", context={"form":form, "reportcomplete":report_complete, "report_id": report_id})
+
+def reports(request):
+    game = get_latest_game()
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    reports = Report.objects.filter(game=game)
+    context = {"reports": reports.order_by("-timestamp")}
+    return render(request, "reports.html", context)
+
+def report(request, report_id):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    if request.method == "POST":
+        form = ReportUpdateForm(request.POST)
+        if form.is_valid():
+            new_update = form.instance
+            new_update.note_creator = request.user
+            new_update.report = Report.objects.get(id=report_id)
+            if form.cleaned_data['update_status'] != 'x':
+                new_update.report.status = form.cleaned_data['update_status']
+                new_update.report.save()
+                status_change_update = ReportUpdate.objects.create(note=f"-{request.user} changed the status of this report to {new_update.report.status_text}-", note_creator=request.user, report=new_update.report)
+                status_change_update.save()
+            new_update.save()
+            form = ReportUpdateForm()
+    else:
+        form = ReportUpdateForm()
+    report = Report.objects.get(id=report_id)
+    context = {
+        'report': report,
+        'form': form
+    }
+    return render(request, "report.html", context)
