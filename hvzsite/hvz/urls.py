@@ -51,6 +51,7 @@ urlpatterns = [
     path('api/discord-id', views.ApiDiscordId.as_view()),
     path('api/player', views.ApiPlayerId.as_view()),
     path('api/teams', views.ApiTeams.as_view()),
+    path('api/tag', views.ApiTag.as_view()),
 
     # API Data-Table Routes
     path('api/datatables/players', views.players_api),

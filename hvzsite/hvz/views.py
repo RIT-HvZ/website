@@ -700,3 +700,45 @@ class ApiTeams(APIView):
             'teams': t
         }
         return JsonResponse(data)
+
+
+class ApiTag(APIView):
+    permission_classes = [HasAPIKey]
+
+    def post(self, request):
+        r = request.query_params
+
+        if 'tagger' not in r:
+            return HttpResponse(status=400, reason='Bad request, missing field: "tagger"')
+        if 'taggee' not in r:
+            return HttpResponse(status=400, reason='Bad request, missing field: "taggee"')
+
+        try:
+            tagger = Person.objects.get(player_uuid=r['tagger'])
+        except Person.DoesNotExist:
+            return HttpResponse(status=404, reason='No player with the given tagger id')
+
+        try:
+            taggee = PlayerStatus.objects.get(tag1_uuid=r['taggee'])
+            if taggee.status == 'h':
+                taggee.status = 'z'
+            else:
+                return HttpResponse(status=400, reason='Invalid status, ensure the taggee ID is correct')
+        except PlayerStatus.DoesNotExist:
+            try:
+                taggee = PlayerStatus.objects.get(tag2_uuid=r['taggee'])
+                if taggee.status == 'v':
+                    taggee.status = 'x'
+                else:
+                    return HttpResponse(status=400, reason='Invalid status, ensure the taggee ID is correct')
+            except PlayerStatus.DoesNotExist:
+                return HttpResponse(status=404, reason='No player with the given taggee id')
+
+        
+        tag = Tag.objects.create(tagger=tagger, taggee=taggee.player, game=get_active_game())
+        taggee.save()
+        tag.save()
+
+        return HttpResponse(status=200)
+
+    
