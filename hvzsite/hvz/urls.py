@@ -47,6 +47,7 @@ urlpatterns = [
     path('admin/editpostgamesurveys/', views.editpostgamesurveys),
     path('admin/reports/', views.reports),
     path('admin/report/<report_id>/', views.report),
+    path('admin/update_rules/', views.rules_udpate),
 
     # API Routes
     path('api/', include(router.urls)),

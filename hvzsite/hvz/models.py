@@ -27,12 +27,15 @@ class Team(models.Model):
     def __str__(self) -> str:
         return self.name
 
+
 def get_person_upload_path(instance, filename):
     return os.path.join("media","profile_pictures",str(instance.player_uuid), filename)
+
 
 class PersonFullNameManager(models.Manager):
     def get_queryset(self):
         return super(PersonFullNameManager, self).get_queryset().annotate(full_name=Concat('first_name', 'last_name', output_field=CharField()))
+
 
 class Game(models.Model):
     game_name = models.CharField(max_length=50)
@@ -42,13 +45,37 @@ class Game(models.Model):
     def __str__(self) -> str:
         return f"{self.game_name}: {datetime.datetime.strftime(self.start_date, '%Y/%m/%d')}-{datetime.datetime.strftime(self.end_date, '%Y/%m/%d')}"
 
-def get_latest_game():
-    if Game.objects.count() > 0:
-        return Game.objects.latest("start_date")
-    dummy_game = Game.objects.create(game_name="Dummy game", start_date=datetime.date.today(), end_date=datetime.date.today())
-    dummy_game.save()
-    return dummy_game
-    
+
+class SingletonModel(models.Model):
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super(SingletonModel, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+    @classmethod
+    def load(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
+
+class CurrentGame(SingletonModel):
+    current_game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
+
+
+def get_active_game():
+    game = CurrentGame.load()
+    if game.current_game is None:
+        if Game.objects.all().count() > 0:
+            game.current_game = Game.objects.latest("start_date")
+            game.save()
+    return game.current_game
+
+
 class Mission(models.Model):
     mission_name = models.CharField(max_length=100)
     story_form = tinymce_models.HTMLField(verbose_name="Story Form")
@@ -90,11 +117,11 @@ class Person(AbstractUser):
 
     @property
     def current_status(self):
-        return PlayerStatus.objects.get_or_create(player=self, game=get_latest_game())[0]
+        return PlayerStatus.objects.get_or_create(player=self, game=get_active_game())[0]
 
     @property
     def num_tags(self):
-        return Tag.objects.filter(game=get_latest_game(), tagger=self).count()
+        return Tag.objects.filter(game=get_active_game(), tagger=self).count()
 
     @property
     def active_this_game(self):
@@ -108,11 +135,13 @@ class Person(AbstractUser):
     def mod_this_game(self):
         return self.current_status.is_mod()
 
+
 def generate_tag_id(length=10):
     import string
     import secrets
     alphabet = string.ascii_letters + string.digits
     return ''.join(secrets.choice(alphabet) for i in range(length))
+
 
 class PlayerStatus(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE)
@@ -152,8 +181,19 @@ class PlayerStatus(models.Model):
     def can_av(self):
         return self.status == "z"
 
+
+class Rules(SingletonModel):
+    rules_text = tinymce_models.HTMLField(verbose_name="Rules Text")
+    last_edited_by = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)
+    last_edited_datetime = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Da Rules. Last edited by {self.last_edited_by} at {self.last_edited_datetime.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}"
+
+
 def gen_default_code():
     return ''.join(random.choices(string.ascii_letters, k=10))
+
 
 class AntiVirus(models.Model):
     av_uuid = models.UUIDField(verbose_name="AV UUID (Unique)", editable=False, default=uuid.uuid4, primary_key=True)
@@ -163,12 +203,14 @@ class AntiVirus(models.Model):
     time_used = models.DateTimeField(null=True, blank=True)
     expiration_time = models.DateTimeField(null=True, blank=True)
 
+
 class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)
     picture = ResizedImageField(size=[400,None], force_format="PNG", keep_meta=False, upload_to="static/badge_icons/", null=True)
     badge_type = models.CharField(verbose_name="Badge Type", choices=[('a','Account (persistent)'),('g','Game (resets after each game)')], max_length=1, null=False, default='g')
     def __str__(self) -> str:
         return f"{self.badge_name}"
+
 
 class BadgeInstance(models.Model):
     badge_type = models.ForeignKey(BadgeType, on_delete=models.CASCADE)
@@ -182,6 +224,7 @@ class BadgeInstance(models.Model):
 def get_blaster_upload_path(instance, filename):
         return os.path.join("media","blaster_pictures",str(instance.owner.player_uuid), filename)
 
+
 class Blaster(models.Model):
     name = models.CharField(max_length=100, default="No name given")
     owner = models.ForeignKey(Person, on_delete=models.CASCADE, null=False, related_name="owned_blasters")
@@ -192,6 +235,7 @@ class Blaster(models.Model):
 
     def __str__(self) -> str:
         return f"Blaster \"{self.name}\" owned by {self.owner}. Avg. FPS: {self.avg_chrono if self.avg_chrono != 0 else 'N/A'}. Approved by {', '.join([str(p) for p in self.approved_by.all()])}"
+
 
 class PostGameSurvey(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)#, default=get_latest_game)
@@ -206,10 +250,14 @@ class PostGameSurvey(models.Model):
     
     @property
     def is_viewable(self):
+        print(f"---{self.mission}---")
+        print(self.go_live_time)
+        print(timezone.localtime())
         return self.go_live_time < timezone.localtime()
 
     def __str__(self) -> str:
         return f"Survey for mission {self.mission}"
+
 
 class PostGameSurveyOption(models.Model):
     survey = models.ForeignKey(PostGameSurvey, on_delete=models.CASCADE)
@@ -219,6 +267,7 @@ class PostGameSurveyOption(models.Model):
     def __str__(self) -> str:
         return f"Option {self.option_name} for survey {self.survey}"
 
+
 class PostGameSurveyResponse(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE)
     survey = models.ForeignKey(PostGameSurvey, on_delete=models.CASCADE)
@@ -226,6 +275,7 @@ class PostGameSurveyResponse(models.Model):
 
     def __str__(self) -> str:
         return f"Response of {self.player} for survey {self.survey} - {self.response}"
+
 
 class BodyArmor(models.Model):
     armor_uuid = models.CharField(verbose_name="Armor UUID (Unique)", max_length=36, editable=False, default=uuid.uuid4, primary_key=True)
@@ -258,6 +308,7 @@ class BodyArmor(models.Model):
     def __str__(self) -> str:
         return f"Body Armor {self.armor_code}. Expires {self.expiration_time.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}. From game {self.game}"
 
+
 class Tag(models.Model):
     tagger = models.ForeignKey(Person, null=False, on_delete=models.CASCADE, related_name="taggers")
     taggee = models.ForeignKey(Person, null=True, blank=True, on_delete=models.CASCADE, related_name="taggees")
@@ -271,6 +322,7 @@ class Tag(models.Model):
             return f"{self.tagger} tagged {self.armor_taggee} at {self.timestamp}"
         else:
             return f"{self.tagger} tagged nothing at {self.timestamp}"
+
 
 def get_report_upload_path(instance, filename):
     return os.path.join("media","report_images",str(instance.id), filename)
@@ -322,6 +374,7 @@ class Report(models.Model):
     def __str__(self):
         return f"Report #{self.id}, made by {self.get_reporter} on {self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}. Status: {self.status_text}"
 
+
 @receiver(post_save, sender=Report)
 def update_file_path(instance, created, **kwargs):
     if created:
@@ -331,6 +384,7 @@ def update_file_path(instance, created, **kwargs):
         os.rename(initial_path, new_path)
         instance.picture = new_path
         instance.save()
+
 
 class ReportUpdate(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE)

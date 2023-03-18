@@ -9,8 +9,8 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Report, ReportUpdate, Game, get_latest_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor
-from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Report, ReportUpdate, Game, Rules, get_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor
+from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -21,7 +21,7 @@ import json
 
 # Create your views here.
 def index(request):
-    game = get_latest_game()
+    game = get_active_game()
     humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v')).count()
     zombiecount = PlayerStatus.objects.filter(game=game).filter(Q(status='z') | Q(status='x') | Q(status='o')).count()
     return render(request, "index.html", {'humancount': humancount, 'zombiecount': zombiecount})
@@ -32,7 +32,7 @@ def me(request):
     return player_view(request, request.user.player_uuid, is_me=True)
 
 def infection(request):
-    game = get_latest_game()
+    game = get_active_game()
     ozs = PlayerStatus.objects.filter(game=game, status='o')
     tags = Tag.objects.filter(game=game)
     return render(request, "infection.html", {'ozs':ozs, 'tags':tags})
@@ -52,7 +52,7 @@ def register(request):
 def missions_view(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
-    this_game = get_latest_game()
+    this_game = get_active_game()
     if request.method == "POST":
         survey_option = request.POST.get("survey_option")
         if not survey_option or not str(survey_option).isnumeric():
@@ -94,7 +94,7 @@ def missions_view(request):
 def editmissions(request):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
-    this_game = get_latest_game()
+    this_game = get_active_game()
     missions = Mission.objects.filter(game=this_game)
     return render(request, "editmissions.html", {'missions':missions.order_by("-go_live_time")})
 
@@ -147,7 +147,7 @@ def editpostgamesurvey(request, postgamesurvey_id):
 def editpostgamesurveys(request):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
-    this_game = get_latest_game()
+    this_game = get_active_game()
     surveys = PostGameSurvey.objects.filter(game=this_game)
     return render(request, "editpostgamesurveys.html", {'surveys':surveys.order_by("-go_live_time")})
 
@@ -188,7 +188,7 @@ def tag(request):
         form = TagForm(request.POST)
         if form.is_valid():
             if form.cleaned_data['type'] == "player":
-                tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, taggee=form.cleaned_data['taggee'].player, game=get_latest_game())
+                tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, taggee=form.cleaned_data['taggee'].player, game=get_active_game())
                 tag.save()
                 if form.cleaned_data['taggee'].status == 'v':
                     form.cleaned_data['taggee'].status = 'x'
@@ -196,7 +196,7 @@ def tag(request):
                     form.cleaned_data['taggee'].status = 'z'
                 form.cleaned_data['taggee'].save()
             else:
-                tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, armor_taggee=form.cleaned_data['taggee'], game=get_latest_game())
+                tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, armor_taggee=form.cleaned_data['taggee'], game=get_active_game())
                 tag.save()
             form = TagForm()
             return render(request, "tag.html", {'form':form, 'tagcomplete': True, 'tag': tag, 'qr': qr})
@@ -231,7 +231,7 @@ def blasterapproval(request):
         return HttpResponseRedirect("/")
     if request.method == "GET":     
         form = BlasterApprovalForm()
-        form.fields['owner'].queryset = Person.objects.filter(playerstatus__game=get_latest_game()) \
+        form.fields['owner'].queryset = Person.objects.filter(playerstatus__game=get_active_game()) \
                                                       .filter(playerstatus__status__in=['h','v','z','o','x']) \
                                                       .annotate(num_status=Count('playerstatus')) \
                                                       .filter(num_status=1)
@@ -242,7 +242,7 @@ def blasterapproval(request):
             blaster = Blaster()
             blaster.name = form.cleaned_data['name']
             blaster.owner = form.cleaned_data['owner']
-            blaster.game_approved_in = get_latest_game()
+            blaster.game_approved_in = get_active_game()
             blaster.picture = form.cleaned_data['picture']
             blaster.avg_chrono = form.cleaned_data['avg_chrono']
             blaster.save()
@@ -284,7 +284,7 @@ def admin_create_body_armor(request):
         form = BodyArmorCreateForm(request.POST)
 
         if form.is_valid():
-            bodyarmor = BodyArmor.objects.create(armor_code=form.cleaned_data['armor_code'], expiration_time=form.cleaned_data['expiration_time'], game = get_latest_game())
+            bodyarmor = BodyArmor.objects.create(armor_code=form.cleaned_data['armor_code'], expiration_time=form.cleaned_data['expiration_time'], game = get_active_game())
             bodyarmor.save()
             newform = BodyArmorCreateForm()
             return render(request, "create_body_armor.html", {'form':newform, 'createcomplete': True, 'bodyarmor': bodyarmor})
@@ -311,7 +311,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 def player_view(request, player_id, is_me=False, game=None):
     player = Person.objects.get(player_uuid=player_id)
     if game is None:
-        game = get_latest_game()
+        game = get_active_game()
     context = {
         'player': player,
         'is_me': is_me,
@@ -329,7 +329,7 @@ def player_admin_tools(request, player_id, command):
 
     try:
         player = Person.objects.get(player_uuid = player_id)
-        playerstatus = PlayerStatus.objects.get(player = player, game = get_latest_game())
+        playerstatus = PlayerStatus.objects.get(player = player, game = get_active_game())
     except:
         return HttpResponseRedirect('/')
 
@@ -368,7 +368,7 @@ def players(request):
 @api_view(["GET"])
 def players_api(request, game=None):
     if game is None:
-        game = get_latest_game()
+        game = get_active_game()
     r = request.query_params
     try:
         order_column = int(r.get("order[0][column]"))
@@ -429,7 +429,7 @@ def player_activation_api(request, game=None):
         return JsonResponse({})
 
     if game is None:
-        game = get_latest_game()
+        game = get_active_game()
     r = request.query_params
     try:
         order_column = int(r.get("order[0][column]"))
@@ -473,7 +473,7 @@ def player_activation_api(request, game=None):
 
 @api_view(["POST"])
 def player_activation_rest(request):
-    game = get_latest_game()
+    game = get_active_game()
     if not request.user.is_authenticated or not request.user.admin_this_game:
         print("Not admin")
         return JsonResponse({"status":"error","error":"Not Authorized"})
@@ -530,10 +530,10 @@ def teams_api(request):
     return JsonResponse(data)
 
 def rules(request):
-    return render(request, "rules.html", {})
+    return render(request, "rules.html", {'rules': Rules.load()})
 
 def bodyarmors(request):
-    game = get_latest_game()
+    game = get_active_game()
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
     body_armors = BodyArmor.objects.filter(game=game)
@@ -557,7 +557,7 @@ def create_report(request):
         print(form.fields)
         if form.is_valid():
             report = form.instance
-            report.game = get_latest_game()
+            report.game = get_active_game()
             if request.user.is_authenticated:
                 report.reporter = request.user
             report.status = "n"
@@ -572,7 +572,7 @@ def create_report(request):
     return render(request=request, template_name="create_report.html", context={"form":form, "reportcomplete":report_complete, "report_id": report_id})
 
 def reports(request):
-    game = get_latest_game()
+    game = get_active_game()
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
     reports = Report.objects.filter(game=game)
@@ -603,6 +603,27 @@ def report(request, report_id):
         'form': form
     }
     return render(request, "report.html", context)
+
+
+def rules_udpate(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    if request.method == "POST":
+        form = RulesUpdateForm(request.POST)
+        if form.is_valid():
+            rules_obj = form.instance
+            rules_obj.last_edited_by = request.user
+            rules_obj.last_edited_datetime = timezone.localtime()
+            rules_obj.save()
+            return HttpResponseRedirect("/rules/")
+    else:
+        form = RulesUpdateForm(instance= Rules.load())
+    rules = Rules.load()
+    context = {
+        'rules': rules,
+        'form': form
+    }
+    return render(request, "rules_update.html", context)
 
 
 ## REST API endpoints

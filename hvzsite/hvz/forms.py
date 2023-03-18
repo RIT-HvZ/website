@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ValidationError
 from django.db.models import Count, Q
-from .models import Person, Blaster, BodyArmor, AntiVirus, PlayerStatus, get_latest_game, Tag, Mission, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate
+from .models import Person, Blaster, BodyArmor, AntiVirus, Rules, PlayerStatus, get_active_game, Tag, Mission, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -89,7 +89,7 @@ class TagForm(forms.Form):
 
         tagger = cd.get("tagger_id")
         taggee = cd.get("taggee_id")
-        this_game = get_latest_game()
+        this_game = get_active_game()
         try:
             tagger_status = PlayerStatus.objects.get(zombie_uuid=tagger, game=this_game)
         except:
@@ -147,7 +147,7 @@ class AVForm(forms.Form):
     def clean(self):
         cd = self.cleaned_data
         av = cd.get("av_code")
-        this_game = get_latest_game()
+        this_game = get_active_game()
 
         try:
             av = AntiVirus.objects.get(av_code=av, game=this_game)
@@ -280,6 +280,7 @@ class ReportForm(forms.ModelForm):
             self.fields["reporter_email"].label = "Your email address (optional)"
             self.fields['captcha'] = CaptchaField()
 
+
 class ReportUpdateForm(forms.ModelForm):
     update_status = forms.ChoiceField(choices=(('x','No change'),('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
     class Meta:
@@ -290,3 +291,8 @@ class ReportUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['note'].widget.attrs['cols'] = 80
 
+
+class RulesUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Rules
+        fields = ['rules_text']

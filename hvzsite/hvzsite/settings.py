@@ -187,6 +187,9 @@ TINYMCE_DEFAULT_CONFIG = {
     "skin": "oxide-dark",
     "content_css": "dark",
     'height': 500,
+    'plugins': 'code',
+    'toolbar': 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent | code',
+    'menubar': 'edit view tools'
 }
 
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
