@@ -582,21 +582,39 @@ def reports(request):
 def report(request, report_id):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
+    report = Report.objects.get(id=report_id)
     if request.method == "POST":
-        form = ReportUpdateForm(request.POST)
+        form = ReportUpdateForm(request.POST, report=report)
         if form.is_valid():
+            form_reportees = set(form.cleaned_data['reportees'])
             new_update = form.instance
             new_update.note_creator = request.user
             new_update.report = Report.objects.get(id=report_id)
+            existing_reportees = set(new_update.report.reportees.get_queryset())
+            new_reportees = form_reportees - existing_reportees
+            deleted_reportees = existing_reportees - form_reportees
+            print(new_reportees)
+            print(deleted_reportees)
+            print(existing_reportees.intersection(form_reportees))
+            new_update.report.reportees.set(form_reportees)
+            new_update.report.save()
+            if len(new_reportees) > 0 or len(deleted_reportees) > 0:
+                new_note = ""
+                if len(new_reportees) > 0:
+                    new_note += f"-{request.user} added {', '.join([str(reportee) for reportee in new_reportees])} as Reportees-\n"
+                if len(deleted_reportees) > 0:
+                    new_note += f"-{request.user} removed {', '.join([str(reportee) for reportee in deleted_reportees])} as Reportees-"
+                reportee_change_update = ReportUpdate.objects.create(note=new_note, note_creator=request.user, report=new_update.report)
+                reportee_change_update.save()
             if form.cleaned_data['update_status'] != 'x':
                 new_update.report.status = form.cleaned_data['update_status']
                 new_update.report.save()
                 status_change_update = ReportUpdate.objects.create(note=f"-{request.user} changed the status of this report to {new_update.report.status_text}-", note_creator=request.user, report=new_update.report)
                 status_change_update.save()
             new_update.save()
-            form = ReportUpdateForm()
+            form = ReportUpdateForm(report=report)
     else:
-        form = ReportUpdateForm()
+        form = ReportUpdateForm(report=report)
     report = Report.objects.get(id=report_id)
     context = {
         'report': report,

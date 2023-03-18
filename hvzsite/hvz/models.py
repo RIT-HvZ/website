@@ -332,7 +332,7 @@ class Report(models.Model):
     report_text = models.TextField(verbose_name="Report Description")
     reporter_email = models.EmailField(verbose_name="Reporter Email", null=True, blank=True)
     reporter = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="reporters")
-    reportee = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name="reportees")
+    reportees = models.ManyToManyField(Person, related_name="reportees")
     timestamp = models.DateTimeField(auto_now_add=True, editable=True)
     status = models.CharField(max_length=1, null=False, default='n', choices=(('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
     game = models.ForeignKey(Game, null=False, on_delete=models.CASCADE)

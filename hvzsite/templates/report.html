@@ -2,14 +2,14 @@
 {% load static %}
 {% block title %} HvZ @ RIT - Report {% endblock %}
 {% block extrahead %}
-<script>
-$(document).ready(function () {
-    $('#maincontainer').addClass("armorcontainer");
-});
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/multi.js/0.4.1/multi.css">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/multi.js/0.4.1/multi.min.js" integrity="sha512-6UUThLVSijzV3nvbg3UItMp8eYd2rcDQO5P07/B+cgkA8tPOFFh4BjndmuAzoPSEoQu0rE29bpB8LictuUzvaw==" crossorigin="anonymous"></script>
 
-function admintools(command) {
-    window.location.href = "/admin/bodyarmor/tools/{{armor.armor_uuid}}/" + command;
-}
+<script>
+    $(document).ready(function () {
+        $( '#id_reportees' ).multi();
+    });
 </script>
 {% endblock %}
 {% block body %}
@@ -24,7 +24,7 @@ function admintools(command) {
         Reporter: {{report.get_reporter}}
     </div>
     <div class="col col-md-3">
-        Reported Party: {{report.get_reportee}}
+        Reportee(s): <ul class="reporteelist">{%for reportee in report.reportees.all %}<li><a class="reportee_link" href="/player/{{reportee.player_uuid}}/">{{reportee}}</a></li>{% empty %}N/A{% endfor %}</ul>
     </div> 
     <div class="col col-md-3">
         Timestamp: {{report.timestamp}}

@@ -283,14 +283,21 @@ class ReportForm(forms.ModelForm):
 
 class ReportUpdateForm(forms.ModelForm):
     update_status = forms.ChoiceField(choices=(('x','No change'),('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
+    
     class Meta:
         model = ReportUpdate
         fields = ['note']
 
     def __init__(self, *args, **kwargs):
+        report = kwargs.pop("report", None)
         super().__init__(*args, **kwargs)
         self.fields['note'].widget.attrs['cols'] = 80
-
+        if report:
+            self.fields['reportees'] = forms.ModelMultipleChoiceField(queryset=Person.objects.filter(playerstatus__game=get_active_game()) \
+                                                        .filter(playerstatus__status__in=['h','v','z','o','x']) \
+                                                        .annotate(num_status=Count('playerstatus')) \
+                                                        .filter(num_status=1)   )
+            self.fields['reportees'].initial = report.reportees.all()
 
 class RulesUpdateForm(forms.ModelForm):
     class Meta:

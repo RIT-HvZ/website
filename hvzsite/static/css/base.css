@@ -435,3 +435,18 @@ a.missionlink {
 .rulescontainer {
     font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+.reportee_link {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.reporteelist{
+    list-style: none;
+    list-style-type: none;
+    padding: 0;
+}
+
+.reporteelist li {
+    padding: 0;
+}

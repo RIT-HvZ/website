@@ -25,7 +25,7 @@
                     <th class="foo">Timestamp</th>
                     <th class="foo">Status</th>
                     <th class="foo">Last Updated</th>
-                    <th class="foo">Reportee</th>
+                    <th class="foo">Reportee(s)</th>
             </thead>
             <tbody>
                 {% for report in reports %}
@@ -34,7 +34,7 @@
                     <td>{{report.timestamp}}</td>
                     <td>{{report.status_text}}</td>
                     <td>{% if report.last_updated %}{{report.last_updated}}{% endif %}</td>
-                    <td>{% if report.reportee %}{{ report.reportee }}{% endif %}</td>
+                    <td>{%for reportee in report.reportees_set.all %}<a class="reportee_link" href="/player/{{reportee.player_uuid}}/">{{reportee}}</a>{% empty %}N/A{% endfor %}</td>
                 </tr>
                 {% empty %}
                 {% endfor %}

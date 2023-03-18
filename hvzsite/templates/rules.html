@@ -5,9 +5,9 @@
 <script>
 $(document).ready(function () {
     $("section h2").each(function(index, elem){
-        console.log(elem);
-        $(elem).attr("id","section_"+(index+1));
-        let new_row = "<a class='missionlink' href='#section_"+(index+1)+"'>"+$(elem).text()+"</a>";
+        new_id = "section_"+(index+1);
+        $(elem).attr("id", new_id);
+        let new_row = "<a class='missionlink' href='#"+new_id+"'>"+$(elem).text()+"</a>";
         $("#links").append(new_row);
     });
 });
