@@ -27,9 +27,6 @@ urlpatterns = [
     path('rules/', views.rules),
     path('infections/', views.infection),
 
-    path('api/players', views.players_api),
-    path('api/teams', views.teams_api),
-
     # Activation Routes
     path('player_activation/', views.player_activation),
     path('api/player_activation_api', views.player_activation_api),
@@ -54,4 +51,8 @@ urlpatterns = [
     path('api/discord-id', views.ApiDiscordId.as_view()),
     path('api/player', views.ApiPlayerId.as_view()),
     path('api/teams', views.ApiTeams.as_view()),
+
+    # API Data-Table Routes
+    path('api/datatables/players', views.players_api),
+    path('api/datatables/teams', views.teams_api),
 ]
