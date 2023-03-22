@@ -18,7 +18,7 @@ from pytz import timezone as pytz_timezone
 from tinymce import models as tinymce_models
 
 def get_team_upload_path(instance, filename):
-        return os.path.join("media","team_pictures",str(instance.name), filename)
+        return os.path.join("team_pictures",str(instance.name), filename)
 
 
 class Team(models.Model):
@@ -29,7 +29,7 @@ class Team(models.Model):
 
 
 def get_person_upload_path(instance, filename):
-    return os.path.join("media","profile_pictures",str(instance.player_uuid), filename)
+    return os.path.join("profile_pictures",str(instance.player_uuid), filename)
 
 
 class PersonFullNameManager(models.Manager):
@@ -206,7 +206,7 @@ class AntiVirus(models.Model):
 
 class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)
-    picture = ResizedImageField(size=[400,None], force_format="PNG", keep_meta=False, upload_to="static/badge_icons/", null=True)
+    picture = ResizedImageField(size=[400,None], force_format="PNG", keep_meta=False, upload_to="badge_icons/", null=True)
     badge_type = models.CharField(verbose_name="Badge Type", choices=[('a','Account (persistent)'),('g','Game (resets after each game)')], max_length=1, null=False, default='g')
     def __str__(self) -> str:
         return f"{self.badge_name}"
@@ -222,7 +222,7 @@ class BadgeInstance(models.Model):
 
 
 def get_blaster_upload_path(instance, filename):
-        return os.path.join("media","blaster_pictures",str(instance.owner.player_uuid), filename)
+        return os.path.join("blaster_pictures",str(instance.owner.player_uuid), filename)
 
 
 class Blaster(models.Model):
@@ -324,10 +324,6 @@ class Tag(models.Model):
             return f"{self.tagger} tagged nothing at {self.timestamp}"
 
 
-def get_report_upload_path(instance, filename):
-    return os.path.join("media","report_images",str(instance.id), filename)
-
-
 class Report(models.Model):
     report_text = models.TextField(verbose_name="Report Description")
     reporter_email = models.EmailField(verbose_name="Reporter Email", null=True, blank=True)
@@ -336,7 +332,7 @@ class Report(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, editable=True)
     status = models.CharField(max_length=1, null=False, default='n', choices=(('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
     game = models.ForeignKey(Game, null=False, on_delete=models.CASCADE)
-    picture = ResizedImageField(size=[1000,None], force_format="jpeg", keep_meta=False, upload_to='media/report_images/', null=True)
+    picture = ResizedImageField(size=[1000,None], force_format="jpeg", keep_meta=False, upload_to='report_images/', null=True)
 
     @property
     def get_reporter(self):
