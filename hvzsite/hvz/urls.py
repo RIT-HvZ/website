@@ -45,6 +45,9 @@ urlpatterns = [
     re_path(r'^admin/reports/?$', views.reports),
     re_path(r'^admin/report/(?P<report_id>[^/]+)/?$', views.report),
     re_path(r'^admin/update_rules/?$', views.rules_udpate),
+    re_path(r'^admin/print/?$', views.print_ids),
+    re_path(r'^admin/print_preview/?$', views.print_preview),
+    re_path(r'^admin/mark_printed/?$', views.mark_printed),
 
     # API Routes
     re_path(r'^api/?', include(router.urls)),

@@ -172,6 +172,7 @@ class PlayerStatus(models.Model):
     tag1_uuid =   models.CharField(verbose_name="Tag #1 ID", editable=True, default=generate_tag_id, max_length=36)
     tag2_uuid =   models.CharField(verbose_name="Tag #2 ID", editable=True, default=generate_tag_id, max_length=36)
     zombie_uuid = models.CharField(verbose_name="Zombie ID", editable=True, default=generate_tag_id, max_length=36)
+    printed = models.BooleanField(verbose_name="Has Player's ID card been printed?", default=False)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('z','Zombie'),('x','Zombie (used AV)'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='n', null=False)
 

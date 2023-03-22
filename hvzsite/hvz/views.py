@@ -14,6 +14,7 @@ from .forms import TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpd
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
+from django.contrib.sites.shortcuts import get_current_site
 from rest_framework.views import APIView
 from rest_framework_api_key.models import APIKey
 from rest_framework_api_key.permissions import HasAPIKey
@@ -632,6 +633,26 @@ def rules_udpate(request):
     }
     return render(request, "rules_update.html", context)
 
+
+def print_ids(request, preview=False):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    to_print = PlayerStatus.objects.filter(printed=False, game=get_active_game())
+    context = {
+        "players": [status.player for status in to_print],
+        "preview": preview,
+        "url": f"{request.scheme}://{get_current_site(request)}"
+    }
+    return render(request, "print_cards.html", context)
+
+def print_preview(request):
+    return print_ids(request, True)
+
+def mark_printed(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    PlayerStatus.objects.filter(printed=False, game=get_active_game()).update(printed=True)
+    return HttpResponseRedirect("/")
 
 ## REST API endpoints
 

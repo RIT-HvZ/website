@@ -101,7 +101,7 @@ function admintools(command) {
         <div id="player_tags" class="row">
             <div class="col">
                 <h1> Tags </h1>
-                {% for tag in tags %} <div class="player_tag_div">{% if tag.taggee %}<a href="/player/{{tag.taggee.player_uuid}}/"><div><img src="{{ tag.taggee.picture.url }}" class="player_tag_img" /></div><div>{{tag.taggee}}</div></a></div>{% else %}<div><img src="/static/images/bodyarmor.png" class="player_tag_img" /></div><div>Body Armor</div></a></div>{% endif %}
+                {% for tag in tags %} <div class="player_tag_div">{% if tag.taggee %}<a href="/player/{{tag.taggee.player_uuid}}/"><div><img src="{{ tag.taggee.picture.url }}" class="player_tag_img" /></div><div>{{tag.taggee}}</div></a></div>{% else %}<div><img src="/media/bodyarmor.png" class="player_tag_img" /></div><div>Body Armor</div></a></div>{% endif %}
                 {% empty %}<span class="notags">No tags to show</span>{% endfor %}
             </div>
         </div>
