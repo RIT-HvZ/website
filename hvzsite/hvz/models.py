@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser, UserManager, BaseUserManage
 from django.db.models.functions import Concat
 from django.db.models import CharField
 from django.conf import settings
-from django_resized import ResizedImageField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -16,6 +15,22 @@ import string
 from django.utils import timezone
 from pytz import timezone as pytz_timezone
 from tinymce import models as tinymce_models
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import sys
+
+def resize_image(photo, width, height, format="JPEG"):
+    im = Image.open(photo)
+    output = BytesIO()
+    #Resize/modify the image
+    im.thumbnail( (width,height) , Image.ANTIALIAS )
+    #after modifications, save it to the output
+    im.save(output, format=format, quality=95)
+    output.seek(0)
+    #change the imagefield value to be the newley modifed image value
+    return InMemoryUploadedFile(output,'ImageField', "%s.jpg" % photo.name.split('.')[0], 'image/jpeg', sys.getsizeof(output), None)
+
 
 def get_team_upload_path(instance, filename):
         return os.path.join("team_pictures",str(instance.name), filename)
@@ -23,11 +38,15 @@ def get_team_upload_path(instance, filename):
 
 class Team(models.Model):
     name = models.CharField(max_length=100, primary_key=True)
-    picture = ResizedImageField(size=[400, None], keep_meta=False, force_format="jpeg", upload_to=get_team_upload_path, null=True)
+    picture = models.ImageField(upload_to=get_team_upload_path, null=True)
     def __str__(self) -> str:
         return self.name
-
-
+    
+    def save(self, *args, **kwargs):
+        if self.picture:
+            self.picture = resize_image(self.picture, 400, 400)
+        super().save()
+                
 def get_person_upload_path(instance, filename):
     return os.path.join("profile_pictures",str(instance.player_uuid), filename)
 
@@ -100,7 +119,7 @@ class Mission(models.Model):
 class Person(AbstractUser):
     player_uuid = models.UUIDField(verbose_name="Player UUID", default=uuid.uuid4, unique=True)
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, blank=True, null=True, related_name="team_members")
-    picture = ResizedImageField(size=[400,None], keep_meta=False, force_format="jpeg", upload_to=get_person_upload_path, null=False, default="/static/images/noprofile.png")
+    picture = models.ImageField(upload_to=get_person_upload_path, null=False, default="/static/images/noprofile.png")
     objects = UserManager()
     full_name_objects = PersonFullNameManager()
     discord_id = models.CharField(max_length=100, blank=True, null=True)
@@ -134,6 +153,11 @@ class Person(AbstractUser):
     @property
     def mod_this_game(self):
         return self.current_status.is_mod()
+    
+    def save(self, *args, **kwargs):
+        if self.picture:
+            self.picture = resize_image(self.picture, 400, 400, 'JPEG')
+        super().save()
 
 
 def generate_tag_id(length=10):
@@ -206,11 +230,15 @@ class AntiVirus(models.Model):
 
 class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)
-    picture = ResizedImageField(size=[400,None], force_format="PNG", keep_meta=False, upload_to="badge_icons/", null=True)
+    picture = models.ImageField(upload_to="badge_icons/", null=True)
     badge_type = models.CharField(verbose_name="Badge Type", choices=[('a','Account (persistent)'),('g','Game (resets after each game)')], max_length=1, null=False, default='g')
     def __str__(self) -> str:
         return f"{self.badge_name}"
-
+    
+    def save(self, *args, **kwargs):
+        if self.picture:
+            self.picture = resize_image(self.picture, 400, 400, "PNG")
+        super().save()
 
 class BadgeInstance(models.Model):
     badge_type = models.ForeignKey(BadgeType, on_delete=models.CASCADE)
@@ -230,12 +258,16 @@ class Blaster(models.Model):
     owner = models.ForeignKey(Person, on_delete=models.CASCADE, null=False, related_name="owned_blasters")
     game_approved_in = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     approved_by = models.ManyToManyField(Person, related_name="approved_blasters", limit_choices_to={'is_staff': True})
-    picture = ResizedImageField(size=[400, None], quality=75, keep_meta=False, force_format="jpeg", upload_to=get_blaster_upload_path, null=True)
+    picture = models.ImageField(upload_to=get_blaster_upload_path, null=True)
     avg_chrono = models.FloatField(verbose_name="Average Chronograph velocity", default=0)
 
     def __str__(self) -> str:
         return f"Blaster \"{self.name}\" owned by {self.owner}. Avg. FPS: {self.avg_chrono if self.avg_chrono != 0 else 'N/A'}. Approved by {', '.join([str(p) for p in self.approved_by.all()])}"
 
+    def save(self, *args, **kwargs):
+        if self.picture:
+            self.picture = resize_image(self.picture, 400, 400)
+        super().save()
 
 class PostGameSurvey(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)#, default=get_latest_game)
@@ -332,7 +364,12 @@ class Report(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, editable=True)
     status = models.CharField(max_length=1, null=False, default='n', choices=(('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
     game = models.ForeignKey(Game, null=False, on_delete=models.CASCADE)
-    picture = ResizedImageField(size=[1000,None], force_format="jpeg", keep_meta=False, upload_to='report_images/', null=True)
+    picture = models.ImageField(upload_to='report_images/', null=True)
+
+    def save(self, *args, **kwargs):
+        if self.picture:
+            self.picture = resize_image(self.picture, 1000, 1000, "JPEG")
+        super().save()
 
     @property
     def get_reporter(self):
