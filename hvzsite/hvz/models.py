@@ -365,7 +365,7 @@ class Report(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, editable=True)
     status = models.CharField(max_length=1, null=False, default='n', choices=(('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
     game = models.ForeignKey(Game, null=False, on_delete=models.CASCADE)
-    picture = models.ImageField(upload_to='report_images/', null=True)
+    picture = models.ImageField(upload_to='report_images/', null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.picture:
@@ -411,7 +411,7 @@ class Report(models.Model):
 
 @receiver(post_save, sender=Report)
 def update_file_path(instance, created, **kwargs):
-    if created:
+    if created and instance.picture:
         initial_path = instance.picture.path
         new_path = settings.MEDIA_ROOT + f'/report_images/{instance.id}.jpeg'
         os.makedirs(os.path.dirname(new_path), exist_ok=True)
