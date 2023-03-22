@@ -117,7 +117,7 @@ function markprinted() {
     </style>
 </head>
 <body>
-    {% if not preview %}<button id="mark_printed" class="btn btn-primary" onclick="markprinted()">Mark All as Printed</button>{% endif %}
+    {% if not preview %}{% if not print_one %}<button id="mark_printed" class="btn btn-primary" onclick="markprinted()">Mark All as Printed</button>{% endif %}{% endif %}
     {% for player in players %}
         {% if forloop.counter0|divisibleby:2 %}<br style="clear:both">{%endif%}
         <div class="card {% if player.admin_this_game %}admin{% endif %}{% if player.mod_this_game %}mod{% endif %}">

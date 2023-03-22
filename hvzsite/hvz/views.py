@@ -322,7 +322,8 @@ def player_admin_tools(request, player_id, command):
         playerstatus = PlayerStatus.objects.get(player = player, game = get_active_game())
     except:
         return HttpResponseRedirect('/')
-
+    if command == "print_id":
+        return print_one(request, player_id)
     if command == "make_oz":
         playerstatus.status = 'o'
     if command == "make_nonplayer":
@@ -633,14 +634,25 @@ def rules_udpate(request):
     }
     return render(request, "rules_update.html", context)
 
+def print_one(request, player_uuid):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    context = {
+        "players": Person.objects.filter(player_uuid=player_uuid),
+        "preview": False,
+        "print_one": True,
+        "url": f"{request.scheme}://{get_current_site(request)}"
+    }
+    return render(request, "print_cards.html", context)
 
 def print_ids(request, preview=False):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
-    to_print = PlayerStatus.objects.filter(printed=False, game=get_active_game())
+    to_print = PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n'))
     context = {
         "players": [status.player for status in to_print],
         "preview": preview,
+        "print_one": False,
         "url": f"{request.scheme}://{get_current_site(request)}"
     }
     return render(request, "print_cards.html", context)
@@ -651,7 +663,7 @@ def print_preview(request):
 def mark_printed(request):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
-    PlayerStatus.objects.filter(printed=False, game=get_active_game()).update(printed=True)
+    PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n')).update(printed=True)
     return HttpResponseRedirect("/")
 
 ## REST API endpoints
