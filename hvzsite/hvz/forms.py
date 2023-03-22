@@ -270,6 +270,7 @@ class ReportUpdateForm(forms.ModelForm):
                                                         .annotate(num_status=Count('playerstatus')) \
                                                         .filter(num_status=1)   )
             self.fields['reportees'].initial = report.reportees.all()
+            self.fields['reportees'].required = False
 
 class RulesUpdateForm(forms.ModelForm):
     class Meta:
