@@ -158,7 +158,7 @@ def tag(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
     player = request.user
-    if player.current_status.is_zombie():
+    if player.current_status.is_zombie() or player.current_status.is_staff():
         qr = player.current_status.zombie_uuid
     elif player.current_status.status == 'h':
         qr = player.current_status.tag1_uuid
@@ -170,7 +170,7 @@ def tag(request):
         data = {}
         player = request.user
         status = player.current_status
-        if status.is_zombie():
+        if status.is_zombie() or status.is_staff():
             data['tagger_id'] = status.zombie_uuid
         elif status.is_human():
             if status.status == 'h':

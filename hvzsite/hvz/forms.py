@@ -94,7 +94,7 @@ class TagForm(forms.Form):
             tagger_status = PlayerStatus.objects.get(zombie_uuid=tagger, game=this_game)
         except:
             raise ValidationError("No Player with that Zombie ID found")
-        if not (tagger_status.is_zombie() or tagger_status.is_admin()):
+        if not (tagger_status.is_zombie() or tagger_status.is_staff()):
             raise ValidationError("Tagger is not a Zombie!")
 
         taggee_statuses = PlayerStatus.objects.filter(game=this_game).filter(Q(tag1_uuid=taggee) | Q(tag2_uuid=taggee))
