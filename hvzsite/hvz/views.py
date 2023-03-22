@@ -313,6 +313,7 @@ def player_view(request, player_id, is_me=False, game=None):
     if game is None:
         game = get_active_game()
     context = {
+        'user': request.user,
         'player': player,
         'is_me': is_me,
         'badges': BadgeInstance.objects.filter(player=player), 
