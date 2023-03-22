@@ -52,34 +52,6 @@ class HVZRegistrationForm(UserCreationForm):
         cd['username'] = cd['email']
 
 
-# Create your forms here.
-class LoginForm(forms.Form):
-    email = forms.CharField(label='Email', max_length=100)
-    password = forms.CharField(widget=forms.PasswordInput())
-    class Meta:
-        model = Person
-
-class NewUserForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["first_name"].required = True
-        self.fields["last_name"].required = True
-
-    class Meta:
-        model = Person
-        fields = ("email", "first_name", "last_name", "password1", "password2")
-
-    def save(self, commit=True):
-        user = super(NewUserForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.username = self.cleaned_data['email']
-        if commit:
-            user.save()
-        return user
-
-
 class TagForm(forms.Form):
     tagger_id = forms.CharField(label='Tagger (Zombie) ID', max_length=36)
     taggee_id = forms.CharField(label='Taggee (Human) ID / Body Armor ID', max_length=36)
@@ -94,7 +66,7 @@ class TagForm(forms.Form):
             tagger_status = PlayerStatus.objects.get(zombie_uuid=tagger, game=this_game)
         except:
             raise ValidationError("No Player with that Zombie ID found")
-        if not (tagger_status.is_zombie() or tagger_status.is_admin()):
+        if not (tagger_status.is_zombie() or tagger_status.is_staff()):
             raise ValidationError("Tagger is not a Zombie!")
 
         taggee_statuses = PlayerStatus.objects.filter(game=this_game).filter(Q(tag1_uuid=taggee) | Q(tag2_uuid=taggee))

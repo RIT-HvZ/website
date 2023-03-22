@@ -10,7 +10,7 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
 from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Report, ReportUpdate, Game, Rules, get_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor
-from .forms import TagForm, AVForm, NewUserForm, LoginForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
+from .forms import TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -36,18 +36,6 @@ def infection(request):
     ozs = PlayerStatus.objects.filter(game=game, status='o')
     tags = Tag.objects.filter(game=game)
     return render(request, "infection.html", {'ozs':ozs, 'tags':tags})
-
-def register(request):
-    if request.method == "POST":
-        form = NewUserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, "Registration successful." )
-            return index(request)
-        messages.error(request, "Unsuccessful registration. Invalid information.")
-    form = NewUserForm()
-    return render (request=request, template_name="register.html", context={"register_form":form})
 
 def missions_view(request):
     if not request.user.is_authenticated:
@@ -158,7 +146,7 @@ def tag(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
     player = request.user
-    if player.current_status.is_zombie():
+    if player.current_status.is_zombie() or player.current_status.is_staff():
         qr = player.current_status.zombie_uuid
     elif player.current_status.status == 'h':
         qr = player.current_status.tag1_uuid
@@ -170,7 +158,7 @@ def tag(request):
         data = {}
         player = request.user
         status = player.current_status
-        if status.is_zombie():
+        if status.is_zombie() or status.is_staff():
             data['tagger_id'] = status.zombie_uuid
         elif status.is_human():
             if status.status == 'h':
