@@ -119,7 +119,7 @@ class Mission(models.Model):
 class Person(AbstractUser):
     player_uuid = models.UUIDField(verbose_name="Player UUID", default=uuid.uuid4, unique=True)
     team = models.ForeignKey(Team, on_delete=models.SET_NULL, blank=True, null=True, related_name="team_members")
-    picture = models.ImageField(upload_to=get_person_upload_path, null=False, default="/static/images/noprofile.png")
+    picture = models.ImageField(upload_to=get_person_upload_path, null=False, default="noprofile.png")
     objects = UserManager()
     full_name_objects = PersonFullNameManager()
     discord_id = models.CharField(max_length=100, blank=True, null=True)

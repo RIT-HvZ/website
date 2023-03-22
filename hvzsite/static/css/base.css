@@ -105,6 +105,10 @@ th, label {
     background-color: rgba(201, 119, 13, 0.5);
 }
 
+#maincontainer.npcontainer {
+    background-color: rgb(100,100,100);
+}
+
 #maincontainer.modcontainer {
     background-color: rgba(9, 111, 228, 0.644);
 }

@@ -16,6 +16,9 @@ $(document).ready(function () {
     if ("{{player.current_status.is_admin}}" == "True") {
         $('#maincontainer').addClass("admincontainer");
     }
+    if ("{{player.active_this_game}}" == "False") {
+        $('#maincontainer').addClass("npcontainer");
+    }
 });
 
 {% if user.is_authenticated and user.current_status.is_admin %}
