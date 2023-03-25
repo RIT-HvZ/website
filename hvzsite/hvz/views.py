@@ -740,7 +740,7 @@ class ApiPlayers(APIView):
             {
                 'name': str(p),
                 'id': p.player_uuid,
-                'status': PlayerStatus.objects.get(player=p).get_status_display()
+                'status': p.current_status.get_status_display(),
             } for p in Person.objects.all()
         ]
         
