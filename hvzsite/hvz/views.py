@@ -669,6 +669,16 @@ def mark_printed(request):
 ## REST API endpoints
 
 class ApiDiscordId(APIView):
+    """
+    Returns the player UUID associated with the given discord ID.
+
+    @param id The discord id to be checked
+    @return {
+      discord-id: The input id
+      player-id: The UUID of the player
+      player-name: The full name of the player
+    }
+    """
     permission_classes = [HasAPIKey]
 
     def get(self, request):
@@ -720,6 +730,22 @@ class ApiTeams(APIView):
 
         data = {
             'teams': t
+        }
+        return JsonResponse(data)
+
+
+class ApiPlayers(APIView):
+    def get(self, request):
+        players = [
+            {
+                'name': str(p),
+                'id': p.player_uuid,
+                'status': PlayerStatus.objects.get(player=p).get_status_display()
+            } for p in Person.objects.all()
+        ]
+        
+        data = {
+            'players': players
         }
         return JsonResponse(data)
 

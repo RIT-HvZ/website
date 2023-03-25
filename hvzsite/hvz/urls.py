@@ -3,11 +3,12 @@ from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
 
 from . import views
-from rest_framework import routers
+#from rest_framework import routers
+from rest_framework.schemas import get_schema_view
 
-router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
+# router = routers.DefaultRouter()
+# router.register(r'users', views.UserViewSet)
+# router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
     # Primary Game View Routes
@@ -50,11 +51,21 @@ urlpatterns = [
     re_path(r'^admin/mark_printed/?$', views.mark_printed),
 
     # API Routes
-    re_path(r'^api/?', include(router.urls)),
+    # re_path(r'^api/?', include(router.urls)),
     re_path(r'^api/discord-id/?$', views.ApiDiscordId.as_view()),
     re_path(r'^api/player/?$', views.ApiPlayerId.as_view()),
     re_path(r'^api/teams/?$', views.ApiTeams.as_view()),
+    re_path(r'^api/players/?$', views.ApiPlayers.as_view()),
     re_path(r'^api/tag/?$', views.ApiTag.as_view()),
+    re_path(r'^openapi/?$', get_schema_view(
+            title="HvZ @ RIT API",
+            description="API Endpoint descriptions for HvZ @ RIT Website",
+            version="1.0.0"
+        ), name='openapi-schema'),
+    re_path(r'^swagger-ui/?$', TemplateView.as_view(
+        template_name='swagger-ui.html',
+        extra_context={'schema_url':'openapi-schema'}
+    ), name='swagger-ui'),
 
     # API Data-Table Routes
     re_path(r'^api/datatables/players/?$', views.players_api),
