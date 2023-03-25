@@ -721,6 +721,7 @@ class ApiPlayerId(APIView):
             'email': player.email,
             'name': str(player),
             'status': player.current_status.status,
+            'tags': player.num_tags,
         }
         return JsonResponse(data)
 
@@ -735,12 +736,16 @@ class ApiTeams(APIView):
 
 
 class ApiPlayers(APIView):
+    '''
+    Returns all player information
+    '''
     def get(self, request):
         players = [
             {
                 'name': str(p),
                 'id': p.player_uuid,
                 'status': p.current_status.get_status_display(),
+                'tags': p.num_tags,
             } for p in Person.objects.all()
         ]
         
