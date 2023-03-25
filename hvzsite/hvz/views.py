@@ -700,6 +700,34 @@ class ApiDiscordId(APIView):
         }
         return JsonResponse(data)
 
+class ApiMissions(APIView):
+    permission_classes = [HasAPIKey]
+
+    def get(self, request):
+        r = request.query_params
+
+        if 'team' not in r:
+            return HttpResponse(status=400, reason='Bad request, missing field: "team"')
+        team = r.get('team')
+
+        valid_teams = ['Human', 'Zombie', 'Staff']
+        if team not in valid_teams:
+            return HttpResponse(status=400, reason='Bad request, "team" must be one of: '+str(valid_teams))
+
+        missions = Mission.objects.filter(team=team[0].lower(), game=get_active_game())
+
+        data = {
+            'missions': [
+                {
+                    'story-form': m.story_form,
+                    'story-form-live-time': m.story_form_go_live_time,
+                    'mission-text': m.mission_text,
+                    'mission-text-live-time': m.go_live_time,
+                }
+                for m in missions]
+        }
+        return JsonResponse(data)
+
 class ApiPlayerId(APIView):
     permission_classes = [HasAPIKey]
 

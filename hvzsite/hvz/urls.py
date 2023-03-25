@@ -57,6 +57,7 @@ urlpatterns = [
     re_path(r'^api/teams/?$', views.ApiTeams.as_view()),
     re_path(r'^api/players/?$', views.ApiPlayers.as_view()),
     re_path(r'^api/tag/?$', views.ApiTag.as_view()),
+    re_path(r'^api/missions/?$', views.ApiMissions.as_view()),
 
     # Api Documentation
     re_path(r'^openapi/?$', get_schema_view(
