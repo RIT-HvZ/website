@@ -822,4 +822,20 @@ class ApiTag(APIView):
 
         return HttpResponse(status=200)
 
-    
+
+class ApiReports(APIView):
+    permission_classes = [HasAPIKey]
+
+    def get(self, request):
+        data = {
+            'reports': [
+                {
+                    "report-text": report.report_text,
+                    "reporter-email": report.reporter_email,
+                    "reporter": str(report.reporter) if report.reporter else None, 
+                    "timestamp": report.timestamp,
+                    "status": report.status,
+                }
+                for report in Report.objects.all()],
+        }
+        return JsonResponse(data)
