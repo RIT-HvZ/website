@@ -156,7 +156,7 @@ class Person(AbstractUser):
     
     def save(self, *args, **kwargs):
         if self.picture:
-            self.picture = resize_image(self.picture, 400, 400, 'JPEG')
+            self.picture = resize_image(self.picture, 400, 400, 'PNG')
         super().save()
 
 
