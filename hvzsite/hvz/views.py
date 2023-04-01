@@ -2,6 +2,7 @@ from datetime import datetime
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.conf import settings
 from rest_framework.response import Response
 from django.db.models import Count
 from django.utils import timezone
@@ -19,6 +20,12 @@ from rest_framework.views import APIView
 from rest_framework_api_key.models import APIKey
 from rest_framework_api_key.permissions import HasAPIKey
 import json 
+import discord
+
+report_webhook = None
+if settings.DISCORD_REPORT_WEBHOOK_URL:
+    report_webhook = discord.SyncWebhook.from_url(settings.DISCORD_REPORT_WEBHOOK_URL)
+
 
 # Create your views here.
 def index(request):
@@ -545,7 +552,6 @@ def create_report(request):
     report_id = None
     if request.method == "POST":
         form = ReportForm(request.POST, request.FILES, authenticated=request.user.is_authenticated)
-        print(form.fields)
         if form.is_valid():
             report = form.instance
             report.game = get_active_game()
@@ -556,6 +562,15 @@ def create_report(request):
             report_complete = True
             report_id = report.id
             form = ReportForm(authenticated=request.user.is_authenticated)
+            if report_webhook:
+                report_webhook.send("!report" + "\n" +
+                                    json.dumps({
+                                        'report_text': report.report_text, 
+                                        'reporter_email': report.reporter_email,
+                                        'reporter': str(report.reporter),
+                                        'timestamp': str(report.timestamp),
+                                        # 'picture' = models.ImageField(upload_to='report_images/', null=True, blank=True)
+                                    }))
         else:
             messages.error(request, "Unsuccessful report. Invalid information.")
     else:
