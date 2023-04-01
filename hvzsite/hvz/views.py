@@ -563,7 +563,7 @@ def create_report(request):
             report_id = report.id
             form = ReportForm(authenticated=request.user.is_authenticated)
             if report_webhook:
-                report_webhook.send("!report" + "\n" +
+                report_webhook.send("!report " +
                                     json.dumps({
                                         'report_text': report.report_text, 
                                         'reporter_email': report.reporter_email,
