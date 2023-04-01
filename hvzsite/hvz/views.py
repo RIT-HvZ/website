@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.conf import settings
+from django.core import exceptions
 from rest_framework.response import Response
 from django.db.models import Count
 from django.utils import timezone
@@ -629,7 +630,7 @@ def report(request, report_id):
     return render(request, "report.html", context)
 
 
-def rules_udpate(request):
+def rules_update(request):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
     if request.method == "POST":
@@ -854,3 +855,27 @@ class ApiReports(APIView):
                 for report in Report.objects.all()],
         }
         return JsonResponse(data)
+
+
+class ApiCreateAv(APIView):
+    permission_classes = [HasAPIKey]
+
+    def post(self, request):
+        r = request.query_params
+
+        if 'exp-time' not in r:
+            return HttpResponse(status=400, reason='Bad request, missing field: "exp-time"')
+
+        print(r.keys())
+
+        try:
+            if 'av-code' in r:
+                av = AntiVirus.objects.create(av_code=r['av-code'], game=get_active_game(), expiration_time = r['exp-time'])
+            else:
+                av = AntiVirus.objects.create(game=get_active_game(), expiration_time = r['exp-time'])
+        except exceptions.ValidationError:
+            return HttpResponse(status=400, reason='Invalid time format. It must be in YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ] format.')
+        av.save()
+
+        return HttpResponse('Successfully created AV: "{}"'.format(av.av_code))
+

@@ -45,7 +45,7 @@ urlpatterns = [
     re_path(r'^admin/editpostgamesurveys/?$', views.editpostgamesurveys),
     re_path(r'^admin/reports/?$', views.reports),
     re_path(r'^admin/report/(?P<report_id>[^/]+)/?$', views.report),
-    re_path(r'^admin/update_rules/?$', views.rules_udpate),
+    re_path(r'^admin/update_rules/?$', views.rules_update),
     re_path(r'^admin/print/?$', views.print_ids),
     re_path(r'^admin/print_preview/?$', views.print_preview),
     re_path(r'^admin/mark_printed/?$', views.mark_printed),
@@ -59,6 +59,7 @@ urlpatterns = [
     re_path(r'^api/tag/?$', views.ApiTag.as_view()),
     re_path(r'^api/missions/?$', views.ApiMissions.as_view()),
     re_path(r'^api/reports/?$', views.ApiReports.as_view()),
+    re_path(r'^api/create-av/?$', views.ApiCreateAv.as_view()),
 
     # Api Documentation
     re_path(r'^openapi/?$', get_schema_view(
