@@ -25,9 +25,9 @@ SECRET_KEY = ""
 with open(os.path.join(BASE_DIR,"secret.txt"),'r') as f:
     SECRET_KEY = f.readline().strip()
 
-DB_SECRETS = {}
+SECRET_SETTINGS = {}
 with open(os.path.join(BASE_DIR,"secrets.json"),'r') as f:
-    DB_SECRETS = json.load(f)
+    SECRET_SETTINGS = json.load(f)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -103,10 +103,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'hvzdb',
-        'USER': DB_SECRETS['user'],
-        'PASSWORD': DB_SECRETS['pass'],
-        'HOST': DB_SECRETS['host'],
-        'PORT': DB_SECRETS['port']
+        'USER': SECRET_SETTINGS['user'],
+        'PASSWORD': SECRET_SETTINGS['pass'],
+        'HOST': SECRET_SETTINGS['host'],
+        'PORT': SECRET_SETTINGS['port']
     }
 }
 
@@ -173,13 +173,18 @@ STATICFILES_DIRS = [
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = DB_SECRETS['email_host']
-EMAIL_PORT = DB_SECRETS['email_port']
-EMAIL_USE_TLS = DB_SECRETS['email_use_tls']
-EMAIL_HOST_USER = DB_SECRETS['email']
-EMAIL_HOST_PASSWORD = DB_SECRETS['email_password']
+EMAIL_HOST = SECRET_SETTINGS['email_host']
+EMAIL_PORT = SECRET_SETTINGS['email_port']
+EMAIL_USE_TLS = SECRET_SETTINGS['email_use_tls']
+EMAIL_HOST_USER = SECRET_SETTINGS['email']
+EMAIL_HOST_PASSWORD = SECRET_SETTINGS['email_password']
 
-DEFAULT_FROM_EMAIL = DB_SECRETS['email_from']
+DEFAULT_FROM_EMAIL = SECRET_SETTINGS['email_from']
+
+if 'discord_report_webhook_url' in SECRET_SETTINGS:
+    DISCORD_REPORT_WEBHOOK_URL = SECRET_SETTINGS['discord_report_webhook_url']
+else:
+    DISCORD_REPORT_WEBHOOK_URL = None
 
 ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
 
