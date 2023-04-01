@@ -7,6 +7,7 @@ from django.core import exceptions
 from rest_framework.response import Response
 from django.db.models import Count
 from django.utils import timezone
+from django.db.utils import IntegrityError
 from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -866,8 +867,6 @@ class ApiCreateAv(APIView):
         if 'exp-time' not in r:
             return HttpResponse(status=400, reason='Bad request, missing field: "exp-time"')
 
-        print(r.keys())
-
         try:
             if 'av-code' in r:
                 av = AntiVirus.objects.create(av_code=r['av-code'], game=get_active_game(), expiration_time = r['exp-time'])
@@ -875,7 +874,33 @@ class ApiCreateAv(APIView):
                 av = AntiVirus.objects.create(game=get_active_game(), expiration_time = r['exp-time'])
         except exceptions.ValidationError:
             return HttpResponse(status=400, reason='Invalid time format. It must be in YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ] format.')
-        av.save()
+        except IntegrityError:
+            return HttpResponse(status=400, reason='Cannot create duplicate AV code.')
 
+        av.save()
+        
         return HttpResponse('Successfully created AV: "{}"'.format(av.av_code))
+
+class ApiCreateBodyArmor(APIView):
+    permission_classes = [HasAPIKey]
+
+    def post(self, request):
+        r = request.query_params
+
+        if 'exp-time' not in r:
+            return HttpResponse(status=400, reason='Bad request, missing field: "exp-time"')
+
+        try:
+            if 'armor-code' in r:
+                armor = BodyArmor.objects.create(armor_code=r['armor-code'], game=get_active_game(), expiration_time = r['exp-time'])
+            else:
+                armor = BodyArmor.objects.create(game=get_active_game(), expiration_time = r['exp-time'])
+        except exceptions.ValidationError:
+            return HttpResponse(status=400, reason='Invalid time format. It must be in YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ] format.')
+        except IntegrityError:
+            return HttpResponse(status=400, reason='Cannot create duplicate BodyArmor code.')
+
+        armor.save()
+
+        return HttpResponse('Successfully created Body Armor: "{}"'.format(armor.armor_code))
 
