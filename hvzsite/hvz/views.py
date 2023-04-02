@@ -702,13 +702,13 @@ class ApiDiscordId(APIView):
         r = request.query_params
 
         if 'id' not in r:
-            return HttpResponse(status=400, reason='Bad request, missing field: "id"')
+            return HttpResponse(status=400, content='Missing field: "id"')
         discord_id = r.get('id')
 
         try:
             player = Person.objects.get(discord_id=discord_id)
         except Person.DoesNotExist:
-            return HttpResponse(status=404, reason='No player with the given discord id')
+            return HttpResponse(status=404, content='No player with the given discord id')
 
         data = {
             'discord-id': discord_id,
@@ -724,12 +724,12 @@ class ApiMissions(APIView):
         r = request.query_params
 
         if 'team' not in r:
-            return HttpResponse(status=400, reason='Bad request, missing field: "team"')
+            return HttpResponse(status=400, content='Missing field: "team"')
         team = r.get('team')
 
         valid_teams = ['Human', 'Zombie', 'Staff']
         if team not in valid_teams:
-            return HttpResponse(status=400, reason='Bad request, "team" must be one of: '+str(valid_teams))
+            return HttpResponse(status=400, content='Invalid team, must be one of: '+str(valid_teams))
 
         missions = Mission.objects.filter(team=team[0].lower(), game=get_active_game())
 
@@ -752,13 +752,13 @@ class ApiPlayerId(APIView):
         r = request.query_params
 
         if 'uuid' not in r:
-            return HttpResponse(status=400, reason='Bad request, missing field: "uuid"')
+            return HttpResponse(status=400, content='Missing field: "uuid"')
         player_id = r.get('uuid')
 
         try:
             player = Person.objects.get(player_uuid=player_id)
         except Person.DoesNotExist:
-            return HttpResponse(status=404, reason='No player with the given user id')
+            return HttpResponse(status=404, content='No player with the given user id')
 
         data = {
             'uuid': player.player_uuid,
@@ -807,30 +807,30 @@ class ApiTag(APIView):
         r = request.query_params
 
         if 'tagger' not in r:
-            return HttpResponse(status=400, reason='Bad request, missing field: "tagger"')
+            return HttpResponse(status=400, content='Missing field: "tagger"')
         if 'taggee' not in r:
-            return HttpResponse(status=400, reason='Bad request, missing field: "taggee"')
+            return HttpResponse(status=400, content='Missing field: "taggee"')
 
         try:
             tagger = Person.objects.get(player_uuid=r['tagger'])
         except Person.DoesNotExist:
-            return HttpResponse(status=404, reason='No player with the given tagger id')
+            return HttpResponse(status=404, content='No player with the given tagger id')
 
         try:
             taggee = PlayerStatus.objects.get(tag1_uuid=r['taggee'])
             if taggee.status == 'h':
                 taggee.status = 'z'
             else:
-                return HttpResponse(status=400, reason='Invalid status, ensure the taggee ID is correct')
+                return HttpResponse(status=400, content='Invalid status, ensure the taggee ID is correct')
         except PlayerStatus.DoesNotExist:
             try:
                 taggee = PlayerStatus.objects.get(tag2_uuid=r['taggee'])
                 if taggee.status == 'v':
                     taggee.status = 'x'
                 else:
-                    return HttpResponse(status=400, reason='Invalid status, ensure the taggee ID is correct')
+                    return HttpResponse(status=400, content='Invalid status, ensure the taggee ID is correct')
             except PlayerStatus.DoesNotExist:
-                return HttpResponse(status=404, reason='No player with the given taggee id')
+                return HttpResponse(status=404, content='No player with the given taggee id')
 
         
         tag = Tag.objects.create(tagger=tagger, taggee=taggee.player, game=get_active_game())
@@ -865,7 +865,7 @@ class ApiCreateAv(APIView):
         r = request.query_params
 
         if 'exp-time' not in r:
-            return HttpResponse(status=400, reason='Bad request, missing field: "exp-time"')
+            return HttpResponse(status=400, content='Missing field: "exp-time"')
 
         try:
             if 'av-code' in r:
@@ -873,9 +873,9 @@ class ApiCreateAv(APIView):
             else:
                 av = AntiVirus.objects.create(game=get_active_game(), expiration_time = r['exp-time'])
         except exceptions.ValidationError:
-            return HttpResponse(status=400, reason='Invalid time format. It must be in YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ] format.')
+            return HttpResponse(status=400, content='Invalid time format. It must be in YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ] format.')
         except IntegrityError:
-            return HttpResponse(status=400, reason='Cannot create duplicate AV code.')
+            return HttpResponse(status=400, content='Cannot create duplicate AV code.')
 
         av.save()
         
@@ -888,7 +888,7 @@ class ApiCreateBodyArmor(APIView):
         r = request.query_params
 
         if 'exp-time' not in r:
-            return HttpResponse(status=400, reason='Bad request, missing field: "exp-time"')
+            return HttpResponse(status=400, content='Missing field: "exp-time"')
 
         try:
             if 'armor-code' in r:
@@ -896,9 +896,9 @@ class ApiCreateBodyArmor(APIView):
             else:
                 armor = BodyArmor.objects.create(game=get_active_game(), expiration_time = r['exp-time'])
         except exceptions.ValidationError:
-            return HttpResponse(status=400, reason='Invalid time format. It must be in YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ] format.')
+            return HttpResponse(status=400, content='Invalid time format. It must be in YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ] format.')
         except IntegrityError:
-            return HttpResponse(status=400, reason='Cannot create duplicate BodyArmor code.')
+            return HttpResponse(status=400, content='Cannot create duplicate BodyArmor code.')
 
         armor.save()
 
