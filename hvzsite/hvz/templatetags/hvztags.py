@@ -13,3 +13,9 @@ def get_player_response(player, survey):
     if responses.count() > 0:
         return responses[0]
     return None
+
+
+@register.filter
+def strftime(date, fmt="%H:%M (%m/%d)"):
+    return date.strftime(fmt)
+

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block body %}
 <div class="row">
   <div class="col">
@@ -35,12 +36,24 @@
   </div>
 </div>
 
-<div class="leaderboard">
-  <h3>Most Tags:</h3>
-  {% for p in most_tags %}
 
-  <a href="player/{{p.player.player_uuid}}">{{p.player}} ({{p.get_status_display}})</a>: {{p.num_tags}} <br />
+<div class="row center">
+  <div class="col recent-tags">
+    <h3>Recent Infections:</h3>
+    {% for t in recent_tags %}
+    
+    
+    <a href="player/{{t.taggee.player_uuid}}">{{t.taggee}}</a> was tagged by <a href="player/{{t.tagger.player_uuid}}">{{t.tagger}}</a> at {{ t.timestamp|strftime }} <br />
+    {% endfor %}
+  </div>
+
+  <div class="col leaderboard">
+    <h3>Most Tags:</h3>
+    {% for p in most_tags %}
+
+    <a href="player/{{p.player.player_uuid}}">{{p.player}} ({{p.get_status_display}})</a>: {{p.num_tags}} <br />
   
-  {% endfor %}
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

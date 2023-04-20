@@ -36,7 +36,10 @@ def index(request):
     zombiecount = PlayerStatus.objects.filter(game=game).filter(Q(status='z') | Q(status='x') | Q(status='o')).count()
     most_tags = sorted( [ p for p in PlayerStatus.objects.filter(game=get_active_game()) ],
                         key = lambda p: p.num_tags, reverse=True)
-    return render(request, "index.html", {'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags})
+
+    recent_tags = [ t for t in Tag.objects.filter(game=get_active_game()).order_by('-timestamp') ]
+    
+    return render(request, "index.html", {'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_tags': recent_tags[:10]})
 
 def me(request):
     if not request.user.is_authenticated:
