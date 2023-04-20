@@ -45,7 +45,7 @@ $(document).ready(function () {
                             <td class="roster_pic"><a class="dt_profile" href="/player/{{player.player_uuid}}/"><img src="{{ player.picture.url }}"/></a></td>
                             <td class="roster_name"><a class="dt_name_link" href="/player/{{player.player_uuid}}/">{{player}}</a></td>
                             <td class="roster_status">{{ player.current_status.get_status_display }}</td>
-                            <td class="roster_tags">{{player.num_tags}}</td>
+                            <td class="roster_tags">{{player.current_status.num_tags}}</td>
                         </tr>
                         {% endfor %} 
                     </tbody>

@@ -34,4 +34,13 @@
     
   </div>
 </div>
+
+<div class="leaderboard">
+  <h3>Most Tags:</h3>
+  {% for p in most_tags %}
+
+  <a href="player/{{p.player.player_uuid}}">{{p.player}} ({{p.get_status_display}})</a>: {{p.num_tags}} <br />
+  
+  {% endfor %}
+</div>
 {% endblock %}

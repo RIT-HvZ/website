@@ -34,7 +34,9 @@ def index(request):
     game = get_active_game()
     humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v')).count()
     zombiecount = PlayerStatus.objects.filter(game=game).filter(Q(status='z') | Q(status='x') | Q(status='o')).count()
-    return render(request, "index.html", {'humancount': humancount, 'zombiecount': zombiecount})
+    most_tags = sorted( [ p for p in PlayerStatus.objects.filter(game=get_active_game()) ],
+                        key = lambda p: p.num_tags, reverse=True)
+    return render(request, "index.html", {'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags})
 
 def me(request):
     if not request.user.is_authenticated:
@@ -766,7 +768,7 @@ class ApiPlayerId(APIView):
             'email': player.email,
             'name': str(player),
             'status': player.current_status.status,
-            'tags': player.num_tags,
+            'tags': player.current_status.num_tags,
         }
         return JsonResponse(data)
 
@@ -790,7 +792,7 @@ class ApiPlayers(APIView):
                 'name': str(p),
                 'id': p.player_uuid,
                 'status': p.current_status.get_status_display(),
-                'tags': p.num_tags,
+                'tags': p.current_status.num_tags,
             } for p in Person.objects.all()
         ]
         

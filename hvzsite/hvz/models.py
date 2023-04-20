@@ -33,7 +33,7 @@ def resize_image(photo, width, height, format="JPEG"):
 
 
 def get_team_upload_path(instance, filename):
-        return os.path.join("team_pictures",str(instance.name), filename)
+    return os.path.join("team_pictures",str(instance.name), filename)
 
 
 class Team(models.Model):
@@ -139,10 +139,6 @@ class Person(AbstractUser):
         return PlayerStatus.objects.get_or_create(player=self, game=get_active_game())[0]
 
     @property
-    def num_tags(self):
-        return Tag.objects.filter(game=get_active_game(), tagger=self).count()
-
-    @property
     def active_this_game(self):
         return not self.current_status.is_nonplayer()
 
@@ -205,6 +201,10 @@ class PlayerStatus(models.Model):
     @property
     def can_av(self):
         return self.status == "z"
+
+    @property
+    def num_tags(self):
+        return Tag.objects.filter(game=self.game, tagger=self.player).count()
 
 
 class Rules(SingletonModel):
