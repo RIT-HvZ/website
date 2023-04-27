@@ -94,6 +94,10 @@ def get_active_game():
             game.save()
     return game.current_game
 
+def reset_active_game():
+    game = CurrentGame.load()
+    game.current_game = None
+    game.save()
 
 class Mission(models.Model):
     mission_name = models.CharField(max_length=100)

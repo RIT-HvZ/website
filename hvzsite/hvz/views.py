@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Report, ReportUpdate, Game, Rules, get_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor
 from .forms import TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -100,7 +100,6 @@ def editmissions(request):
     this_game = get_active_game()
     missions = Mission.objects.filter(game=this_game)
     return render(request, "editmissions.html", {'missions':missions.order_by("-go_live_time")})
-
 
 def editmission(request, mission_id):
     if not request.user.is_authenticated or not request.user.admin_this_game:
@@ -272,6 +271,17 @@ def admin_create_av(request):
             newform = AVCreateForm()
             return render(request, "create_av.html", {'form':newform, 'createcomplete': True})
     return render(request, "create_av.html", {'form':form, 'createcomplete': False})
+
+
+def admin_reset_game(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+
+    if not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+
+    reset_active_game()
+    return HttpResponseRedirect("/")
 
 
 def admin_create_body_armor(request):
