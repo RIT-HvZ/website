@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
 from .forms import TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -41,16 +41,44 @@ def index(request):
     
     return render(request, "index.html", {'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_tags': recent_tags[:10]})
 
+
 def me(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
     return player_view(request, request.user.player_uuid, is_me=True)
+
 
 def infection(request):
     game = get_active_game()
     ozs = PlayerStatus.objects.filter(game=game, status='o')
     tags = Tag.objects.filter(game=game)
     return render(request, "infection.html", {'ozs':ozs, 'tags':tags})
+
+
+def discord_link(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+
+    user = request.user
+    link_codes = DiscordLinkCode.objects.filter(account=user)
+    code = None
+    
+    if len(link_codes) > 0:
+        for mini_code in link_codes:
+            if mini_code.expiration_time < timezone.localtime():
+                mini_code.delete()
+            else:
+                code = mini_code
+
+    if code == None:
+        code = DiscordLinkCode()
+        code.account = user
+        code.expiration_time = timezone.localtime() + timedelta(days=1)
+        code.save()
+    
+    return player_view(request, request.user.player_uuid, is_me=True, discord_code=code.code)
+
+
 
 def missions_view(request):
     if not request.user.is_authenticated:
@@ -321,10 +349,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-def player_view(request, player_id, is_me=False, game=None):
+def player_view(request, player_id, is_me=False, game=None, discord_code=None):
     player = Person.objects.get(player_uuid=player_id)
     if game is None:
         game = get_active_game()
+
     context = {
         'user': request.user,
         'player': player,
@@ -333,8 +362,10 @@ def player_view(request, player_id, is_me=False, game=None):
         'tags': Tag.objects.filter(tagger=player, game=game),
         'status': PlayerStatus.objects.get_or_create(player=player, game=game)[0],
         'blasters': Blaster.objects.filter(owner=player, game_approved_in=game),
-        'domain': request.build_absolute_uri('/tag/')
+        'domain': request.build_absolute_uri('/tag/'),
+        'discord_code': discord_code
     }
+    
     return render(request, "player.html", context)
 
 def player_admin_tools(request, player_id, command):
@@ -732,6 +763,32 @@ class ApiDiscordId(APIView):
         }
         return JsonResponse(data)
 
+
+class ApiLinkDiscordId(APIView):
+    permission_classes = [HasAPIKey]
+
+    def get(self, request):
+        r = request.query_params
+
+        if 'discord_id' not in r:
+            return HttpResponse(status=400, content='Missing field: "discord_id"')
+        if 'link_code' not in r:
+            return HttpResponse(status=400, content='Missing field: "link_code"')
+        discord_id = r.get('discord_id')
+        link_code = r.get('link_code')
+
+        try:
+            code = DiscordLinkCode.objects.get(code=link_code)
+        except DiscordLinkCode.DoesNotExist:
+            return HttpResponse(status=404, content='Bad link code: does not exist')
+
+        code.account.discord_id = discord_id
+        code.account.save()
+        code.delete()
+
+        return HttpResponse('Successfully linked account')
+
+    
 class ApiMissions(APIView):
     permission_classes = [HasAPIKey]
 

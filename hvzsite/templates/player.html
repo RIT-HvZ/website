@@ -91,6 +91,21 @@ function admintools(command) {
                 {% endif %}
             </div>
         </div>
+	{% if is_me or user.admin_this_game%}
+	<div class="row">	  
+          <div class="col" id="player_role">
+            <h1> Discord </h1>
+            {% if discord_code %}
+	    Use the following code: {{ discord_code }}
+            {% elif player.discord_id %}
+	    <h5>Linked: {{player.discord_id}}</h5>
+	    <a href="/discord-link">Reset your discord link</a>
+            {% else %}
+	    <a href="/discord-link">Generate a code to link your discord account</a>
+            {% endif %}
+          </div>
+        </div>
+	{% endif %}
     </div>
     <div class="col col-lg-8">
         <div class="row">

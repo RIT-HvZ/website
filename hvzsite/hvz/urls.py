@@ -27,6 +27,7 @@ urlpatterns = [
     re_path(r'^logout/?$', LogoutView.as_view()),
     re_path(r'^rules/?$', views.rules),
     re_path(r'^infections/?$', views.infection),
+    re_path(r'^discord-link/?$', views.discord_link),
 
     # Activation Routes
     re_path(r'^player_activation/?$', views.player_activation),
@@ -54,6 +55,7 @@ urlpatterns = [
     # API Routes
     # re_path(r'^api/?', include(router.urls)),
     re_path(r'^api/discord-id/?$', views.ApiDiscordId.as_view()),
+    re_path(r'^api/link-discord-id/?$', views.ApiLinkDiscordId.as_view()),
     re_path(r'^api/player/?$', views.ApiPlayerId.as_view()),
     re_path(r'^api/teams/?$', views.ApiTeams.as_view()),
     re_path(r'^api/players/?$', views.ApiPlayers.as_view()),

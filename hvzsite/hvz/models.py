@@ -220,8 +220,8 @@ class Rules(SingletonModel):
         return f"Da Rules. Last edited by {self.last_edited_by} at {self.last_edited_datetime.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}"
 
 
-def gen_default_code():
-    return ''.join(random.choices(string.ascii_letters, k=10))
+def gen_default_code(k=10):
+    return ''.join(random.choices(string.ascii_letters, k=k))
 
 
 class AntiVirus(models.Model):
@@ -436,3 +436,9 @@ class ReportUpdate(models.Model):
     
     def __str__(self):
         return f"Update on Report #{self.report.id} by {self.note_creator} at {self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}"
+
+
+class DiscordLinkCode(models.Model):
+    account = models.ForeignKey(Person, on_delete=models.CASCADE)
+    code = models.CharField(verbose_name="Discord Link Code", editable=False, default=gen_default_code, max_length=30)
+    expiration_time = models.DateTimeField()
