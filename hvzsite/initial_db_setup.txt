@@ -1,2 +1,2 @@
-CREATE USER myuser WITH ENCRYPTED PASSWORD 'somepassword'
+CREATE USER myuser WITH ENCRYPTED PASSWORD 'somepassword';
 create DATABASE hvzdb owner myuser;
