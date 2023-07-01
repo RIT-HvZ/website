@@ -301,6 +301,13 @@ def admin_create_av(request):
     return render(request, "create_av.html", {'form':form, 'createcomplete': False})
 
 
+def admin_control_panel(request):
+    if (not request.user.is_authenticated) or (not request.user.admin_this_game):
+        return HttpResponseRedirect("/")
+    
+    return render(request, "admincontrolpanel.html")
+    
+
 def admin_reset_game(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
@@ -559,7 +566,7 @@ def teams_api(request):
     query = Team.objects.all()
     if search != "":
         query = query.filter(name__icontains=search)
-    query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"name", "size": "persons_count", }[order_column_name]}""")
+    query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"name", "size": "team_members", }[order_column_name]}""")
     result = []
     for team in query[start:limit]:
         result.append({

@@ -23,31 +23,13 @@ $(document).ready(function () {
 
 {% if user.is_authenticated and user.current_status.is_admin %}
 function admintools(command) {
+    if (command == "Tools") return;
     window.location.href = "/admin/player_admin/tools/{{player.player_uuid}}/" + command;
 }
 {% endif %}
 </script>
 {% endblock %}
 {% block body %}
-{% if user.is_authenticated and user.current_status.is_admin %}
-<div class="row justify-content-md-center align-items-center playeradmintools">
-    <div class="col col-md-2">
-        <h2>Admin Tools</h2>
-    </div>
-    <div class="col col-md-6">
-        <div class="row justify-content-md-center">
-            <button onclick="admintools('make_oz')" class="playeradmintool">Make OZ</button>
-            <button onclick="admintools('make_nonplayer')" class="playeradmintool">Make Nonplayer</button>
-            <button onclick="admintools('make_human')" class="playeradmintool">Make Human</button>
-            <button onclick="admintools('make_human_av')" class="playeradmintool">Make Human (Used AV)</button>
-            <button onclick="admintools('make_zombie')" class="playeradmintool">Make Zombie</button>
-            <button onclick="admintools('make_zombie_av')" class="playeradmintool">Make Zombie (Used AV)</button>
-            <button onclick="admintools('make_mod')" class="playeradmintool">Make Mod</button>
-            <button onclick="admintools('print_id')" class="playeradmintool">Print ID</button>
-        </div>
-    </div>
-</div>
-{% endif %}
 <div class="row justify-content-md-center playermainrow">
     <div class="col col-md-4">
         <div class="row justify-content-md-center">
@@ -127,6 +109,26 @@ function admintools(command) {
                 {% for blaster in blasters %} <div class="player_blaster_div"><img src="{{ blaster.picture.url }}" title="{{ blaster }}" class="player_blaster_img" /><div>{{blaster.name}}</div>{% empty %}<span class="noblasters">No blasters to show</span> {% endfor %}
             </div>
         </div>
+        {% if user.is_authenticated and user.current_status.is_admin %}
+        <div id="admin_tools" class="row">
+            <div class="col">
+                <h1>Admin Tools</h1>
+                <div class="admin_tool_div">
+                    <select onchange="admintools(this.value)" id="admin_tools">
+                        <option value="Tools" selected="selected">Alter Player Status</option> 
+                        <option value="make_oz" class="playeradmintool">Make OZ</option>
+                        <option value="make_nonplayer" class="playeradmintool">Make Nonplayer</option>
+                        <option value="make_human" class="playeradmintool">Make Human</option>
+                        <option value="make_human_av" class="playeradmintool">Make Human (Used AV)</option>
+                        <option value="make_zombie" class="playeradmintool">Make Zombie</option>
+                        <option value="make_zombie_av" class="playeradmintool">Make Zombie (Used AV)</option>
+                        <option value="make_mod" class="playeradmintool">Make Mod</option>
+                    </select>
+                </div>
+                <button onlick="admintools('print_id')" class="playeradmintool">Print ID</button>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

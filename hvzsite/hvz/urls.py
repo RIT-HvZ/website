@@ -35,6 +35,7 @@ urlpatterns = [
     re_path(r'^api/player_activation_rest/?$', views.player_activation_rest),
 
     # Admin Routes
+    re_path(r'^admin/controlpanel', views.admin_control_panel),
     re_path(r'^admin/reset-game/?$', views.admin_reset_game),
     re_path(r'^admin/create-av/?$', views.admin_create_av),
     re_path(r'^admin/create-body-armor/?$', views.admin_create_body_armor),
