@@ -24,6 +24,7 @@ import sys
 def resize_image(photo, width, height, format="JPEG"):
     im = Image.open(photo)
     output = BytesIO()
+    im = im.convert('RGB')
     #Resize/modify the image
     im.thumbnail( (width,height) , Image.ANTIALIAS )
     #after modifications, save it to the output
