@@ -43,7 +43,8 @@
     {% for t in recent_tags %}
     
     
-    <a href="player/{{t.taggee.player_uuid}}">{{t.taggee}}</a> was tagged by <a href="player/{{t.tagger.player_uuid}}">{{t.tagger}}</a> at {{ t.timestamp|strftime }} <br />
+    {% if t.taggee %}<a href="/player/{{t.taggee.player_uuid}}">{{t.taggee}}</a>{% else %}Body Armor{% endif %} was tagged by <a href="player/{{t.tagger.player_uuid}}">{{t.tagger}}</a> at {{ t.timestamp|strftime }} <br />
+    
     {% endfor %}
   </div>
 
