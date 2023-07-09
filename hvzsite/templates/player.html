@@ -61,16 +61,18 @@ function admintools(command) {
             </div>
         </div>
         {% if is_me or user.admin_this_game %}
-        <div class="row">
-            <div class="col" id="showidsdiv">
-                <button class="btn btn-danger" type="button" id="showids" onclick="document.getElementById('player_ids').style.display='inline-block';document.getElementById('showidsdiv').style.display='none';">Show Human/Zombie IDs</button>
+            {% if player.active_this_game %}
+            <div class="row">
+                <div class="col" id="showidsdiv">
+                    <button class="btn btn-danger" type="button" id="showids" onclick="document.getElementById('player_ids').style.display='inline-block';document.getElementById('showidsdiv').style.display='none';">Show Human/Zombie IDs</button>
+                </div>
+                <div class="col" id="player_ids" style="display:none">
+                    Tag #1 ID: {{ player.current_status.tag1_uuid}} <br/>
+                    Tag #2 ID: {{ player.current_status.tag2_uuid}} <br>
+                    Zombie ID: {{ player.current_status.zombie_uuid}}
+                </div>
             </div>
-            <div class="col" id="player_ids" style="display:none">
-                Tag #1 ID: {{ player.current_status.tag1_uuid}} <br/>
-                Tag #2 ID: {{ player.current_status.tag2_uuid}} <br>
-                Zombie ID: {{ player.current_status.zombie_uuid}}
-            </div>
-        </div>
+            {% endif %}
         {% endif %}
         <div class="row">
             <div class="col" id="player_role">

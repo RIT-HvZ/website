@@ -51,6 +51,10 @@ class HVZRegistrationForm(UserCreationForm):
         cd = self.cleaned_data
         cd['username'] = cd['email']
 
+        existing_players = Person.objects.filter(email=cd['email'])
+        if existing_players.count() > 0:
+            raise ValidationError("An account with that email address already exists.")
+
 
 class TagForm(forms.Form):
     tagger_id = forms.CharField(label='Tagger (Zombie) ID', max_length=36)
