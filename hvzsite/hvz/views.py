@@ -426,6 +426,8 @@ def players_api(request, game=None):
         limit = int(request.query_params["length"])
         start = int(request.query_params["start"])
         search = r["search[value]"] 
+        print(start)
+        print(limit)
     except AssertionError:
         raise
     query = Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','z','o','x','a','m'])
@@ -435,28 +437,32 @@ def players_api(request, game=None):
         query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "status": "playerstatus__status", "clan": "clan__name"}[order_column_name]}""")
     else:
         query = query.annotate(n_tags=Count('taggers', filter=Q(taggers__game=game))).order_by(f"""{'-' if order_direction == 'asc' else ''}n_tags""")
+    
     result = []
-    for person in query[start:limit]:
-        try:
-            person_status = PlayerStatus.objects.get(player=person, game=game)
-        except:
-            continue
-        if person_status.status == "n":
-            continue
-        result.append({
-            "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
-            "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture_url}' class='dt_profile' /></a>""",
-            "status": {"h": "Human", "a": "Admin", "z": "Zombie", "m": "Mod", "v": "Human", "o": "Zombie", "n": "NonPlayer", "x": "Zombie"}[person_status.status],
-            "clan": None if person.clan is None else (f"""<a href="/clan/{person.clan.name}/" class="dt_clan_link">person.clan.name</a>""" if (person.clan is None or person.clan.picture is None) else f"""<a href="/clan/{person.clan.name}/" class="dt_clan_link"><img src='{person.clan.picture.url}' class='dt_clanpic' alt='{person.clan}' /><span class="dt_clanname">{person.clan}</span></a>"""),
-            "clan_pic": None if (person.clan is None or person.clan.picture is None) else person.clan.picture.url,
-            "tags": Tag.objects.filter(tagger=person,game=game).count(),
-            "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
-            "DT_RowData": {"person_url": f"/player/{person.player_uuid}/", "clan_url": f"/clan/{person.clan.name}/" if person.clan is not None else ""}
-        })
+    filtered_length = len(query)
+    if start < filtered_length:
+        for person in query[start:]:
+            if limit == 0:
+                break
+            try:
+                person_status = PlayerStatus.objects.get(player=person, game=game)
+            except:
+                continue
+            result.append({
+                "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
+                "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture_url}' class='dt_profile' /></a>""",
+                "status": {"h": "Human", "a": "Admin", "z": "Zombie", "m": "Mod", "v": "Human", "o": "Zombie", "n": "NonPlayer", "x": "Zombie"}[person_status.status],
+                "clan": None if person.clan is None else (f"""<a href="/clan/{person.clan.name}/" class="dt_clan_link">person.clan.name</a>""" if (person.clan is None or person.clan.picture is None) else f"""<a href="/clan/{person.clan.name}/" class="dt_clan_link"><img src='{person.clan.picture.url}' class='dt_clanpic' alt='{person.clan}' /><span class="dt_clanname">{person.clan}</span></a>"""),
+                "clan_pic": None if (person.clan is None or person.clan.picture is None) else person.clan.picture.url,
+                "tags": Tag.objects.filter(tagger=person,game=game).count(),
+                "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
+                "DT_RowData": {"person_url": f"/player/{person.player_uuid}/", "clan_url": f"/clan/{person.clan.name}/" if person.clan is not None else ""}
+            })
+            limit -= 1
     data = {
         "draw": int(r['draw']),
-        "recordsTotal": Person.objects.all().count(),
-        "recordsFiltered": len(result),
+        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','z','o','x','a','m']).count(),
+        "recordsFiltered": filtered_length,
         "data": result
     }
     return JsonResponse(data)

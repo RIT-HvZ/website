@@ -454,3 +454,8 @@ a.missionlink {
 .reporteelist li {
     padding: 0;
 }
+
+#players img {
+    max-width: 50px;
+    max-height: 50px;
+}

@@ -389,8 +389,14 @@ class Report(models.Model):
     game = models.ForeignKey(Game, null=False, on_delete=models.CASCADE)
     picture = models.ImageField(upload_to='report_images/', null=True, blank=True)
 
+    __original_picture = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_picture = self.picture
+
     def save(self, *args, **kwargs):
-        if self.picture:
+        if self.picture and (self.picture != self.__original_picture):
             self.picture = resize_image(self.picture, 1000, 1000, "JPEG")
         super().save()
 
