@@ -6,6 +6,7 @@ from django.db.models import CharField
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.templatetags.static import static
 
 import datetime
 import uuid
@@ -32,13 +33,15 @@ def resize_image(photo, width, height, format="JPEG"):
     return InMemoryUploadedFile(output,'ImageField', "%s.jpg" % photo.name.split('.')[0], 'image/jpeg', sys.getsizeof(output), None)
 
 
-def get_team_upload_path(instance, filename):
-    return os.path.join("team_pictures",str(instance.name), filename)
+def get_clan_upload_path(instance, filename):
+    return os.path.join("clan_pictures",str(instance.name), filename)
 
+# Only needed for database migration nonsense, not actually used
+get_team_upload_path = get_clan_upload_path
 
-class Team(models.Model):
+class Clan(models.Model):
     name = models.CharField(max_length=100, primary_key=True)
-    picture = models.ImageField(upload_to=get_team_upload_path, null=True)
+    picture = models.ImageField(upload_to=get_clan_upload_path, null=True)
     def __str__(self) -> str:
         return self.name
     
@@ -122,8 +125,8 @@ class Mission(models.Model):
 
 class Person(AbstractUser):
     player_uuid = models.UUIDField(verbose_name="Player UUID", default=uuid.uuid4, unique=True)
-    team = models.ForeignKey(Team, on_delete=models.SET_NULL, blank=True, null=True, related_name="team_members")
-    picture = models.ImageField(upload_to=get_person_upload_path, null=False, default="noprofile.png")
+    clan = models.ForeignKey(Clan, on_delete=models.SET_NULL, blank=True, null=True, related_name="clan_members")
+    picture = models.ImageField(upload_to=get_person_upload_path, null=True, blank=True)
     objects = UserManager()
     full_name_objects = PersonFullNameManager()
     discord_id = models.CharField(max_length=100, blank=True, null=True)
@@ -135,6 +138,13 @@ class Person(AbstractUser):
     )
     #USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
+
+    __original_picture = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_picture = self.picture
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -154,8 +164,15 @@ class Person(AbstractUser):
     def mod_this_game(self):
         return self.current_status.is_mod()
     
-    def save(self, *args, **kwargs):
+    @property
+    def picture_url(self):
         if self.picture:
+            return self.picture.url
+        else:
+            return static('/images/noprofile.png')
+    
+    def save(self, *args, **kwargs):
+        if self.picture and (self.picture != self.__original_picture):
             self.picture = resize_image(self.picture, 400, 400, 'PNG')
         super().save()
 

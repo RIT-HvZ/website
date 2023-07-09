@@ -52,12 +52,12 @@ function admintools(command) {
     <div class="col col-md-4">
         <div class="row justify-content-md-center">
             <div class="col">
-                <h1 class="team_name"> {{ player }} </h1>
+                <h1 class="clan_name"> {{ player }} </h1>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <div class="team_picture"><img src="{{ player.picture.url }}"/></div>
+                <div class="clan_picture"><img src="{{ player.picture_url }}"/></div>
             </div>
         </div>
         {% if is_me or user.admin_this_game %}
@@ -80,11 +80,11 @@ function admintools(command) {
         </div>
         <div class="row">
             <div class="col" id="player_role">
-                <h1> Team </h1>
-                {% if player.team %}
-                <a href="/team/{{player.team}}/" class="team_link">
-                    {% if player.team.picture %}<img src="/{{player.team.picture}}"/>{% endif %}
-                    <h5>{{player.team}}</h5>
+                <h1> Clan </h1>
+                {% if player.clan %}
+                <a href="/clan/{{player.clan}}/" class="clan_link">
+                    {% if player.clan.picture %}<img src="/{{player.clan.picture}}"/>{% endif %}
+                    <h5>{{player.clan}}</h5>
                 </a>
                 {% else %}
                     <h5>None</h5>
@@ -117,7 +117,7 @@ function admintools(command) {
         <div id="player_tags" class="row">
             <div class="col">
                 <h1> Tags </h1>
-                {% for tag in tags %} <div class="player_tag_div">{% if tag.taggee %}<a href="/player/{{tag.taggee.player_uuid}}/"><div><img src="{{ tag.taggee.picture.url }}" class="player_tag_img" /></div><div>{{tag.taggee}}</div></a></div>{% else %}<div><img src="/media/bodyarmor.png" class="player_tag_img" /></div><div>Body Armor</div></a></div>{% endif %}
+                {% for tag in tags %} <div class="player_tag_div">{% if tag.taggee %}<a href="/player/{{tag.taggee.player_uuid}}/"><div><img src="{{ tag.taggee.picture_url }}" class="player_tag_img" /></div><div>{{tag.taggee}}</div></a></div>{% else %}<div><img src="/media/bodyarmor.png" class="player_tag_img" /></div><div>Body Armor</div></a></div>{% endif %}
                 {% empty %}<span class="notags">No tags to show</span>{% endfor %}
             </div>
         </div>

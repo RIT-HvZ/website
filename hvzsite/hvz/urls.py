@@ -14,10 +14,10 @@ urlpatterns = [
     # Primary Game View Routes
     re_path(r'^player/(?P<player_id>[^/]+)/?$', views.player_view),
     re_path(r'^me/?$', views.me),
-    re_path(r'^team/(?P<team_name>[^/]+)/?$', views.team_view),
+    re_path(r'^clan/(?P<clan_name>[^/]+)/?$', views.clan_view),
     re_path(r'^players/?$', views.players),
     re_path(r'^report/?$', views.create_report),
-    re_path(r'^teams/?$', views.teams),
+    re_path(r'^clans/?$', views.clans),
     re_path(r'^tag/?$', views.tag),
     re_path(r'^av/?$', views.av),
     re_path(r'^blasterapproval/?$', views.blasterapproval),
@@ -57,7 +57,7 @@ urlpatterns = [
     re_path(r'^api/discord-id/?$', views.ApiDiscordId.as_view()),
     re_path(r'^api/link-discord-id/?$', views.ApiLinkDiscordId.as_view()),
     re_path(r'^api/player/?$', views.ApiPlayerId.as_view()),
-    re_path(r'^api/teams/?$', views.ApiTeams.as_view()),
+    re_path(r'^api/clans/?$', views.ApiClans.as_view()),
     re_path(r'^api/players/?$', views.ApiPlayers.as_view()),
     re_path(r'^api/tag/?$', views.ApiTag.as_view()),
     re_path(r'^api/missions/?$', views.ApiMissions.as_view()),
@@ -78,5 +78,5 @@ urlpatterns = [
 
     # API Data-Table Routes
     re_path(r'^api/datatables/players/?$', views.players_api),
-    re_path(r'^api/datatables/teams/?$', views.teams_api),
+    re_path(r'^api/datatables/clans/?$', views.clans_api),
 ]

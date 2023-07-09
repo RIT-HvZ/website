@@ -123,7 +123,7 @@ function markprinted() {
         <div class="card {% if player.admin_this_game %}admin{% endif %}{% if player.mod_this_game %}mod{% endif %}">
             <div class="top">
                 <div class="avatar">
-                    <img src="{{player.picture.url}}" alt="avatar">
+                    <img src="{{player.picture_url}}" alt="avatar">
                 </div>
                 <div class="qr">
                     <span id="qr_url_{{player.player_uuid}}" style="display:none">{{url}}/player/{{player.player_uuid}}/</span>
@@ -159,7 +159,7 @@ function markprinted() {
     {% empty %}
     No cards to print!
     {% endfor %}
-    <!--
+    
     <br style="clear:both">
     <div class="card admin">
         <div class="top">
@@ -254,6 +254,6 @@ function markprinted() {
             </div>
         </div>
     </div>
-    <br style="clear:both">-->
+    <br style="clear:both">
 </body>
 </html>

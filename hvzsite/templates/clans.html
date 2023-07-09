@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %} HvZ @ RIT - Team List {% endblock %}
+{% block title %} HvZ @ RIT - Clan List {% endblock %}
 
 {% block extrahead %}
 <script>
     $(document).ready(function () {
-        var datatable = $('#teams').DataTable( {
+        var datatable = $('#clans').DataTable( {
             "serverSide": true,
             "ajax": {
-                "url": '/api/datatables/teams',
+                "url": '/api/datatables/clans',
                 "type": 'GET'
             },
             "order": [[1, 'asc']],
@@ -23,9 +23,9 @@
 {% endblock %}
 
 {% block body %}
-<h1> Teams </h1>
+<h1> Clans </h1>
 
-<table id="teams" class="table table-striped">
+<table id="clans" class="table table-striped">
     <thead>
         <tr>
             <th class="foo">Picture</th>
