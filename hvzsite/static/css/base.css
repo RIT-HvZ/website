@@ -18,7 +18,7 @@ p, form {
 }
 
 .logout-link {
-    color: rgb(80,80,80);
+    color: rgb(160,160,160);
 }
 .container {
     border-radius: 2em;
@@ -458,4 +458,16 @@ a.missionlink {
 #players img {
     max-width: 50px;
     max-height: 50px;
+}
+
+a.statuspage {
+    text-decoration: none;
+    font-weight: bold;
+    color: #777;
+}
+
+a.statuspage:hover {
+    text-decoration: none;
+    font-weight: bold;
+    color: #bbb;
 }
