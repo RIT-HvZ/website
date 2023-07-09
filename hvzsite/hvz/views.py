@@ -556,10 +556,10 @@ def clans_api(request):
         search = r["search[value]"] 
     except AssertionError:
         raise
-    query = Clan.objects.all()
+    query = Clan.objects.all().annotate(clan_member_count=Count('clan_members'))
     if search != "":
         query = query.filter(name__icontains=search)
-    query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"name", "size": "persons_count", }[order_column_name]}""")
+    query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"name", "size": "clan_member_count", }[order_column_name]}""")
     result = []
     for clan in query[start:limit]:
         result.append({

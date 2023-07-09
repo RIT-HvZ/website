@@ -83,7 +83,7 @@ function admintools(command) {
                 <h1> Clan </h1>
                 {% if player.clan %}
                 <a href="/clan/{{player.clan}}/" class="clan_link">
-                    {% if player.clan.picture %}<img src="/{{player.clan.picture}}"/>{% endif %}
+                    {% if player.clan.picture %}<img src="{{player.clan.picture.url}}"/>{% endif %}
                     <h5>{{player.clan}}</h5>
                 </a>
                 {% else %}
