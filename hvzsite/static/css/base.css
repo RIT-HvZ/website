@@ -196,19 +196,19 @@ div.zombiecount {
     vertical-align: middle;
 }
 
-#bodyarmors tbody tr.odd td {
+.adminlist tbody tr.odd td {
     background-color: rgb(200,200,200);
 }
 
-#bodyarmors tbody tr.even td {
+.adminlist tbody tr.even td {
     background-color: rgb(160,160,160);
 }
 
-#bodyarmors tbody tr td.ba-returned-False {
+.adminlist tbody tr td.ba-returned-False {
     background-color: #822;
 }
 
-#bodyarmors tbody tr td.ba-returned-True {
+.adminlist tbody tr td.ba-returned-True {
     background-color: #1f1;
 }
 

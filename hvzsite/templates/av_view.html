@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - AV {% endblock %}
+{% block extrahead %}
+<script>
+$(document).ready(function () {
+    $('#maincontainer').addClass("armorcontainer");
+});
+
+</script>
+{% endblock %}
+{% block body %}
+<div class="row justify-content-md-center armortitle">
+    <div class="col col-lg-8" style="display:inline-block;text-align: center;">
+        <h1>AV Detail</h1>
+    </div>
+</div>
+<div class="row justify-content-md-center armormainrow">
+    <div class="col col-md-2">
+        AV UUID: {{av.av_uuid}}
+    </div>
+    <div class="col col-md-2">
+        Expiration Time: {{av.expiration_time}}
+    </div>
+    <div class="col col-md-4">
+        {% if av.used_by %}
+        Used By: {{av.used_by}} at {{av.time_used}}
+        {% else %}
+        Status: {{av.get_status}}
+        {% endif %}
+    </div> 
+</div>
+{% endblock %}

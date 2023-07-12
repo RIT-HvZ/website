@@ -250,6 +250,14 @@ class AntiVirus(models.Model):
     time_used = models.DateTimeField(null=True, blank=True)
     expiration_time = models.DateTimeField(null=True, blank=True)
 
+    @property
+    def get_status(self):
+        if self.used_by is not None:
+            return "Used"
+        if timezone.localtime() > self.expiration_time:
+            return "Expired"
+        return "Active"
+
 
 class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)

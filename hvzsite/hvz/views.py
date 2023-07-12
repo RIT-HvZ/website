@@ -79,7 +79,6 @@ def discord_link(request):
     return player_view(request, request.user.player_uuid, is_me=True, discord_code=code.code)
 
 
-
 def missions_view(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
@@ -122,12 +121,14 @@ def missions_view(request):
         missions = Mission.objects.filter(game=this_game, story_form_go_live_time__lt=timezone.now())
     return render(request, "missions.html", {'missions':missions.order_by("-go_live_time")})
 
+
 def editmissions(request):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
     this_game = get_active_game()
     missions = Mission.objects.filter(game=this_game)
     return render(request, "editmissions.html", {'missions':missions.order_by("-go_live_time")})
+
 
 def editmission(request, mission_id):
     if not request.user.is_authenticated or not request.user.admin_this_game:
@@ -182,8 +183,6 @@ def editpostgamesurveys(request):
     return render(request, "editpostgamesurveys.html", {'surveys':surveys.order_by("-go_live_time")})
 
 
-
-
 def tag(request):
     if not request.user.is_authenticated or request.user.current_status.is_nonplayer():
         return HttpResponseRedirect("/")
@@ -233,6 +232,7 @@ def tag(request):
     
     return render(request, "tag.html", {'form':form, 'tagcomplete': False, 'qr': qr})
 
+
 def av(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
@@ -255,6 +255,7 @@ def av(request):
             newform = AVForm()
             return render(request, "av.html", {'form':newform, 'avcomplete': True, 'av': form.cleaned_data['av']})
     return render(request, "av.html", {'form':form, 'avcomplete': False})
+
 
 def blasterapproval(request):
     if (not request.user.is_authenticated) or (not request.user.admin_this_game):
@@ -282,6 +283,7 @@ def blasterapproval(request):
             return render(request, "blasterapproval.html", {'form':newform, 'approvalcomplete': True})
     return render(request, "blasterapproval.html", {'form':form, 'approvalcomplete': False})
 
+
 def admin_create_av(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
@@ -299,6 +301,15 @@ def admin_create_av(request):
             newform = AVCreateForm()
             return render(request, "create_av.html", {'form':newform, 'createcomplete': True})
     return render(request, "create_av.html", {'form':form, 'createcomplete': False})
+
+
+def admin_view_avs(request):
+    game = get_active_game()
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    anti_viruses = AntiVirus.objects.filter(game=game)
+    context = {"avs": anti_viruses.order_by("-expiration_time")}
+    return render(request, "view_avs.html", context)
 
 
 def admin_control_panel(request):
@@ -356,6 +367,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+
 def player_view(request, player_id, is_me=False, game=None, discord_code=None):
     player = Person.objects.get(player_uuid=player_id)
     if game is None:
@@ -374,6 +386,7 @@ def player_view(request, player_id, is_me=False, game=None, discord_code=None):
     }
     
     return render(request, "player.html", context)
+
 
 def player_admin_tools(request, player_id, command):
     if not request.user.is_authenticated or not request.user.admin_this_game:
@@ -403,6 +416,7 @@ def player_admin_tools(request, player_id, command):
     playerstatus.save()
 
     return player_view(request, player_id, False)
+
 
 def clan_view(request, clan_name):
     clan = Clan.objects.get(name=clan_name)
@@ -480,6 +494,7 @@ def player_activation(request):
         return HttpResponseRedirect('/')
     context = {}
     return render(request, "player_activation.html", context)
+
 
 @api_view(["GET"])
 def player_activation_api(request, game=None):
@@ -588,8 +603,10 @@ def clans_api(request):
     }
     return JsonResponse(data)
 
+
 def rules(request):
     return render(request, "rules.html", {'rules': Rules.load()})
+
 
 def bodyarmors(request):
     game = get_active_game()
@@ -599,6 +616,7 @@ def bodyarmors(request):
     context = {"bodyarmors": body_armors.order_by("-expiration_time")}
     return render(request, "bodyarmors.html", context)
 
+
 def bodyarmor_view(request, armor_id):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
@@ -607,6 +625,17 @@ def bodyarmor_view(request, armor_id):
         'armor': armor,
     }
     return render(request, "bodyarmor.html", context)
+
+
+def av_view(request, av_id):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    av = AntiVirus.objects.get(av_uuid=av_id)
+    context = {
+        'av': av,
+    }
+    return render(request, "av_view.html", context)
+
 
 def create_report(request):
     report_complete = False
@@ -637,6 +666,7 @@ def create_report(request):
     else:
         form = ReportForm(authenticated=request.user.is_authenticated)
     return render(request=request, template_name="create_report.html", context={"form":form, "reportcomplete":report_complete, "report_id": report_id})
+
 
 def reports(request):
     game = get_active_game()
@@ -710,6 +740,7 @@ def rules_update(request):
     }
     return render(request, "rules_update.html", context)
 
+
 def print_one(request, player_uuid):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
@@ -720,6 +751,7 @@ def print_one(request, player_uuid):
         "url": f"{request.scheme}://{get_current_site(request)}"
     }
     return render(request, "print_cards.html", context)
+
 
 def print_ids(request, preview=False):
     if not request.user.is_authenticated or not request.user.admin_this_game:
@@ -733,8 +765,10 @@ def print_ids(request, preview=False):
     }
     return render(request, "print_cards.html", context)
 
+
 def print_preview(request):
     return print_ids(request, True)
+
 
 def mark_printed(request):
     if not request.user.is_authenticated or not request.user.admin_this_game:

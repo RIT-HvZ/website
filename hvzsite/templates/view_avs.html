@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - AV List {% endblock %}
+
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable = $('#avs').DataTable({'ordering':false});
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> AVs </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="avs" class="table table-striped display adminlist">
+            <thead>
+                <tr>
+                    <th class="foo">AV Code</th>
+                    <th class="foo">Expiration Time</th>
+                    <th class="foo">Status</th>
+                    <th class="foo">Used By</th>
+                    <th class="foo">Used At</th>
+            </thead>
+            <tbody>
+                {% for av in avs %}
+                <tr onclick="window.location.href='/admin/av/{{av.av_uuid}}/'">
+                    <td>{{av.av_code}}</td>
+                    <td>{{av.expiration_time}}</td>
+                    <td>{{av.get_status}}</td>
+                    <td>{% if av.used_by %}{{av.used_by}}{% endif %}</td>
+                    <td>{% if av.time_used %}{{ av.time_used }}{% endif %}</td>
+                </tr>
+                {% empty %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
