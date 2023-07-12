@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Team, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Clan, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
 from .forms import TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -185,7 +185,7 @@ def editpostgamesurveys(request):
 
 
 def tag(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated or request.user.current_status.is_nonplayer():
         return HttpResponseRedirect("/")
     player = request.user
     if player.current_status.is_zombie() or player.current_status.is_staff():
@@ -404,13 +404,13 @@ def player_admin_tools(request, player_id, command):
 
     return player_view(request, player_id, False)
 
-def team_view(request, team_name):
-    team = Team.objects.get(name=team_name)
+def clan_view(request, clan_name):
+    clan = Clan.objects.get(name=clan_name)
     context = {
-        'team': team,
-        'roster': Person.objects.filter(team=team)
+        'clan': clan,
+        'roster': Person.objects.filter(clan=clan)
     }
-    return render(request, "team.html", context)
+    return render(request, "clan.html", context)
 
 
 def players(request):
@@ -427,43 +427,49 @@ def players_api(request, game=None):
         order_column = int(r.get("order[0][column]"))
         assert order_column in [1,2,3,4]
         order_column_name = r.get(f"columns[{order_column}][name]")
-        assert order_column_name in ("name","status","tags","team")
+        assert order_column_name in ("name","status","tags","clan")
         order_direction = r.get("order[0][dir]")
         assert order_direction in ("asc","desc")
         limit = int(request.query_params["length"])
         start = int(request.query_params["start"])
         search = r["search[value]"] 
+        print(start)
+        print(limit)
     except AssertionError:
         raise
     query = Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','z','o','x','a','m'])
     if search != "":
-        query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(team__name__icontains=search))
+        query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
     if order_column_name != "tags":
-        query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "status": "playerstatus__status", "team": "team__name"}[order_column_name]}""")
+        query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "status": "playerstatus__status", "clan": "clan__name"}[order_column_name]}""")
     else:
         query = query.annotate(n_tags=Count('taggers', filter=Q(taggers__game=game))).order_by(f"""{'-' if order_direction == 'asc' else ''}n_tags""")
+    
     result = []
-    for person in query[start:limit]:
-        try:
-            person_status = PlayerStatus.objects.get(player=person, game=game)
-        except:
-            continue
-        if person_status.status == "n":
-            continue
-        result.append({
-            "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
-            "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture.url}' class='dt_profile' /></a>""",
-            "status": {"h": "Human", "a": "Admin", "z": "Zombie", "m": "Mod", "v": "Human", "o": "Zombie", "n": "NonPlayer", "x": "Zombie"}[person_status.status],
-            "team": None if person.team is None else (f"""<a href="/team/{person.team.name}/" class="dt_team_link">person.team.name</a>""" if (person.team is None or person.team.picture is None) else f"""<a href="/team/{person.team.name}/" class="dt_team_link"><img src='{person.team.picture.url}' class='dt_teampic' alt='{person.team}' /><span class="dt_teamname">{person.team}</span></a>"""),
-            "team_pic": None if (person.team is None or person.team.picture is None) else person.team.picture.url,
-            "tags": Tag.objects.filter(tagger=person,game=game).count(),
-            "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
-            "DT_RowData": {"person_url": f"/player/{person.player_uuid}/", "team_url": f"/team/{person.team.name}/" if person.team is not None else ""}
-        })
+    filtered_length = len(query)
+    if start < filtered_length:
+        for person in query[start:]:
+            if limit == 0:
+                break
+            try:
+                person_status = PlayerStatus.objects.get(player=person, game=game)
+            except:
+                continue
+            result.append({
+                "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
+                "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture_url}' class='dt_profile' /></a>""",
+                "status": {"h": "Human", "a": "Admin", "z": "Zombie", "m": "Mod", "v": "Human", "o": "Zombie", "n": "NonPlayer", "x": "Zombie"}[person_status.status],
+                "clan": None if person.clan is None else (f"""<a href="/clan/{person.clan.name}/" class="dt_clan_link">person.clan.name</a>""" if (person.clan is None or person.clan.picture is None) else f"""<a href="/clan/{person.clan.name}/" class="dt_clan_link"><img src='{person.clan.picture.url}' class='dt_clanpic' alt='{person.clan}' /><span class="dt_clanname">{person.clan}</span></a>"""),
+                "clan_pic": None if (person.clan is None or person.clan.picture is None) else person.clan.picture.url,
+                "tags": Tag.objects.filter(tagger=person,game=game).count(),
+                "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
+                "DT_RowData": {"person_url": f"/player/{person.player_uuid}/", "clan_url": f"/clan/{person.clan.name}/" if person.clan is not None else ""}
+            })
+            limit -= 1
     data = {
         "draw": int(r['draw']),
-        "recordsTotal": Person.objects.all().count(),
-        "recordsFiltered": len(result),
+        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','z','o','x','a','m']).count(),
+        "recordsFiltered": filtered_length,
         "data": result
     }
     return JsonResponse(data)
@@ -498,7 +504,7 @@ def player_activation_api(request, game=None):
         raise
     query = Person.full_name_objects.all()
     if search != "":
-        query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(team__name__icontains=search))
+        query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
     query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name"}[order_column_name]}""")
     result = []
     for person in query[start:limit]:
@@ -510,7 +516,7 @@ def player_activation_api(request, game=None):
             continue
         result.append({
             "name": f"""{person.first_name} {person.last_name}""",
-            "pic": f"""<img src='{person.picture.url}' class='dt_profile' />""",
+            "pic": f"""<img src='{person.picture_url}' class='dt_profile' />""",
             "email": f"""{person.email}""",
             "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
             "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{person.first_name} {person.last_name}" data-bs-activationid="{person.player_uuid}">Activate</button>"""
@@ -543,13 +549,13 @@ def player_activation_rest(request):
         return JsonResponse({"status":"error", "error": str(e)})
 
 
-def teams(request):
+def clans(request):
     context = {}
-    return render(request, "teams.html", context)
+    return render(request, "clans.html", context)
 
 
 @api_view(["GET"])
-def teams_api(request):
+def clans_api(request):
     r = request.query_params
     try:
         order_column = int(r.get("order[0][column]"))
@@ -563,20 +569,20 @@ def teams_api(request):
         search = r["search[value]"] 
     except AssertionError:
         raise
-    query = Team.objects.all()
+    query = Clan.objects.all().annotate(clan_member_count=Count('clan_members'))
     if search != "":
         query = query.filter(name__icontains=search)
-    query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"name", "size": "team_members", }[order_column_name]}""")
+    query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"name", "size": "clan_member_count", }[order_column_name]}""")
     result = []
-    for team in query[start:limit]:
+    for clan in query[start:limit]:
         result.append({
-            "name": f"""<a class="dt_name_link" href="/team/{team.name}/">{team.name}</a>""",
-            "pic": f"""<a class="dt_profile_link" href="/team/{team.name}/"><img src='{team.picture.url}' class='dt_profile' /></a>""",
-            "size": team.team_members.count()
+            "name": f"""<a class="dt_name_link" href="/clan/{clan.name}/">{clan.name}</a>""",
+            "pic": f"""<a class="dt_profile_link" href="/clan/{clan.name}/"><img src='{clan.picture.url}' class='dt_profile' /></a>""",
+            "size": clan.clan_members.count()
         })
     data = {
         "draw": int(r['draw']),
-        "recordsTotal": Team.objects.all().count(),
+        "recordsTotal": Clan.objects.all().count(),
         "recordsFiltered": len(result),
         "data": result
     }
@@ -841,7 +847,7 @@ class ApiPlayerId(APIView):
 
         data = {
             'uuid': player.player_uuid,
-            'team': player.team,
+            'clan': player.clan,
             'email': player.email,
             'name': str(player),
             'status': player.current_status.status,
@@ -849,12 +855,12 @@ class ApiPlayerId(APIView):
         }
         return JsonResponse(data)
 
-class ApiTeams(APIView):
+class ApiClans(APIView):
     def get(self, request):
-        t = list(Team.objects.values_list('name', flat=True))
+        t = list(Clan.objects.values_list('name', flat=True))
 
         data = {
-            'teams': t
+            'clans': t
         }
         return JsonResponse(data)
 

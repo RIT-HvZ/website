@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %} HvZ @ RIT - {{ team }} {% endblock %}
+{% block title %} HvZ @ RIT - {{ clan }} {% endblock %}
 {% block extrahead %}
 <script>
 $(document).ready(function () {
@@ -13,18 +13,18 @@ $(document).ready(function () {
     <div class="col col-md-4">
         <div class="row justify-content-md-center">
             <div class="col">
-                <h1 class="team_name"> {{ team }} </h1>
+                <h1 class="clan_name"> {{ clan }} </h1>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                <div class="team_picture"><img src="{{ team.picture.url }}"/></div>
+                <div class="clan_picture"><img src="{{ clan.picture.url }}"/></div>
             </div>
         </div>
     </div>
     <div class="col col-lg-8">
         <div class="row">
-            <div class="col" id="team_roster">
+            <div class="col" id="clan_roster">
                 <h1 class="roster_title"> Roster </h1>
             </div>
         </div>
@@ -42,7 +42,7 @@ $(document).ready(function () {
                     <tbody>
                         {% for player in roster %}
                         <tr class="{% if player.current_status.is_zombie %}dt_zombie{% elif player.current_status.is_human %}dt_human{% elif player.current_status.is_mod %}dt_mod{% elif player.current_status.is_admin %}dt_admin{% elif player.current_status.is_nonplayer %}dt_nonplayer{% endif %}">
-                            <td class="roster_pic"><a class="dt_profile" href="/player/{{player.player_uuid}}/"><img src="{{ player.picture.url }}"/></a></td>
+                            <td class="roster_pic"><a class="dt_profile" href="/player/{{player.player_uuid}}/"><img src="{{ player.picture_url }}"/></a></td>
                             <td class="roster_name"><a class="dt_name_link" href="/player/{{player.player_uuid}}/">{{player}}</a></td>
                             <td class="roster_status">{{ player.current_status.get_status_display }}</td>
                             <td class="roster_tags">{{player.current_status.num_tags}}</td>

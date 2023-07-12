@@ -43,7 +43,8 @@
     {% for t in recent_tags %}
     
     
-    <a href="player/{{t.taggee.player_uuid}}">{{t.taggee}}</a> was tagged by <a href="player/{{t.tagger.player_uuid}}">{{t.tagger}}</a> at {{ t.timestamp|strftime }} <br />
+    {% if t.taggee %}<a class="statuspage" href="/player/{{t.taggee.player_uuid}}">{{t.taggee}}</a>{% else %}Body Armor{% endif %} was tagged by <a class="statuspage" href="player/{{t.tagger.player_uuid}}">{{t.tagger}}</a> at {{ t.timestamp|strftime }} <br />
+    
     {% endfor %}
   </div>
 
@@ -51,7 +52,7 @@
     <h3>Most Tags:</h3>
     {% for p in most_tags %}
 
-    <a href="player/{{p.player.player_uuid}}">{{p.player}} ({{p.get_status_display}})</a>: {{p.num_tags}} <br />
+    <a class="statuspage" href="player/{{p.player.player_uuid}}">{{p.player}}</a>: {{p.num_tags}} <br />
   
     {% endfor %}
   </div>
