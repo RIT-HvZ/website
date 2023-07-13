@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.conf import settings
 from django.core import exceptions
 from rest_framework.response import Response
@@ -416,6 +416,77 @@ def player_admin_tools(request, player_id, command):
     playerstatus.save()
 
     return player_view(request, player_id, False)
+
+
+@api_view(["POST"])
+def bodyarmor_admin_tools(request, armor_id, command):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return JsonResponse({"status": "not authorized"})
+    try:
+        armor = BodyArmor.objects.get(armor_uuid = armor_id)
+    except:
+        return JsonResponse({"status", "body armor id not found"})
+    if command == "mark_returned":
+        armor.returned = True
+        armor.save()
+        return JsonResponse({"status": "success"})
+    elif command == "loan":
+        target_player_uuid = request.data.get("target_uuid")
+        try:
+            player = Person.objects.get(player_uuid=target_player_uuid)
+        except:
+            return JsonResponse({"status": "player not found"})
+        armor.loaned_to = player
+        armor.loaned_at = timezone.localtime()
+        armor.save()
+        return JsonResponse({'status': 'success', "playername": f"{player.first_name} {player.last_name}", "time": str(armor.loaned_at)})
+
+        
+
+
+@api_view(["GET"])
+def bodyarmor_get_loan_targets(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return JsonResponse({"status": "not authorized"})
+
+    game = get_active_game()
+    r = request.query_params
+    try:
+        order_column = int(r.get("order[0][column]"))
+        assert order_column == 1
+        order_column_name = r.get(f"columns[{order_column}][name]")
+        assert order_column_name in ("name",)
+        order_direction = r.get("order[0][dir]")
+        assert order_direction in ("asc","desc")
+        limit = int(request.query_params["length"])
+        start = int(request.query_params["start"])
+        search = r["search[value]"] 
+    except AssertionError:
+        raise
+    players = Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v'])
+    if search != "":
+        players = players.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
+    result = []
+    filtered_length = len(players)
+    if start < filtered_length:
+        for person in players[start:]:
+            if limit == 0:
+                break
+
+            result.append({
+                "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
+                "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture_url}' class='dt_profile' /></a>""",
+                "loan": f"""<input type="button" value="Loan" class="dt_loan_button" id="{person.player_uuid}" onclick="loan_to(this)" />""",
+                "DT_RowData": {"person_url": f"/player/{person.player_uuid}/", "clan_url": f"/clan/{person.clan.name}/" if person.clan is not None else ""}
+            })
+            limit -= 1
+    data = {
+        "draw": int(r['draw']),
+        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','z','o','x','a','m']).count(),
+        "recordsFiltered": filtered_length,
+        "data": result
+    }
+    return JsonResponse(data)
 
 
 def clan_view(request, clan_name):

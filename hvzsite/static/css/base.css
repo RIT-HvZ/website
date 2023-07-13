@@ -471,3 +471,11 @@ a.statuspage:hover {
     font-weight: bold;
     color: #bbb;
 }
+
+.blacktext {
+    color: #111;
+}
+
+#playerlist {
+    width: 100%;
+}

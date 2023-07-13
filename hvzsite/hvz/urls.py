@@ -44,6 +44,7 @@ urlpatterns = [
     re_path(r'^admin/player_admin/tools/(?P<player_id>[^/]+)/(?P<command>[^/]+)/?$', views.player_admin_tools),
     re_path(r'^admin/bodyarmors/?$', views.bodyarmors),
     re_path(r'^admin/bodyarmor/(?P<armor_id>[^/]+)/?$', views.bodyarmor_view),
+    re_path(r'^admin/bodyarmor/tools/(?P<armor_id>[^/]+)/(?P<command>[^/]+)/?$', views.bodyarmor_admin_tools),
     re_path(r'^admin/editmissions/?$', views.editmissions),
     re_path(r'^admin/editmission/(?P<mission_id>[^/]+)/?$', views.editmission),
     re_path(r'^admin/editpostgamesurvey/(?P<postgamesurvey_id>[^/]+)/?$', views.editpostgamesurvey),
@@ -80,6 +81,7 @@ urlpatterns = [
     ), name='swagger-ui'),
 
     # API Data-Table Routes
+    re_path(r'^api/datatables/bodyarmor_get_loan_targets/?$', views.bodyarmor_get_loan_targets),
     re_path(r'^api/datatables/players/?$', views.players_api),
     re_path(r'^api/datatables/clans/?$', views.clans_api),
 ]

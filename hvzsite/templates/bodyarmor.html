@@ -5,12 +5,101 @@
 <script>
 $(document).ready(function () {
     $('#maincontainer').addClass("armorcontainer");
+
+    var datatable = $('#playerlist').DataTable( {
+            "serverSide": true,
+            "ajax": {
+                "url": '/api/datatables/bodyarmor_get_loan_targets/',
+                "type": 'GET'
+            },
+            "scrollX": true,
+            "order": [[1, 'asc']],
+            "columns": [
+                {"className": "dt_profilepic", "name": "picture", "data": "pic", "orderable": false},
+                {"className": "dt_name", "name": "name"  , "data": "name"},
+                {"className": "dt_loan", "name": "loan"  , "data": "loan", "orderable": false}
+            ],
+        } );
+
+    document.getElementById('markreturnedbutton').addEventListener("click", function(event){
+        event.preventDefault()
+        $("#markreturnedbutton").disabled = true;
+        $("#markreturnedbutton").prop('value', 'Marking...');
+        $.ajax('/admin/bodyarmor/tools/{{armor.armor_uuid}}/mark_returned',{
+            method: "POST",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            }
+        }).done( function (data) {
+            console.log(data);
+            if (data.status == "success") {
+                $("#markreturnedbutton").remove();
+                $("#returned_div").html("Returned:<br/>True");
+            }
+            else {
+                $("#markreturnedbutton").disabled = false;
+                $("#markreturnedbutton").prop('value', 'Mark Returned');
+                $("#returnerror").html("Error marking Body Armor returned!");
+            }
+        })
+    });
+
+    $(document).on('shown.bs.modal', function (e) {
+        $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
+    });
 });
 
-function admintools(command) {
-    window.location.href = "/admin/bodyarmor/tools/{{armor.armor_uuid}}/" + command;
+function loan_to(button) {
+    $(button).prop('value','Loaning...');
+    var uuid = button.getAttribute('id');
+    console.log(uuid);
+    $.ajax("/admin/bodyarmor/tools/{{armor.armor_uuid}}/loan", {
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            target_uuid: uuid
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success")
+        {
+            $('#loanmodal').modal('toggle');
+            $('#loaned_to_div').html("Loaned to:<br/>"+data.playername+" at "+data.time);
+        }
+    });
 }
 </script>
+{% endblock %}
+{% block prebody %}
+<div class="modal modal-lg fade" id="loanmodal" tabindex="-1" role="dialog" aria-labelledby="loanmodal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Loan Body Armor {{armor.armor_code}}</h3>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <table id="playerlist" width="100%" class="table table-striped display">
+                <thead>
+                    <tr>
+                        <th>Picture</th>
+                        <th>Name</th>
+                        <th>Loan to</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+          <span id="modal_status"></span>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 {% block body %}
 <div class="row justify-content-md-center armortitle">
@@ -20,24 +109,32 @@ function admintools(command) {
 </div>
 <div class="row justify-content-md-center armormainrow">
     <div class="col col-md-2">
-        Armor UUID: {{armor.armor_uuid}}
+        Armor Code:<br/>{{armor.armor_code}}
     </div>
     <div class="col col-md-2">
-        Expiration Time: {{armor.expiration_time}}
+        Armor UUID:<br/>{{armor.armor_uuid}}
     </div>
-    <div class="col col-md-4">
+    <div class="col col-md-2">
+        Expiration Time:<br/>{{armor.expiration_time}}
+    </div>
+    <div class="col col-md-2">
+        Tagged By:<br/>{{armor.tagged_by}}
+    </div>
+    <div class="col col-md-2" id="loaned_to_div">
         {% if loaned_at %}
-        Loaned To: {{armor.loaned_to}} at {{armor.loaned_at}}
+        Loaned To:<br/>{{armor.loaned_to}} at {{armor.loaned_at}}
         {% else %}
-        Loaned: False
-        <button>Loan</button>
+            {% if not armor.returned %}
+                <input type='button' value='Loan' id='loanbutton' data-bs-toggle="modal" data-bs-target="#loanmodal"/>
+            {% endif %}
         {% endif %}
     </div> 
-    <div class="col col-md-2">
-        Returned: {{armor.returned}}
+    <div class="col col-md-2" id="returned_div">
+        Returned:<br/>{{armor.returned}}
         {% if not armor.returned %}
-        <button onclick="admintools('mark_returned')">Mark Returned</button>
+        <input type='button' value='Mark Returned' id='markreturnedbutton' />
         {% endif %}
+        <div id="returnerror"></div>
     </div>
 </div>
 {% endblock %}
