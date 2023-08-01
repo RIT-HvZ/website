@@ -1,6 +1,55 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load hvztags %}
+{% block extrahead %}
+<script>
+
+{% if game.is_after_end %}
+console.log("after_end");
+document.getElementById("countdowntext").innerHTML = "Game over!";
+{% else %}
+  // Set the date we're counting down to
+  {% if game.is_after_start %}
+  console.log("after_start");
+  console.log("{{game.end_date_javascript}}")
+  var countDownDate = new Date("{{game.end_date_javascript}}").getTime();
+  var countDownPrefix = "Game ends in ";
+  {% else %}
+  console.log("before_game");
+  console.log("{{game.start_date_javascript}}")
+  var countDownDate = new Date("{{game.start_date_javascript}}").getTime();
+  var countDownPrefix = "Game starts in ";
+  {% endif %}
+  console.log(countDownDate);
+  // Update the count down every 1 second
+  var x = setInterval(function() {
+
+    // Get today's date and time
+    var now = new Date().getTime();
+
+    // Find the distance between now and the count down date
+    var distance = countDownDate - now;
+
+    // Time calculations for days, hours, minutes and seconds
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Display the result in the element with id="demo"
+    document.getElementById("countdownprefix").innerHTML = countDownPrefix;
+    document.getElementById("countdowntext").innerHTML = days + "d " + hours + "h "
+    + minutes + "m " + seconds + "s ";
+
+    // If the count down is finished, write some text
+    if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("countdowntext").innerHTML = "0d 0h 0m 0s";
+    }
+  }, 1000);
+{% endif %}
+</script>
+{% endblock %}
 {% block body %}
 <div class="row">
   <div class="col">
@@ -8,28 +57,34 @@
   </div>
 </div>
 <div class="row center">
+  <div class="col countdown">
+    <span class="countdownlabel" id="countdownprefix"></span>
+    <span class="countdowntext" id="countdowntext"></span>
+  </div>
+</div>
+<div class="row center">
   <div class="col humancount">
     <div class="row">
       <div class="col">
-        <span class=humancountlabel>Humans</span>
+        <span class="humancountlabel">Humans</span>
       </div>
     </div>
     <div class="row">
       <div class="col">
-        <span class=humancountnumber>{{humancount}}</span>
+        <span class="humancountnumber">{{humancount}}</span>
       </div>
     </div>
   </div>
   <div class="col zombiecount">
     <div class="row">
       <div class="col">
-        <span class=humancountlabel>Zombies</span>
+        <span class="humancountlabel">Zombies</span>
       </div>
     </div>
 
     <div class="row">
       <div class="col">
-        <span class=humancountnumber>{{zombiecount}}</span>
+        <span class="humancountnumber">{{zombiecount}}</span>
       </div>
     </div>
     

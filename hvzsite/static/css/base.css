@@ -479,3 +479,12 @@ a.statuspage:hover {
 #playerlist {
     width: 100%;
 }
+
+div.countdown {
+    width: 80%;
+    display: block;
+    background-color: rgb(100,100,100);
+    color: black;
+    font-size: xx-large;
+    border-radius: 10px;
+}

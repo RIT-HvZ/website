@@ -62,12 +62,28 @@ class PersonFullNameManager(models.Manager):
 
 class Game(models.Model):
     game_name = models.CharField(max_length=50)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
 
     def __str__(self) -> str:
         return f"{self.game_name}: {datetime.datetime.strftime(self.start_date, '%Y/%m/%d')}-{datetime.datetime.strftime(self.end_date, '%Y/%m/%d')}"
 
+    @property
+    def is_after_start(self):
+        return timezone.now() > self.start_date
+    
+    @property
+    def is_after_end(self):
+        return timezone.now() > self.end_date
+    
+    @property
+    def start_date_javascript(self):
+        return self.start_date.strftime("%b %d, %Y %H:%M:%S %Z")
+    
+    @property
+    def end_date_javascript(self):
+        return self.end_date.strftime("%b %d, %Y %H:%M:%S %Z")
+    
 
 class SingletonModel(models.Model):
     class Meta:
