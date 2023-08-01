@@ -95,7 +95,7 @@ def missions_view(request):
         status = request.user.current_status
         # See if we have an existing Response for this survey
         existing_responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
-        if (survey.mission.team == 'h' and status.is_human()) or (survey.mission.team == "z" and status.is_zombie()) or status.is_admin():
+        if (survey.mission.team == 'h' and status.is_human()) or (survey.mission.team == "z" and status.is_zombie()) or status.is_admin() or survey.mission.team == "a":
             # All authorization steps complete
             print("Authorized")
             if existing_responses.count() > 0:
@@ -114,9 +114,9 @@ def missions_view(request):
         else:
             return HttpResponseRedirect("/")
     if request.user.current_status.is_zombie():
-        missions = Mission.objects.filter(game=this_game, team='z', story_form_go_live_time__lt=timezone.now())
+        missions = Mission.objects.filter(game=this_game, team__in=['a','z'], story_form_go_live_time__lt=timezone.now())
     elif request.user.current_status.is_human():
-        missions = Mission.objects.filter(game=this_game, team='h', story_form_go_live_time__lt=timezone.now())
+        missions = Mission.objects.filter(game=this_game, team__in=['a','h'], story_form_go_live_time__lt=timezone.now())
     elif request.user.current_status.is_staff():
         missions = Mission.objects.filter(game=this_game, story_form_go_live_time__lt=timezone.now())
     return render(request, "missions.html", {'missions':missions.order_by("-go_live_time")})
@@ -518,8 +518,8 @@ def players_api(request, game=None):
         limit = int(request.query_params["length"])
         start = int(request.query_params["start"])
         search = r["search[value]"] 
-        print(start)
-        print(limit)
+        #print(start)
+        #print(limit)
     except AssertionError:
         raise
     query = Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','z','o','x','a','m'])
@@ -570,7 +570,7 @@ def player_activation(request):
 @api_view(["GET"])
 def player_activation_api(request, game=None):
     if not request.user.is_authenticated or not request.user.admin_this_game:
-        print("Not admin")
+        #print("Not admin")
         return JsonResponse({})
 
     if game is None:
@@ -620,9 +620,9 @@ def player_activation_api(request, game=None):
 def player_activation_rest(request):
     game = get_active_game()
     if not request.user.is_authenticated or not request.user.admin_this_game:
-        print("Not admin")
+        #print("Not admin")
         return JsonResponse({"status":"error","error":"Not Authorized"})
-    print(request.POST["activated_player"])
+    #print(request.POST["activated_player"])
     import time
     time.sleep(1)
     try:
@@ -921,7 +921,7 @@ class ApiMissions(APIView):
         if team not in valid_teams:
             return HttpResponse(status=400, content='Invalid team, must be one of: '+str(valid_teams))
 
-        missions = Mission.objects.filter(team=team[0].lower(), game=get_active_game())
+        missions = Mission.objects.filter(team__in=[team[0].lower(),'a'], game=get_active_game())
 
         data = {
             'missions': [

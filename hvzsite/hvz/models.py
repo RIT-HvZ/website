@@ -109,11 +109,11 @@ class Mission(models.Model):
     story_form_go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Story form of the mission")
     mission_text = tinymce_models.HTMLField(verbose_name="Non-Story Form")
     go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Non-Story form of the mission")
-    team = models.CharField(max_length=1,choices=[('h','Human'),('z','Zombie'),('s',"Staff")])
+    team = models.CharField(max_length=1,choices=[('h','Human'),('z','Zombie'),('s',"Staff"),('a',"All")])
     game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
 
     def __str__(self) -> str:
-        return f"{self.mission_name} - { {'h':'Human','z':'Zombie','s':'Staff'}[self.team]} - {str(self.game)}"
+        return f"{self.mission_name} - { {'h':'Human','z':'Zombie','s':'Staff','a':'All'}[self.team]} - {str(self.game)}"
 
     @property
     def story_viewable(self):
