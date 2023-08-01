@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ValidationError
 from django.db.models import Count, Q
-from .models import Person, Blaster, BodyArmor, AntiVirus, Rules, PlayerStatus, get_active_game, Tag, Mission, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate
+from .models import Person, Blaster, BodyArmor, AntiVirus, Rules, PlayerStatus, get_active_game, Tag, Mission, CurrentGame, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -158,6 +158,12 @@ class MissionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['go_live_time'].label = "When can players read the Non-Story form of the mission?"
         self.fields['story_form_go_live_time'].label =  "When can players read the Story form of the mission?"
+        self.fields['game'] = forms.CharField(widget = forms.HiddenInput(), required = False)
+
+    def clean(self):
+        cd = self.cleaned_data
+        cd['game'] = get_active_game()
+        return cd
 
 class PostGameSurveyForm(forms.ModelForm):
     class Meta:

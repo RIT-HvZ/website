@@ -143,6 +143,7 @@ def editmission(request, mission_id):
         if mission_id == "new":
             form = MissionForm(request.POST)
             if form.is_valid():
+                print(form.cleaned_data)
                 mission = form.save()
         else:
             form = MissionForm(request.POST, instance=Mission.objects.get(id=mission_id))
