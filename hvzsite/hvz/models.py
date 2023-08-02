@@ -273,6 +273,17 @@ class AntiVirus(models.Model):
         if timezone.localtime() > self.expiration_time:
             return "Expired"
         return "Active"
+    
+    @property
+    def datatype(self):
+        return "AntiVirus"
+    
+    @property
+    def display_timestamp(self):
+        day = self.time_used.astimezone(timezone.get_current_timezone()).strftime("%A")
+        hour = str(int(self.time_used.astimezone(timezone.get_current_timezone()).strftime("%I")))
+        remainder = self.time_used.astimezone(timezone.get_current_timezone()).strftime("%M %p").lower()
+        return f"{day} at {hour}:{remainder}"
 
 
 class BadgeType(models.Model):
@@ -401,6 +412,18 @@ class Tag(models.Model):
             return f"{self.tagger} tagged {self.armor_taggee} at {self.timestamp}"
         else:
             return f"{self.tagger} tagged nothing at {self.timestamp}"
+        
+    @property
+    def datatype(self):
+        return "Tag"
+    
+    @property
+    def display_timestamp(self):
+        day = self.timestamp.astimezone(timezone.get_current_timezone()).strftime("%A")
+        hour = str(int(self.timestamp.astimezone(timezone.get_current_timezone()).strftime("%I")))
+        remainder = self.timestamp.astimezone(timezone.get_current_timezone()).strftime("%M %p").lower()
+        return f"{day} at {hour}:{remainder}"
+
 
 
 class Report(models.Model):

@@ -94,12 +94,13 @@ document.getElementById("countdowntext").innerHTML = "Game over!";
 
 <div class="row center">
   <div class="col recent-tags">
-    <h3>Recent Infections:</h3>
-    {% for t in recent_tags %}
-    
-    
-    {% if t.taggee %}<a class="statuspage" href="/player/{{t.taggee.player_uuid}}">{{t.taggee}}</a>{% else %}Body Armor{% endif %} was tagged by <a class="statuspage" href="player/{{t.tagger.player_uuid}}">{{t.tagger}}</a> at {{ t.timestamp|strftime }} <br />
-    
+    <h3>Recent Events:</h3>
+    {% for t in recent_events %}
+      {% if t.datatype == "Tag" %}
+        {% if t.taggee %}<a class="statuspage" href="/player/{{t.taggee.player_uuid}}">{{t.taggee}}</a>{% else %}Body Armor{% endif %} was tagged by <a class="statuspage" href="player/{{t.tagger.player_uuid}}">{{t.tagger}}</a> {{ t.display_timestamp }} <br />    
+      {% else %}
+        <a class="statuspage" href="/player/{{t.used_by.player_uuid}}">{{ t.used_by }}</a> used Antivirus {{t.display_timestamp}} <br />
+      {% endif %}
     {% endfor %}
   </div>
 

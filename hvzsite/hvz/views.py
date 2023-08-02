@@ -34,12 +34,22 @@ def index(request):
     game = get_active_game()
     humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v')).count()
     zombiecount = PlayerStatus.objects.filter(game=game).filter(Q(status='z') | Q(status='x') | Q(status='o')).count()
-    most_tags = sorted( [ p for p in PlayerStatus.objects.filter(game=get_active_game()) ],
-                        key = lambda p: p.num_tags, reverse=True)
-
+    most_tags = PlayerStatus.objects.annotate(tag_count=Count("player__taggers")).filter(game=game,tag_count__gt=0).order_by("-tag_count")
     recent_tags = [ t for t in Tag.objects.filter(game=get_active_game()).order_by('-timestamp') ]
+    recent_avs = [ a for a in AntiVirus.objects.filter(game=get_active_game(), used_by__isnull=False).order_by('-time_used') ]
+    merged_recents = []
+    while len(merged_recents) < 10:
+        if len(recent_tags) == 0 and len(recent_avs) == 0:
+            break
+        if len(recent_avs) <= 0 or recent_tags[0].timestamp < recent_avs[0].time_used:
+            merged_recents.append(recent_tags.pop(0))
+        elif len(recent_tags) <= 0 or recent_tags[0].timestamp > recent_avs[0].time_used:
+            merged_recents.append(recent_avs.pop(0))
+        else:
+            break
+
     
-    return render(request, "index.html", {'game': game, 'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_tags': recent_tags[:10]})
+    return render(request, "index.html", {'game': game, 'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_events': merged_recents})
 
 
 def me(request):
