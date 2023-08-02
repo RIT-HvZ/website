@@ -110,6 +110,16 @@ class AVCreateForm(forms.ModelForm):
     class Meta:
         model = AntiVirus
         fields='__all__'
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['game'] = forms.CharField(widget = forms.HiddenInput(), required = False)
+
+    def clean(self):
+        cd = self.cleaned_data
+        cd['game'] = get_active_game()
+        return cd
+    
 
 class BlasterApprovalForm(forms.ModelForm):
     class Meta:
@@ -173,6 +183,7 @@ class PostGameSurveyForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['game'] = forms.CharField(widget = forms.HiddenInput(), required = False)
         if len(args) > 0:
             for key in args[0].keys():
                 if key.startswith("option_text_") and not key.startswith("option_text_id") or \
@@ -215,6 +226,8 @@ class PostGameSurveyForm(forms.ModelForm):
             else:
                 option['id'] = None
             options.append(option)
+            
+        self.cleaned_data['game'] = get_active_game()
         self.cleaned_data["options"] = options
 
                          
