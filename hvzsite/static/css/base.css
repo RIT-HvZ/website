@@ -488,3 +488,9 @@ div.countdown {
     font-size: xx-large;
     border-radius: 10px;
 }
+
+h2.cameralabel {
+    color: black;
+    text-decoration: none;
+    text-shadow: none;
+}

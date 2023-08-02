@@ -23,6 +23,12 @@ from rest_framework_api_key.models import APIKey
 from rest_framework_api_key.permissions import HasAPIKey
 import json 
 import discord
+import base64
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import sys
+
 
 report_webhook = None
 if settings.DISCORD_REPORT_WEBHOOK_URL:
@@ -639,8 +645,21 @@ def player_activation_rest(request):
     time.sleep(1)
     try:
         requested_player = Person.objects.get(player_uuid=request.POST["activated_player"])
+        image_base64 = request.POST['player_photo'].replace('data:image/jpeg;base64,', '').replace(" ","+")
+        print(image_base64)
+        im_bytes = base64.b64decode(image_base64)   # im_bytes is a binary image
+        im_file = BytesIO(im_bytes)  # convert image to file-like object
+        img = Image.open(im_file)   # img is now PIL Image object
+
+        output = BytesIO()
+        im = img.convert('RGB')
+        im.thumbnail( (400, 400) , Image.ANTIALIAS )
+        im.save(output, format="JPEG", quality=95)
+        output.seek(0)
+        requested_player.picture = InMemoryUploadedFile(output,'ImageField', "%s.jpg" % requested_player.player_uuid, 'image/jpeg', sys.getsizeof(output), None)
         person_status = PlayerStatus.objects.get(player=requested_player, game=game)
         person_status.status = 'h'
+        requested_player.save()
         person_status.save()
         return JsonResponse({"status":"success"})
     except Exception as e:
