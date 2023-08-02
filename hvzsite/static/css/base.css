@@ -494,3 +494,7 @@ h2.cameralabel {
     text-decoration: none;
     text-shadow: none;
 }
+
+.qrcontainer {
+    padding-bottom: 30px;
+}
