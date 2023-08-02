@@ -399,15 +399,16 @@ def player_view(request, player_id, is_me=False, game=None, discord_code=None):
     return render(request, "player.html", context)
 
 
+@api_view(["POST"])
 def player_admin_tools(request, player_id, command):
     if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect('/')
+        return JsonResponse({"status": "not authorized"})
 
     try:
         player = Person.objects.get(player_uuid = player_id)
         playerstatus = PlayerStatus.objects.get(player = player, game = get_active_game())
     except:
-        return HttpResponseRedirect('/')
+        return JsonResponse({"status": "player not found"})
     if command == "print_id":
         return print_one(request, player_id)
     if command == "make_oz":
@@ -426,7 +427,7 @@ def player_admin_tools(request, player_id, command):
         playerstatus.status = 'm'
     playerstatus.save()
 
-    return player_view(request, player_id, False)
+    return JsonResponse({'status': 'success'})
 
 
 @api_view(["POST"])

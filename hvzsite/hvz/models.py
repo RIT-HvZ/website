@@ -304,7 +304,7 @@ class BadgeInstance(models.Model):
     timestamp = models.DateTimeField(verbose_name="Badge Timestamp", auto_now=True)
     game_awarded = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     def __str__(self) -> str:
-        return f"{self.badge_type.badge_name} earned by {self.player} at {self.timestamp}"
+        return f"{self.badge_type.badge_name} earned by {self.player} at {self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M:%S')}"
 
 
 def get_blaster_upload_path(instance, filename):

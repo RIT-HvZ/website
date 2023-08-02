@@ -24,7 +24,18 @@ $(document).ready(function () {
 {% if user.is_authenticated and user.current_status.is_admin %}
 function admintools(command) {
     if (command == "Tools") return;
-    window.location.href = "/admin/player_admin/tools/{{player.player_uuid}}/" + command;
+    //window.location.href = "/admin/player_admin/tools/{{player.player_uuid}}/" + command;
+    $.ajax("/admin/player_admin/tools/{{player.player_uuid}}/" + command,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            location.reload();
+        };
+    })
 }
 {% endif %}
 </script>
@@ -118,13 +129,13 @@ function admintools(command) {
                 <div class="admin_tool_div">
                     <select onchange="admintools(this.value)" id="admin_tools">
                         <option value="Tools" selected="selected">Alter Player Status</option> 
-                        <option value="make_oz" class="playeradmintool">Make OZ</option>
-                        <option value="make_nonplayer" class="playeradmintool">Make Nonplayer</option>
-                        <option value="make_human" class="playeradmintool">Make Human</option>
-                        <option value="make_human_av" class="playeradmintool">Make Human (Used AV)</option>
-                        <option value="make_zombie" class="playeradmintool">Make Zombie</option>
-                        <option value="make_zombie_av" class="playeradmintool">Make Zombie (Used AV)</option>
-                        <option value="make_mod" class="playeradmintool">Make Mod</option>
+                        <option value="make_oz" >Make OZ</option>
+                        <option value="make_nonplayer" >Make Nonplayer</option>
+                        <option value="make_human" >Make Human</option>
+                        <option value="make_human_av" >Make Human (Used AV)</option>
+                        <option value="make_zombie" >Make Zombie</option>
+                        <option value="make_zombie_av" >Make Zombie (Used AV)</option>
+                        <option value="make_mod" >Make Mod</option>
                     </select>
                 </div>
                 <button onlick="admintools('print_id')" class="playeradmintool">Print ID</button>
