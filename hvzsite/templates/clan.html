@@ -157,6 +157,7 @@ function disband_clan(player_uuid) {
                 <input type="button" value="Request to join Clan" class="btn btn-primary" id="join_clan" onclick="request_to_join_clan('{{user.player_uuid}}')">
             {% endif %}
             {% if is_leader == True %}
+                <a class="btn btn-warning" id="change_name_photo" href="/modify_clan/{{clan.name}}/">Change Clan Name / Photo</a>
                 <input type="button" value="Disband Clan" class="btn btn-danger" id="disband_clan" onclick="disband_clan('{{user.player_uuid}}')">
             {% endif %}
         </div>

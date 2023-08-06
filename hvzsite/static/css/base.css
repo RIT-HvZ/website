@@ -531,4 +531,5 @@ h2.cameralabel {
     padding: 5px;
     margin: 3px;
     border-radius: 5px;
+    word-break: break-all;
 }

@@ -32,6 +32,7 @@ urlpatterns = [
     re_path(r'^clan/clan_management/(?P<clan_name>[^/]+)/(?P<command>[^/]+)/(?P<person_id>[^/]+)/?$', views.clan_api),
     re_path(r'^clan/invitation_response/(?P<invite_id>[^/]+)/(?P<command>[^/]+)?$', views.clan_api_userresponse),
     re_path(r'^clan/request_response/(?P<request_id>[^/]+)/(?P<command>[^/]+)?$', views.clan_api_leaderresponse),
+    re_path(r'^modify_clan/(?P<clan_name>[^/]+)/', views.modify_clan_view),
 
     # Activation Routes
     re_path(r'^player_activation/?$', views.player_activation),

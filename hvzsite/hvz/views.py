@@ -47,9 +47,9 @@ def index(request):
     while len(merged_recents) < 10:
         if len(recent_tags) == 0 and len(recent_avs) == 0:
             break
-        if len(recent_avs) <= 0 or recent_tags[0].timestamp < recent_avs[0].time_used:
+        if len(recent_avs) <= 0 or (len(recent_tags) > 0 and recent_tags[0].timestamp < recent_avs[0].time_used):
             merged_recents.append(recent_tags.pop(0))
-        elif len(recent_tags) <= 0 or recent_tags[0].timestamp > recent_avs[0].time_used:
+        elif len(recent_tags) <= 0 or (len(recent_avs) > 0 and recent_tags[0].timestamp > recent_avs[0].time_used):
             merged_recents.append(recent_avs.pop(0))
         else:
             break
@@ -759,24 +759,29 @@ def player_activation_api(request, game=None):
         query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
     query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name"}[order_column_name]}""")
     result = []
-    for person in query[start:limit]:
-        try:
-            person_status = PlayerStatus.objects.get_or_create(player=person, game=game)[0]
-        except:
-            continue
-        if person.active_this_game:
-            continue
-        result.append({
-            "name": f"""{person.first_name} {person.last_name}""",
-            "pic": f"""<img src='{person.picture_url}' class='dt_profile' />""",
-            "email": f"""{person.email}""",
-            "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
-            "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{person.first_name} {person.last_name}" data-bs-activationid="{person.player_uuid}">Activate</button>"""
-        })
+    filtered_length = len(query)
+    if start < filtered_length:
+        for person in query[start:]:
+            if limit == 0:
+                break
+            try:
+                person_status = PlayerStatus.objects.get_or_create(player=person, game=game)[0]
+            except:
+                continue
+            if person.active_this_game:
+                continue
+            result.append({
+                "name": f"""{person.first_name} {person.last_name}""",
+                "pic": f"""<img src='{person.picture_url}' class='dt_profile' />""",
+                "email": f"""{person.email}""",
+                "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
+                "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{person.first_name} {person.last_name}" data-bs-activationid="{person.player_uuid}">Activate</button>"""
+            })
+            limit -= 1
     data = {
         "draw": int(r['draw']),
-        "recordsTotal": Person.objects.all().count(),
-        "recordsFiltered": len(result),
+        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status='n').count(),
+        "recordsFiltered": filtered_length,
         "data": result
     }
     return JsonResponse(data)
@@ -1293,3 +1298,35 @@ def create_clan_view(request):
             new_history_item.save()
             return HttpResponseRedirect(f"/clan/{newclan.name}/")
     return render(request, "create_clan.html", {'form':form})
+
+def modify_clan_view(request, clan_name):
+    pass
+#    if not request.user.is_authenticated:
+#        return HttpResponseRedirect("/")
+#    try:
+#        clan = Clan.objects.get(name=clan_name)
+#    except:
+#        return HttpResponseRedirect("/")
+#    
+#    if not request.user == clan.leader:
+#        return HttpResponseRedirect("/")
+#    
+#    if request.method == "GET":     
+#        form = ClanCreateForm(instance=clan)
+#    else:
+#        form = ClanCreateForm(request.POST, request.FILES, instance=clan)
+#
+#        if form.is_valid():
+#            old_name = clan.name
+#            old_photo = clan.picture.url
+#            form.save()
+#            new_name = clan.name
+#            new_photo = clan.picture.url
+#            if old_name != new_name:
+#                new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='n', additional_info=f"from {old_name} to {new_name}")
+#                new_history_item.save()
+#            if old_photo != new_photo:
+#                new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='p', additional_info=f"from {old_photo} to {new_photo}")
+#                new_history_item.save()
+#            return HttpResponseRedirect(f"/clan/{clan.name}/")
+#    return render(request, "create_clan.html", {'form':form})

@@ -2,7 +2,7 @@ from importlib.metadata import requires
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager, BaseUserManager
 from django.db.models.functions import Concat
-from django.db.models import CharField
+from django.db.models import CharField, Q
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -189,6 +189,10 @@ class Person(AbstractUser):
             return self.picture.url
         else:
             return static('/images/noprofile.png')
+
+    @property
+    def has_ever_played(self):
+        return PlayerStatus.objects.filter(player=self, status__in=['h','v','z','o','m','a']).count() > 0
 
     def save(self, *args, **kwargs):
         if self.picture and (self.picture != self.__original_picture):
@@ -583,7 +587,7 @@ class ClanHistoryItem(models.Model):
     clan = models.ForeignKey(Clan, on_delete=models.CASCADE)
     actor = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name='actors')
     other = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name='others')
-    additional_info = models.CharField(max_length=100, null=True, blank=True)
+    additional_info = models.CharField(max_length=300, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
     history_item_type = models.CharField(max_length=1, choices=(
         ('c','creation'),
