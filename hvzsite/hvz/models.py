@@ -302,7 +302,7 @@ class BadgeType(models.Model):
 class BadgeInstance(models.Model):
     badge_type = models.ForeignKey(BadgeType, on_delete=models.CASCADE)
     player = models.ForeignKey(Person, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(verbose_name="Badge Timestamp", auto_now=True)
+    timestamp = models.DateTimeField(verbose_name="Badge Timestamp", auto_now_add=True)
     game_awarded = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     def __str__(self) -> str:
         return f"{self.badge_type.badge_name} earned by {self.player} at {self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M:%S')}"
@@ -404,7 +404,7 @@ class Tag(models.Model):
     tagger = models.ForeignKey(Person, null=False, on_delete=models.CASCADE, related_name="taggers")
     taggee = models.ForeignKey(Person, null=True, blank=True, on_delete=models.CASCADE, related_name="taggees")
     armor_taggee = models.ForeignKey(BodyArmor, null=True, blank=True, on_delete=models.CASCADE, related_name="armor_taggees")
-    timestamp = models.DateTimeField(verbose_name="Tag Timestamp", auto_now=True)
+    timestamp = models.DateTimeField(verbose_name="Tag Timestamp", auto_now_add=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     def __str__(self) -> str:
         if self.taggee:
@@ -425,7 +425,47 @@ class Tag(models.Model):
         remainder = self.timestamp.astimezone(timezone.get_current_timezone()).strftime("%M %p").lower()
         return f"{day} at {hour}:{remainder}"
 
+    def handle_streak_badges(self):
+        '''
+        Handles giving streak badges to the tagging player if appropriate
+        '''
+        prev_tags = Tag.objects.filter(tagger=self.tagger, game=self.game).order_by('-timestamp')
+        if prev_tags[0] == self:
+            prev_tags = prev_tags[1:]
 
+        # Loop through prev tags, check for timestamps within 1 hour to continue streak
+        curr_timestamp = self.timestamp
+        streak = 1
+        for tag in prev_tags:
+            if (curr_timestamp - tag.timestamp).seconds / 3600 < 1:
+                # Less than 1 hour, streak continues
+                curr_timestamp = tag.timestamp
+                streak += 1
+            else:
+                break
+
+        if streak > 1:
+            if streak == 2:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Twin-Tag')
+            elif streak == 3:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Triple-Tag')
+            elif streak == 4:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Quad-Tag')
+            elif streak == 5:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Pentag')
+            elif streak == 6:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Overkill')
+            elif streak == 7:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Lucky 7')
+            elif streak == 8:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Tagalicious')
+            elif streak == 9:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Unstoppable')
+            else:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Apocalypse')
+            # Give the player the badge
+            badge = BadgeInstance.objects.create(badge_type=badge_type, player=self.tagger, game_awarded=self.game)
+            badge.save()
 
 class Report(models.Model):
     report_text = models.TextField(verbose_name="Report Description")
