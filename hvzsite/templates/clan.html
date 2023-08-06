@@ -6,6 +6,136 @@
 $(document).ready(function () {
     var datatable = $('#rostertable').DataTable({});
 });
+
+function kick_player(player_uuid) {
+    event.preventDefault()
+    if (confirm("Kick player from clan? THIS CANNOT BE UNDONE.")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/clan_management/{{clan}}/kick/'+player_uuid,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY KICKED PLAYER");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO KICK PLAYER");
+        }
+    })
+}
+
+function promote_player(player_uuid) {
+    event.preventDefault()
+    if (confirm("Abdicate leadership of clan? THIS CANNOT BE UNDONE.")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/clan_management/{{clan}}/promote/'+player_uuid,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY PROMOTED PLAYER");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO PROMOTE PLAYER");
+        }
+    })
+}
+
+function leave_clan(player_uuid) {
+    event.preventDefault()
+    if (confirm("Leave clan? THIS CANNOT BE UNDONE.")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/clan_management/{{clan}}/leave/'+player_uuid,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY LEFT CLAN");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO LEAVE CLAN");
+        }
+    })
+}
+
+function request_to_join_clan(player_uuid) {
+    event.preventDefault()
+    if (confirm("Request to join clan?")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/clan_management/{{clan}}/request_to_join/'+player_uuid,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY REQUESTED TO JOIN CLAN");
+            $("#join_clan").prop('value', 'Requested');
+        } else if (data.status == "request already exists")
+        {
+            console.log("ALREADY REQUESTED TO JOIN CLAN");
+            $("#join_clan").prop('value', 'Requested');
+        }
+        else {
+            console.log("FAILED TO REQUEST TO JOIN CLAN");
+            $("#join_clan").prop('value', 'Failed to send request');
+        }
+    })
+}
+
+function disband_clan(player_uuid) {
+    event.preventDefault()
+    if (confirm("Disband clan? THIS CANNOT BE UNDONE!!!!")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/clan_management/{{clan}}/disband/'+player_uuid,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY DISBANDED CLAN");
+            location.reload();
+        } else {
+            console.log("FAILED TO DISBAND CLAN");
+        }
+    })
+}
+
 </script>
 {% endblock %}
 {% block body %}
@@ -20,6 +150,15 @@ $(document).ready(function () {
             <div class="col">
                 <div class="clan_picture"><img src="{{ clan.picture.url }}"/></div>
             </div>
+            {% if is_leader == False and user.clan == clan %}
+                <input type="button" value="Leave Clan" class="btn btn-danger" id="leave_clan" onclick="leave_clan('{{user.player_uuid}}')">
+            {% endif %}
+            {% if is_leader == False and user.clan != clan and clan.leader != None %}
+                <input type="button" value="Request to join Clan" class="btn btn-primary" id="join_clan" onclick="request_to_join_clan('{{user.player_uuid}}')">
+            {% endif %}
+            {% if is_leader == True %}
+                <input type="button" value="Disband Clan" class="btn btn-danger" id="disband_clan" onclick="disband_clan('{{user.player_uuid}}')">
+            {% endif %}
         </div>
     </div>
     <div class="col col-lg-8">
@@ -37,15 +176,17 @@ $(document).ready(function () {
                             <th> Name </th>
                             <th> Status </th>
                             <th> Tags </th>
+                            {% if is_leader %}<th> Actions </th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
                         {% for player in roster %}
                         <tr class="{% if player.current_status.is_zombie %}dt_zombie{% elif player.current_status.is_human %}dt_human{% elif player.current_status.is_mod %}dt_mod{% elif player.current_status.is_admin %}dt_admin{% elif player.current_status.is_nonplayer %}dt_nonplayer{% endif %}">
                             <td class="roster_pic"><a class="dt_profile" href="/player/{{player.player_uuid}}/"><img src="{{ player.picture_url }}"/></a></td>
-                            <td class="roster_name"><a class="dt_name_link" href="/player/{{player.player_uuid}}/">{{player}}</a></td>
+                            <td class="roster_name">{% if player == clan.leader %}<span title="Clan Leader" class="clanleaderspan">&#128081;</span>{% endif %}<a class="dt_name_link" href="/player/{{player.player_uuid}}/">{{player}}</a></td>
                             <td class="roster_status">{{ player.current_status.get_status_display }}</td>
                             <td class="roster_tags">{{player.current_status.num_tags}}</td>
+                            {% if is_leader %}<td class="roster_actions">{% if player != user %}<input type="button" id="kick_{{player.player_uuid}}" class="btn btn-danger" value="Kick" onclick="kick_player('{{player.player_uuid}}')"/><input type="button" id="promote_{{player.player_uuid}}" class='btn btn-warning' value="Promote" onclick="promote_player('{{player.player_uuid}}')"/>{% endif %}</td>{% endif %}
                         </tr>
                         {% endfor %} 
                     </tbody>

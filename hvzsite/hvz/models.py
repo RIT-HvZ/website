@@ -41,8 +41,9 @@ def get_clan_upload_path(instance, filename):
 get_team_upload_path = get_clan_upload_path
 
 class Clan(models.Model):
-    name = models.CharField(max_length=100, primary_key=True)
+    name = models.CharField(max_length=100, primary_key=True, verbose_name="Clan Name")
     picture = models.ImageField(upload_to=get_clan_upload_path, null=True)
+    leader = models.ForeignKey('Person', on_delete=models.SET_NULL, null=True, related_name="clan_leader")
     def __str__(self) -> str:
         return self.name
     
@@ -513,3 +514,25 @@ class DiscordLinkCode(models.Model):
     account = models.ForeignKey(Person, on_delete=models.CASCADE)
     code = models.CharField(verbose_name="Discord Link Code", editable=False, default=gen_default_code, max_length=30)
     expiration_time = models.DateTimeField()
+
+
+class ClanInvitation(models.Model):
+    inviter = models.ForeignKey(Person, related_name='inviters', on_delete=models.CASCADE)
+    invitee = models.ForeignKey(Person, related_name='invitees', on_delete=models.CASCADE)
+    clan = models.ForeignKey(Clan, on_delete=models.CASCADE)
+    status = models.CharField(max_length=1, choices=(('n','new'),('a','accepted'),('r','rejected'),('e','expired')), default='n')
+    invitation_timestamp = models.DateTimeField(auto_now_add=True)
+    response_timestamp = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"Invitation for {self.invitee} to join clan {self.clan.name}"
+    
+class ClanJoinRequest(models.Model):
+    requestor = models.ForeignKey(Person, related_name='requestors', on_delete=models.CASCADE)
+    clan = models.ForeignKey(Clan, on_delete=models.CASCADE)
+    status = models.CharField(max_length=1, choices=(('n','new'),('a','accepted'),('r','rejected'),('e','expired')), default='n')
+    request_timestamp = models.DateTimeField(auto_now_add=True)
+    response_timestamp = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"Request for {self.invitee} to join clan {self.clan.name}"

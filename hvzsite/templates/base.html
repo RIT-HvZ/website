@@ -12,6 +12,105 @@
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.css"/>
         <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
         {% block extrahead %}{% endblock %}
+        <script>
+function accept_invitation(invite_id) {
+    if (confirm("Accept invitation to clan?")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/invitation_response/'+invite_id+"/accept",{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY ACCEPTED INVITATION");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO ACCEPT INVITATION");
+        }
+    })
+}
+
+function decline_invitation(invite_id) {
+    if (confirm("Decline invitation to clan? THIS CANNOT BE UNDONE.")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/invitation_response/'+invite_id+"/reject",{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY DECLINED INVITATION");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO DECLINE INVITATION");
+        }
+    })
+}
+
+function accept_request(request_id) {
+    if (confirm("Accept request to join clan?")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/request_response/'+request_id+"/accept",{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY ACCEPTED REQUEST");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO ACCEPT REQUEST");
+        }
+    })
+}
+
+function decline_request(request_id) {
+    if (confirm("Decline request to join clan? THIS CANNOT BE UNDONE.")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/request_response/'+request_id+"/reject",{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY DECLINED REQUEST");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO DECLINE REQUEST");
+        }
+    })
+}
+
+
+        </script>
     </head>
     <body class="text-light">
       {% block prebody %}{% endblock %}
@@ -76,6 +175,32 @@
 		  </li>
                   {% endif %}
 		</ul>
+                {% if user.is_authenticated %}
+                {% if notification_count > 0 %}
+                  <ul class="notifications navbar-nav ms-auto">
+                    <a class="nav-link  dropdown-toggle notificationsnav" href="#" id="notificationsDropDown" data-bs-toggle="dropdown" aria-expanded="false">Notifications: <span class="notificationnumber">{{notification_count}}</span></a>
+                    <ul class="dropdown-menu  dropdown-menu-end" aria-labelledby="navbarDropdown">
+                      {% for invitation in unanswered_invitations %}
+                        <li>
+                          <a class="dropdown-item">
+                            {{invitation.inviter}} has invited you to join clan {{invitation.clan.name}}
+                            <input type="button" class="btn btn-primary" value="Accept" onclick="accept_invitation('{{invitation.id}}')"/> 
+                            <input type="button" class="btn btn-danger" value="Decline" onclick="decline_invitation('{{invitation.id}}')"/>
+                          </a>
+                        </li>
+                      {% endfor %}
+                      {% for req in unanswered_requests %}
+                        <li>
+                          <a class="dropdown-item">
+                            {{req.requestor}} has requested to join clan {{req.clan.name}}
+                            <input type="button" class="btn btn-primary" value="Accept" onclick="accept_request('{{req.id}}')"/> 
+                            <input type="button" class="btn btn-danger" value="Decline" onclick="decline_request('{{req.id}}')"/>
+                          </a>
+                        </li>
+                      {% endfor %}
+                  </ul>
+                {% endif %}
+                {% endif %}
                 <ul class="navbar-nav ms-auto">
                   <li class="nav-item">
                     {% if user.is_authenticated %}

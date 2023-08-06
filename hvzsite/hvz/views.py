@@ -12,8 +12,8 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Clan, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
-from .forms import TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Clan, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
+from .forms import TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -399,7 +399,9 @@ def player_view(request, player_id, is_me=False, game=None, discord_code=None):
         'status': PlayerStatus.objects.get_or_create(player=player, game=game)[0],
         'blasters': Blaster.objects.filter(owner=player, game_approved_in=game),
         'domain': request.build_absolute_uri('/tag/'),
-        'discord_code': discord_code
+        'discord_code': discord_code,
+        'is_user_clan_leader': Clan.objects.filter(leader=request.user).count() > 0,
+        'is_player_clan_leader': Clan.objects.filter(leader=player).count() > 0
     }
     
     return render(request, "player.html", context)
@@ -509,12 +511,133 @@ def bodyarmor_get_loan_targets(request):
 
 def clan_view(request, clan_name):
     clan = Clan.objects.get(name=clan_name)
+    is_leader = clan.leader == request.user
     context = {
         'clan': clan,
-        'roster': Person.objects.filter(clan=clan)
+        'roster': Person.objects.filter(clan=clan),
+        'is_leader': is_leader,
+        'user': request.user
     }
     return render(request, "clan.html", context)
 
+@api_view(["POST"])
+def clan_api(request, clan_name, command, person_id):
+    clan = Clan.objects.get(name=clan_name)
+    if request.user.clan == clan and clan.leader != request.user and command=="leave":
+        request.user.clan=None
+        request.user.save()
+        return JsonResponse({"status":"success"})
+    if command == "request_to_join":
+        existing_requests = ClanJoinRequest.objects.filter(clan=clan, requestor=request.user, status__in=['n','r','e'])
+        if existing_requests.count() > 0:
+            return JsonResponse({"status":"request already exists"})
+        existing_leadership = Clan.objects.filter(leader=request.user)
+        if existing_leadership.count() > 0:
+            return JsonResponse({"status":"cannot request to join another clan while leading one"})
+        join_request = ClanJoinRequest.objects.create(requestor=request.user, clan=clan)
+        join_request.save()
+        return JsonResponse({"status":"success"})
+    if (request.user != clan.leader) and not request.user.admin_this_game:
+        return JsonResponse({"status":"not authorized"})
+    target = Person.objects.get(player_uuid=person_id)
+    if command == "promote":
+        if not target.clan == clan:
+            return JsonResponse({"status":"player not in clan"})
+        if request.user == target:
+            return JsonResponse({"status":"cannot promote self"})
+        clan.leader = target
+        clan.save()
+        return JsonResponse({"status":"success"})
+    if command == "kick":
+        if not target.clan == clan:
+            return JsonResponse({"status":"player not in clan"})
+        if request.user == target:
+            return JsonResponse({"status":"cannot kick self"})
+        target.clan = None
+        target.save()
+        return JsonResponse({"status":"success"})
+    if command == "invite":
+        if request.user == target:
+            return JsonResponse({"status":"cannot invite self"})
+        existing_invitations = ClanInvitation.objects.filter(clan=clan, invitee=target, status='n')
+        if existing_invitations.count() > 0:
+            return JsonResponse({"status":"invitation already exists"})
+        existing_leadership = Clan.objects.filter(leader=target)
+        if existing_leadership.count() > 0:
+            return JsonResponse({"status":"cannot invite leader of another clan"})
+        invitation = ClanInvitation.objects.create(inviter=request.user, invitee=target, clan=clan)
+        invitation.save()
+        return JsonResponse({"status":"success"})
+    if command == "cancel_invite":
+        if request.user == target:
+            return JsonResponse({"status":"cannot cancel invite to self"})
+        invites = ClanInvitation.objects.filter(invitee=target, clan=clan)
+        done_something = False
+        for invite in invites:
+            invite.status = 'e'
+            invite.response_timestamp = timezone.now()
+            invite.save()
+            done_something = True
+        if done_something:
+            return JsonResponse({"status":"success"})
+        return JsonResponse({"status":"no invites to cancel"})
+    if command == "disband":
+        clan.delete()
+        return HttpResponseRedirect("/")
+
+    
+
+@api_view(["POST"])
+def clan_api_userresponse(request, invite_id, command):
+    invite = ClanInvitation.objects.get(id=invite_id)
+    if not invite.invitee == request.user:
+        return JsonResponse({"status","not authorized"})
+    if invite.status != "n":
+        return JsonResponse({"status","invitation already responded to"})
+    if command == "accept":
+        invite.status = "a"
+        invite.response_timestamp = timezone.now()
+        invite.save()
+        request.user.clan = invite.clan
+        request.user.save()
+        other_invitations = ClanInvitation.objects.filter(invitee=request.user, status='n')
+        for other_invitation in other_invitations:
+            other_invitation.status = 'r'
+            other_invitation.response_timestamp = timezone.now()
+            other_invitation.save()
+        return JsonResponse({"status":"success"})
+    if command == "reject":
+        invite.status = "r"
+        invite.response_timestamp = timezone.now()
+        invite.save()
+        return JsonResponse({"status":"success"})
+    
+
+@api_view(["POST"])
+def clan_api_leaderresponse(request, request_id, command):
+    joinrequest = ClanJoinRequest.objects.get(id=request_id)
+    if not joinrequest.clan.leader == request.user:
+        return JsonResponse({"status","not authorized"})
+    if joinrequest.status != "n":
+        return JsonResponse({"status","request already responded to"})
+    if command == "accept":
+        joinrequest.status = "a"
+        joinrequest.response_timestamp = timezone.now()
+        joinrequest.save()
+        joinrequest.requestor.clan = joinrequest.clan
+        joinrequest.requestor.save()
+        other_requests = ClanJoinRequest.objects.filter(requestor=joinrequest.requestor, status='n')
+        for other_request in other_requests:
+            other_request.status = 'e'
+            other_request.response_timestamp = timezone.now()
+            other_request.save()
+        return JsonResponse({"status":"success"})
+    if command == "reject":
+        joinrequest.status = "r"
+        joinrequest.response_timestamp = timezone.now()
+        joinrequest.save()
+        return JsonResponse({"status":"success"})
+    
 
 def players(request):
     context = {}
@@ -1125,3 +1248,21 @@ class ApiCreateBodyArmor(APIView):
 
         return HttpResponse('Successfully created Body Armor: "{}"'.format(armor.armor_code))
 
+
+def create_clan_view(request):
+    if not request.user.is_authenticated or not request.user.active_this_game:
+        return HttpResponseRedirect("/")
+    
+    if request.method == "GET":     
+        form = ClanCreateForm()
+    else:
+        form = ClanCreateForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            newclan = form.save()
+            newclan.leader = request.user
+            newclan.save()
+            request.user.clan = newclan
+            request.user.save()
+            return HttpResponseRedirect(f"/clan/{newclan.name}/")
+    return render(request, "create_clan.html", {'form':form})

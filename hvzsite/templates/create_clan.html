@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Create Clan {% endblock %}
+{% block body %}
+{% load crispy_forms_tags %}
+
+<div class="row">
+  <div class="col">
+    <h1 class="center"> Create a new Clan</h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <form method="post" id="create-clan-form" class="center" enctype="multipart/form-data">{% csrf_token %}
+      {% if form.non_field_errors|length > 0 %}
+      <div class="tagformerrors mb-3">
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
+
+      <div class="mb-3">
+        {{ form.errors }}
+        {{ form | crispy }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

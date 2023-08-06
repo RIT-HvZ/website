@@ -28,6 +28,10 @@ urlpatterns = [
     re_path(r'^rules/?$', views.rules),
     re_path(r'^infections/?$', views.infection),
     re_path(r'^discord-link/?$', views.discord_link),
+    re_path(r'^create_clan/?$', views.create_clan_view),
+    re_path(r'^clan/clan_management/(?P<clan_name>[^/]+)/(?P<command>[^/]+)/(?P<person_id>[^/]+)/?$', views.clan_api),
+    re_path(r'^clan/invitation_response/(?P<invite_id>[^/]+)/(?P<command>[^/]+)?$', views.clan_api_userresponse),
+    re_path(r'^clan/request_response/(?P<request_id>[^/]+)/(?P<command>[^/]+)?$', views.clan_api_leaderresponse),
 
     # Activation Routes
     re_path(r'^player_activation/?$', views.player_activation),

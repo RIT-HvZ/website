@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ValidationError
 from django.db.models import Count, Q
-from .models import Person, Blaster, BodyArmor, AntiVirus, Rules, PlayerStatus, get_active_game, Tag, Mission, CurrentGame, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate
+from .models import Person, Blaster, BodyArmor, AntiVirus, Rules, PlayerStatus, Clan, get_active_game, Tag, Mission, CurrentGame, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -299,3 +299,9 @@ class RulesUpdateForm(forms.ModelForm):
     class Meta:
         model = Rules
         fields = ['rules_text']
+
+
+class ClanCreateForm(forms.ModelForm):
+    class Meta:
+        model = Clan
+        fields = ["name", "picture"]

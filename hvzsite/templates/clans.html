@@ -24,7 +24,9 @@
 
 {% block body %}
 <h1> Clans </h1>
-
+{% if request.user.clan == None %}
+<a class="btn btn-primary"  href="/create_clan/">Create New Clan</a>
+{% endif %}
 <table id="clans" class="table table-striped">
     <thead>
         <tr>

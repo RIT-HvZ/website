@@ -1,6 +1,11 @@
 body {
     background-color: #111;
     padding-top: 75px;
+    font-family: "Noto Sans";
+}
+
+input {
+    font-family: inherit;
 }
 
 h1, h2, h3, h4, h5 {
@@ -437,7 +442,7 @@ a.missionlink {
     color: rgb(255,255,255);
 }
 .rulescontainer {
-    font-family: Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Noto Sans", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .reportee_link {
@@ -497,4 +502,18 @@ h2.cameralabel {
 
 .qrcontainer {
     padding-bottom: 30px;
+}
+
+.roster_actions input {
+    padding: 10px;
+    margin: 10px;
+}
+
+.notificationnumber {
+    background-color: yellow;
+    border-radius: 1em;
+    color: black;
+    font-weight: bold;
+    padding-left: .5em;
+    padding-right:  .5em;
 }

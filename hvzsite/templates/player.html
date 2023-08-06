@@ -38,6 +38,81 @@ function admintools(command) {
     })
 }
 {% endif %}
+
+function kick_player(player_uuid) {
+    event.preventDefault()
+    if (confirm("Kick player from clan? THIS CANNOT BE UNDONE.")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/clan_management/{{player.clan}}/kick/'+player_uuid,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY KICKED PLAYER");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO KICK PLAYER");
+        }
+    })
+}
+
+function promote_player(player_uuid) {
+    event.preventDefault()
+    if (confirm("Abdicate leadership of clan? THIS CANNOT BE UNDONE.")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/clan_management/{{player.clan}}/promote/'+player_uuid,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY PROMOTED PLAYER");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO PROMOTE PLAYER");
+        }
+    })
+}
+
+
+function invite_player(player_uuid) {
+    event.preventDefault()
+    if (confirm("Invite player to clan?")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/clan/clan_management/{{user.clan}}/invite/'+player_uuid,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY INVITED PLAYER");
+        }
+        else {
+            console.log("FAILED TO INVITE PLAYER");
+        }
+    })
+}
 </script>
 {% endblock %}
 {% block body %}
@@ -83,6 +158,17 @@ function admintools(command) {
                 </a>
                 {% else %}
                     <h5>None</h5>
+                {% endif %}
+                {% if is_user_clan_leader %}
+                    {% if is_player_clan_leader %}
+                    {% else %}
+                        {% if player.clan != user.clan %}
+                        <input type="button" class="btn btn-primary" value="Invite" onclick="invite_player('{{player.player_uuid}}')" />
+                        {% else %}
+                        <input type="button" class="btn btn-danger" value="Kick" onclick="kick_player('{{player.player_uuid}}')" />
+                        <input type="button" class="btn btn-warning" value="Promote" onclick="promote_player('{{player.player_uuid}}')" />
+                        {% endif %}
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
