@@ -811,6 +811,7 @@ def player_activation_rest(request):
         output.seek(0)
         requested_player.picture = InMemoryUploadedFile(output,'ImageField', "%s.jpg" % requested_player.player_uuid, 'image/jpeg', sys.getsizeof(output), None)
         person_status = PlayerStatus.objects.get(player=requested_player, game=game)
+        person_status.activation_timestamp = timezone.now()
         person_status.status = 'h'
         requested_player.save()
         person_status.save()
