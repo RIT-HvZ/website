@@ -124,7 +124,7 @@ def missions_view(request):
             else:
                 # No response for this survey for this user exists. Create one.
                 print("No response.")
-                new_response = PostGameSurveyOption.objects.create(player=request.user, survey=survey, response=response)
+                new_response = PostGameSurveyResponse.objects.create(player=request.user, survey=survey, response=response)
                 new_response.save()
                 print(f"New response: {new_response}")
         else:
