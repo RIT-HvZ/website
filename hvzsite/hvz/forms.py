@@ -274,6 +274,7 @@ class ReportForm(forms.ModelForm):
         else:
             self.fields["reporter_email"].label = "Your email address (optional)"
             self.fields['captcha'] = CaptchaField()
+            self.fields['captcha'].label = "Captcha (enter the answer to the math problem, not the text of it)"
 
 
 class ReportUpdateForm(forms.ModelForm):
