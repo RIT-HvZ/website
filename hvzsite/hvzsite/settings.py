@@ -194,8 +194,8 @@ TINYMCE_DEFAULT_CONFIG = {
     "skin": "oxide-dark",
     "content_css": "dark",
     'height': 500,
-    'plugins': 'code',
-    'toolbar': 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent | code',
+    'plugins': 'code,textcolor,paste,lists,advlist',
+    'toolbar': 'undo redo | styleselect | forecolor backcolor bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | code',
     'menubar': 'edit view tools'
 }
 
