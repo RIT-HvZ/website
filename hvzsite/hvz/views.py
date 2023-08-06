@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Clan, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
+from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
 from .forms import TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -514,11 +514,17 @@ def bodyarmor_get_loan_targets(request):
 def clan_view(request, clan_name):
     clan = Clan.objects.get(name=clan_name)
     is_leader = clan.leader == request.user
+    if is_leader or request.user.admin_this_game:
+        history = ClanHistoryItem.objects.filter(clan=clan).order_by('-timestamp')
+    else:
+        history = []
     context = {
         'clan': clan,
         'roster': Person.objects.filter(clan=clan),
         'is_leader': is_leader,
-        'user': request.user
+        'user': request.user,
+        'history': history,
+        'show_history': is_leader or request.user.admin_this_game
     }
     return render(request, "clan.html", context)
 
@@ -528,6 +534,8 @@ def clan_api(request, clan_name, command, person_id):
     if request.user.clan == clan and clan.leader != request.user and command=="leave":
         request.user.clan=None
         request.user.save()
+        new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='l')
+        new_history_item.save()
         return JsonResponse({"status":"success"})
     if command == "request_to_join":
         existing_requests = ClanJoinRequest.objects.filter(clan=clan, requestor=request.user, status__in=['n','r','e'])
@@ -549,6 +557,8 @@ def clan_api(request, clan_name, command, person_id):
             return JsonResponse({"status":"cannot promote self"})
         clan.leader = target
         clan.save()
+        new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, other=target, history_item_type='x')
+        new_history_item.save()
         return JsonResponse({"status":"success"})
     if command == "kick":
         if not target.clan == clan:
@@ -557,6 +567,8 @@ def clan_api(request, clan_name, command, person_id):
             return JsonResponse({"status":"cannot kick self"})
         target.clan = None
         target.save()
+        new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, other=target, history_item_type='k')
+        new_history_item.save()
         return JsonResponse({"status":"success"})
     if command == "invite":
         if request.user == target:
@@ -584,8 +596,15 @@ def clan_api(request, clan_name, command, person_id):
             return JsonResponse({"status":"success"})
         return JsonResponse({"status":"no invites to cancel"})
     if command == "disband":
-        clan.delete()
-        return HttpResponseRedirect("/")
+        clan.disband_timestamp = timezone.now()
+        clan.leader = None
+        clan.save()
+        for member in Person.objects.filter(clan=clan):
+            member.clan = None
+            member.save()
+        new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='d')
+        new_history_item.save()
+        return JsonResponse({"status":"success"})
 
     
 
@@ -604,9 +623,11 @@ def clan_api_userresponse(request, invite_id, command):
         request.user.save()
         other_invitations = ClanInvitation.objects.filter(invitee=request.user, status='n')
         for other_invitation in other_invitations:
-            other_invitation.status = 'r'
+            other_invitation.status = 'e'
             other_invitation.response_timestamp = timezone.now()
             other_invitation.save()
+        new_history_item = ClanHistoryItem.objects.create(clan=invite.clan, actor=request.user, history_item_type='i')
+        new_history_item.save()
         return JsonResponse({"status":"success"})
     if command == "reject":
         invite.status = "r"
@@ -633,6 +654,8 @@ def clan_api_leaderresponse(request, request_id, command):
             other_request.status = 'e'
             other_request.response_timestamp = timezone.now()
             other_request.save()
+        new_history_item = ClanHistoryItem.objects.create(clan=joinrequest.clan, actor=request.user, other=joinrequest.requestor, history_item_type='r')
+        new_history_item.save()
         return JsonResponse({"status":"success"})
     if command == "reject":
         joinrequest.status = "r"
@@ -1266,5 +1289,7 @@ def create_clan_view(request):
             newclan.save()
             request.user.clan = newclan
             request.user.save()
+            new_history_item = ClanHistoryItem.objects.create(clan=newclan, actor=request.user, history_item_type='c')
+            new_history_item.save()
             return HttpResponseRedirect(f"/clan/{newclan.name}/")
     return render(request, "create_clan.html", {'form':form})

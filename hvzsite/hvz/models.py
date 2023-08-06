@@ -41,9 +41,10 @@ def get_clan_upload_path(instance, filename):
 get_team_upload_path = get_clan_upload_path
 
 class Clan(models.Model):
-    name = models.CharField(max_length=100, primary_key=True, verbose_name="Clan Name")
+    name = models.CharField(max_length=100, verbose_name="Clan Name", primary_key=True)
     picture = models.ImageField(upload_to=get_clan_upload_path, null=True)
     leader = models.ForeignKey('Person', on_delete=models.SET_NULL, null=True, related_name="clan_leader")
+    disband_timestamp = models.DateTimeField(null=True, blank=True)
     def __str__(self) -> str:
         return self.name
 
@@ -576,4 +577,48 @@ class ClanJoinRequest(models.Model):
     response_timestamp = models.DateTimeField(null=True, blank=True)
 
     def __str__(self) -> str:
-        return f"Request for {self.invitee} to join clan {self.clan.name}"
+        return f"Request for {self.requestor} to join clan {self.clan.name}"
+    
+class ClanHistoryItem(models.Model):
+    clan = models.ForeignKey(Clan, on_delete=models.CASCADE)
+    actor = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name='actors')
+    other = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL, related_name='others')
+    additional_info = models.CharField(max_length=100, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True, editable=False)
+    history_item_type = models.CharField(max_length=1, choices=(
+        ('c','creation'),
+        ('d','disband'),
+        ('n','name_change'),
+        ('p','photo_change'),
+        ('i','player_added_by_invite'),
+        ('r','player_added_by_request'),
+        ('x','promote'),
+        ('k','kick'),
+        ('l','leave')
+    ))
+
+    @property
+    def timestamp_display(self):
+        return self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M:%S')
+
+    def __str__(self) -> str:
+        if self.history_item_type == "c":
+            return f"Clan {self.clan} created by {self.actor} ({self.actor.player_uuid}) at {self.timestamp_display}"
+        elif self.history_item_type == "d":
+            return f"Clan {self.clan} disbanded by {self.actor} ({self.actor.player_uuid}) at {self.timestamp_display}"
+        elif self.history_item_type == "n":
+            return f"{self.actor} ({self.actor.player_uuid}) changed clan name {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X to Y" format
+        elif self.history_item_type == "p":
+            return f"Clan {self.clan} photo updated by {self.actor} ({self.actor.player_uuid}) {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X.jpg to Y.jpg" format
+        elif self.history_item_type == "i":
+            return f"{self.actor} ({self.actor.player_uuid}) accepted invitation to clan {self.clan} at {self.timestamp_display}"
+        elif self.history_item_type == "r":
+            return f"{self.actor} ({self.actor.player_uuid}) accepted {self.other} ({self.other.player_uuid})'s request to join clan {self.clan} at {self.timestamp_display}"
+        elif self.history_item_type == "x":
+            return f"{self.actor} ({self.actor.player_uuid}) promoted {self.other} ({self.other.player_uuid}) to leader of clan {self.clan} at {self.timestamp_display}"
+        elif self.history_item_type == "k":
+            return f"{self.actor} ({self.actor.player_uuid}) kicked {self.other} ({self.other.player_uuid}) from clan {self.clan} at {self.timestamp_display}"
+        elif self.history_item_type == "l":
+            return f"{self.actor} ({self.actor.player_uuid}) left clan {self.clan} at {self.timestamp_display}"
+        else:
+            return "I don't know."

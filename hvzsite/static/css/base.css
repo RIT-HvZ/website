@@ -517,3 +517,18 @@ h2.cameralabel {
     padding-left: .5em;
     padding-right:  .5em;
 }
+
+.clanhistory span:nth-child(odd) {
+    background-color: rgba(200,200,200,0.2);
+}
+
+.clanhistory span:nth-child(even) {
+    background-color: rgba(200,200,200,0.1);
+}
+
+.clanhistoryitem {
+    display: block;
+    padding: 5px;
+    margin: 3px;
+    border-radius: 5px;
+}

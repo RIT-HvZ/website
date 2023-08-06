@@ -160,6 +160,20 @@ function disband_clan(player_uuid) {
                 <input type="button" value="Disband Clan" class="btn btn-danger" id="disband_clan" onclick="disband_clan('{{user.player_uuid}}')">
             {% endif %}
         </div>
+        {% if show_history %}
+        <div class="row">
+            <div class="col center">
+                <h2>Clan History log</h2>
+                <div class="clanhistory">
+                    {% for historyitem in history %}
+                    <span class="clanhistoryitem">{{historyitem}}</span>
+                    {% empty %}
+                    <span class="clanhistoryitem">No history to show</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
     <div class="col col-lg-8">
         <div class="row">
