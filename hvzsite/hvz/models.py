@@ -46,12 +46,12 @@ class Clan(models.Model):
     leader = models.ForeignKey('Person', on_delete=models.SET_NULL, null=True, related_name="clan_leader")
     def __str__(self) -> str:
         return self.name
-    
+
     def save(self, *args, **kwargs):
         if self.picture:
             self.picture = resize_image(self.picture, 400, 400)
         super().save()
-                
+
 def get_person_upload_path(instance, filename):
     return os.path.join("profile_pictures",str(instance.player_uuid), filename)
 
@@ -72,19 +72,19 @@ class Game(models.Model):
     @property
     def is_after_start(self):
         return timezone.now() > self.start_date
-    
+
     @property
     def is_after_end(self):
         return timezone.now() > self.end_date
-    
+
     @property
     def start_date_javascript(self):
         return self.start_date.strftime("%b %d, %Y %H:%M:%S %Z")
-    
+
     @property
     def end_date_javascript(self):
         return self.end_date.strftime("%b %d, %Y %H:%M:%S %Z")
-    
+
 
 class SingletonModel(models.Model):
     class Meta:
@@ -135,7 +135,7 @@ class Mission(models.Model):
     @property
     def story_viewable(self):
         return self.story_form_go_live_time < timezone.localtime()
-    
+
     @property
     def non_story_viewable(self):
         return self.go_live_time < timezone.localtime()
@@ -177,18 +177,18 @@ class Person(AbstractUser):
     @property
     def admin_this_game(self):
         return self.current_status.is_admin()
-    
+
     @property
     def mod_this_game(self):
         return self.current_status.is_mod()
-    
+
     @property
     def picture_url(self):
         if self.picture:
             return self.picture.url
         else:
             return static('/images/noprofile.png')
-    
+
     def save(self, *args, **kwargs):
         if self.picture and (self.picture != self.__original_picture):
             self.picture = resize_image(self.picture, 400, 400, 'PNG')
@@ -236,7 +236,7 @@ class PlayerStatus(models.Model):
 
     def is_nonplayer(self):
         return self.status == 'n'
-    
+
     @property
     def can_av(self):
         return self.status == "z"
@@ -274,11 +274,11 @@ class AntiVirus(models.Model):
         if timezone.localtime() > self.expiration_time:
             return "Expired"
         return "Active"
-    
+
     @property
     def datatype(self):
         return "AntiVirus"
-    
+
     @property
     def display_timestamp(self):
         day = self.time_used.astimezone(timezone.get_current_timezone()).strftime("%A")
@@ -291,9 +291,10 @@ class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)
     picture = models.ImageField(upload_to="badge_icons/", null=True)
     badge_type = models.CharField(verbose_name="Badge Type", choices=[('a','Account (persistent)'),('g','Game (resets after each game)')], max_length=1, null=False, default='g')
+    badge_description = models.CharField(verbose_name="Badge Description", max_length=256, null=False)
     def __str__(self) -> str:
         return f"{self.badge_name}"
-    
+
     def save(self, *args, **kwargs):
         if self.picture:
             self.picture = resize_image(self.picture, 400, 400, "PNG")
@@ -302,7 +303,7 @@ class BadgeType(models.Model):
 class BadgeInstance(models.Model):
     badge_type = models.ForeignKey(BadgeType, on_delete=models.CASCADE)
     player = models.ForeignKey(Person, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(verbose_name="Badge Timestamp", auto_now=True)
+    timestamp = models.DateTimeField(verbose_name="Badge Timestamp", auto_now_add=True)
     game_awarded = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
     def __str__(self) -> str:
         return f"{self.badge_type.badge_name} earned by {self.player} at {self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M:%S')}"
@@ -338,7 +339,7 @@ class PostGameSurvey(models.Model):
     @property
     def is_open(self):
         return self.go_live_time < timezone.localtime() and self.lock_time > timezone.localtime()
-    
+
     @property
     def is_viewable(self):
         print(f"---{self.mission}---")
@@ -383,11 +384,11 @@ class BodyArmor(models.Model):
     @property
     def used(self):
         return len(Tag.objects.filter(armor_taggee=self)) > 0
-    
+
     @property
     def get_tag(self):
         return Tag.objects.get(armor_taggee=self)
-    
+
     @property
     def get_status(self):
         if self.used:
@@ -404,7 +405,7 @@ class Tag(models.Model):
     tagger = models.ForeignKey(Person, null=False, on_delete=models.CASCADE, related_name="taggers")
     taggee = models.ForeignKey(Person, null=True, blank=True, on_delete=models.CASCADE, related_name="taggees")
     armor_taggee = models.ForeignKey(BodyArmor, null=True, blank=True, on_delete=models.CASCADE, related_name="armor_taggees")
-    timestamp = models.DateTimeField(verbose_name="Tag Timestamp", auto_now=True)
+    timestamp = models.DateTimeField(verbose_name="Tag Timestamp", auto_now_add=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     def __str__(self) -> str:
         if self.taggee:
@@ -413,11 +414,11 @@ class Tag(models.Model):
             return f"{self.tagger} tagged {self.armor_taggee} at {self.timestamp}"
         else:
             return f"{self.tagger} tagged nothing at {self.timestamp}"
-        
+
     @property
     def datatype(self):
         return "Tag"
-    
+
     @property
     def display_timestamp(self):
         day = self.timestamp.astimezone(timezone.get_current_timezone()).strftime("%A")
@@ -425,7 +426,47 @@ class Tag(models.Model):
         remainder = self.timestamp.astimezone(timezone.get_current_timezone()).strftime("%M %p").lower()
         return f"{day} at {hour}:{remainder}"
 
+    def handle_streak_badges(self):
+        '''
+        Handles giving streak badges to the tagging player if appropriate
+        '''
+        prev_tags = Tag.objects.filter(tagger=self.tagger, game=self.game).order_by('-timestamp')
+        if prev_tags[0] == self:
+            prev_tags = prev_tags[1:]
 
+        # Loop through prev tags, check for timestamps within 1 hour to continue streak
+        curr_timestamp = self.timestamp
+        streak = 1
+        for tag in prev_tags:
+            if (curr_timestamp - tag.timestamp).seconds / 3600 < 1:
+                # Less than 1 hour, streak continues
+                curr_timestamp = tag.timestamp
+                streak += 1
+            else:
+                break
+
+        if streak > 1:
+            if streak == 2:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Twin-Tag')
+            elif streak == 3:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Triple-Tag')
+            elif streak == 4:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Quad-Tag')
+            elif streak == 5:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Pentag')
+            elif streak == 6:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Overkill')
+            elif streak == 7:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Lucky 7')
+            elif streak == 8:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Tagalicious')
+            elif streak == 9:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Unstoppable')
+            else:
+                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Apocalypse')
+            # Give the player the badge
+            badge = BadgeInstance.objects.create(badge_type=badge_type, player=self.tagger, game_awarded=self.game)
+            badge.save()
 
 class Report(models.Model):
     report_text = models.TextField(verbose_name="Report Description")
@@ -456,7 +497,7 @@ class Report(models.Model):
             return self.reporter_email
         else:
             return "Anonymous"
-        
+
     @property
     def has_picture(self):
         return self.picture is not None
@@ -465,7 +506,7 @@ class Report(models.Model):
     def status_text(self):
         options = {'n':'New', 'i':'Investigating','d':'Dismissed','c':'Closed', '':'Unknown'}
         return options[self.status]
-    
+
     @property
     def is_mod_report(self):
         return self.reporter is not None and self.reporter.mod_this_game
@@ -476,7 +517,7 @@ class Report(models.Model):
         if len(updates) == 0:
             return None
         return updates[0].timestamp
-    
+
     @property
     def get_reportee(self):
         return self.reportee if self.reportee else "N/A"
@@ -505,7 +546,7 @@ class ReportUpdate(models.Model):
     @property
     def get_timestamp(self):
         return self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')
-    
+
     def __str__(self):
         return f"Update on Report #{self.report.id} by {self.note_creator} at {self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}"
 

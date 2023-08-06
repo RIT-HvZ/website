@@ -235,6 +235,7 @@ def tag(request):
         if form.is_valid():
             if form.cleaned_data['type'] == "player":
                 tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, taggee=form.cleaned_data['taggee'].player, game=get_active_game())
+                tag.handle_streak_badges()
                 tag.save()
                 if form.cleaned_data['taggee'].status == 'v':
                     form.cleaned_data['taggee'].status = 'x'
@@ -243,6 +244,7 @@ def tag(request):
                 form.cleaned_data['taggee'].save()
             else:
                 tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, armor_taggee=form.cleaned_data['taggee'], game=get_active_game())
+                tag.handle_streak_badges()
                 tag.save()
             form = TagForm()
             return render(request, "tag.html", {'form':form, 'tagcomplete': True, 'tag': tag, 'qr': qr})
