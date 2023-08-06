@@ -688,7 +688,7 @@ def players_api(request, game=None):
         #print(limit)
     except AssertionError:
         raise
-    query = Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','z','o','x','a','m'])
+    query = Person.full_name_objects.filter(playerstatus__game=game, playerstatus__status__in=['h','v','z','o','x','a','m'])
     if search != "":
         query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
     if order_column_name != "tags":
