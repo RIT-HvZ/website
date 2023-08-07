@@ -203,7 +203,8 @@ class Person(AbstractUser):
 def generate_tag_id(length=10):
     import string
     import secrets
-    alphabet = string.ascii_letters + string.digits
+    # Don't use i, o or l as they can be confused for other symbols
+    alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789'
     return ''.join(secrets.choice(alphabet) for i in range(length))
 
 
