@@ -12,8 +12,8 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
-from .forms import TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
+from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
+from .forms import AnnouncementForm, TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -1022,6 +1022,19 @@ def print_ids(request, preview=False):
     return render(request, "print_cards.html", context)
 
 
+#def print_ids_datetime(request, unix_timestamp, preview=False):
+#    if not request.user.is_authenticated or not request.user.admin_this_game:
+#        return HttpResponseRedirect("/")
+#    to_print = PlayerStatus.objects.filter(game=get_active_game()).filter(~Q(status='n'))
+#    context = {
+#        "players": [status.player for status in to_print],
+#        "preview": preview,
+#        "print_one": False,
+#        "url": f"{request.scheme}://{get_current_site(request)}"
+#    }
+#    return render(request, "print_cards.html", context)
+#
+
 def print_preview(request):
     return print_ids(request, True)
 
@@ -1299,6 +1312,40 @@ def create_clan_view(request):
             new_history_item.save()
             return HttpResponseRedirect(f"/clan/{newclan.name}/")
     return render(request, "create_clan.html", {'form':form})
+
+def manage_announcements(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    announcements = Announcement.objects.all().order_by('-post_time')
+    return render(request, "manage_announcements.html", {'announcements':announcements})
+
+def edit_announcement(request, announcement_id):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    if request.method == "GET":
+        if announcement_id == "new":
+            form = AnnouncementForm()
+        else:
+            form = AnnouncementForm(instance=Announcement.objects.get(id=announcement_id))
+    else:
+        if announcement_id == "new":
+            form = AnnouncementForm(request.POST)
+        else:
+            form = AnnouncementForm(request.POST, instance=Announcement.objects.get(id=announcement_id))
+
+        if form.is_valid():
+            announcement = form.save()
+            return HttpResponseRedirect(f"/announcement/{announcement.id}/")
+    return render(request, "edit_announcement.html", {'form':form})
+
+
+def view_announcement(request, announcement_id):
+    try:
+        announcement = Announcement.objects.get(id=announcement_id)
+        return render(request, "announcement.html", {'announcement':announcement})
+    except:
+        return HttpResponseRedirect("/")
+
 
 def modify_clan_view(request, clan_name):
     pass

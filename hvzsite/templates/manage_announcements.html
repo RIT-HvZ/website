@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Manage Announcements {% endblock %}
+
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable = $('#announcements').DataTable({'ordering':false});
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Announcements </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col center">
+        <a href="/admin/announcement/new/" class="btn btn-primary">Create new Announcement</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="announcements" class="table table-striped display adminlist">
+            <thead>
+                <tr>
+                    <th class="foo">Post Date</th>
+                    <th class="foo">Active?</th>
+                    <th class="foo">Short Form</th>
+            </thead>
+            <tbody>
+                {% for announcement in announcements %}
+                <tr onclick="window.location.href='/admin/announcement/{{announcement.id}}/'">
+                    <td>{{announcement.post_date}}</td>
+                    <td>{{announcement.active}}</td>
+                    <td>{{announcement.short_form}}</td>
+                </tr>
+                {% empty %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

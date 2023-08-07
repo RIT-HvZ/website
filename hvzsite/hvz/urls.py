@@ -33,6 +33,7 @@ urlpatterns = [
     re_path(r'^clan/invitation_response/(?P<invite_id>[^/]+)/(?P<command>[^/]+)?$', views.clan_api_userresponse),
     re_path(r'^clan/request_response/(?P<request_id>[^/]+)/(?P<command>[^/]+)?$', views.clan_api_leaderresponse),
     re_path(r'^modify_clan/(?P<clan_name>[^/]+)/', views.modify_clan_view),
+    re_path(r'^announcement/(?P<announcement_id>[^/]+)/?$', views.view_announcement),
 
     # Activation Routes
     re_path(r'^player_activation/?$', views.player_activation),
@@ -60,6 +61,8 @@ urlpatterns = [
     re_path(r'^admin/print/?$', views.print_ids),
     re_path(r'^admin/print_preview/?$', views.print_preview),
     re_path(r'^admin/mark_printed/?$', views.mark_printed),
+    re_path(r'^admin/manage_announcements/?$', views.manage_announcements),
+    re_path(r'^admin/announcement/(?P<announcement_id>[^/]+)/?$', views.edit_announcement),
 
     # API Routes
     # re_path(r'^api/?', include(router.urls)),

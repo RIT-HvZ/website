@@ -533,3 +533,36 @@ h2.cameralabel {
     border-radius: 5px;
     word-break: break-all;
 }
+
+.announcementtitle {
+    background-color: rgba(200,200,200,0.2);
+    margin: 10px;
+    padding: 1em;
+    border-radius: 10px;
+}
+
+.postdate {
+    color: rgb(80,80,80);
+    margin-bottom: 2em;
+    display: inline-block;
+}
+
+.announcementdiv {
+    background-color: rgb(135, 0, 135);
+    color: black;
+    font-weight: bold;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    font-size: large;
+}
+
+.announcementlink {
+    color: rgb(30,30,30);
+}
+.announcementdismiss {
+    color: rgb(30,30,30);
+    font-size: smaller;
+    margin-left: 10px;
+    font-weight: lighter;
+}

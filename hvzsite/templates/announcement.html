@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Announcement {% endblock %}
+{% block body %}
+<div class="row justify-content-md-center armortitle">
+    <div class="col col-lg-8" style="display:inline-block;text-align: center;">
+        <h1>Announcement</h1>
+    </div>
+</div>
+<div class="row justify-content-md-center">
+    <div class="col">
+        <h1 class="announcementtitle center">{{announcement.short_form}}</h1>
+        <span class="postdate">Posted {{announcement.timestamp_display}}</span>
+    </div>
+</div>
+<div class="row justify-content-md-center">
+    <div class="col">
+        {{announcement.long_form | safe}}
+    </div>
+</div>
+
+
+{% endblock %}

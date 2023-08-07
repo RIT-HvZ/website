@@ -607,23 +607,38 @@ class ClanHistoryItem(models.Model):
         return self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M:%S')
 
     def __str__(self) -> str:
-        if self.history_item_type == "c":
-            return f"Clan {self.clan} created by {self.actor} ({self.actor.player_uuid}) at {self.timestamp_display}"
-        elif self.history_item_type == "d":
-            return f"Clan {self.clan} disbanded by {self.actor} ({self.actor.player_uuid}) at {self.timestamp_display}"
-        elif self.history_item_type == "n":
-            return f"{self.actor} ({self.actor.player_uuid}) changed clan name {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X to Y" format
-        elif self.history_item_type == "p":
-            return f"Clan {self.clan} photo updated by {self.actor} ({self.actor.player_uuid}) {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X.jpg to Y.jpg" format
-        elif self.history_item_type == "i":
-            return f"{self.actor} ({self.actor.player_uuid}) accepted invitation to clan {self.clan} at {self.timestamp_display}"
-        elif self.history_item_type == "r":
-            return f"{self.actor} ({self.actor.player_uuid}) accepted {self.other} ({self.other.player_uuid})'s request to join clan {self.clan} at {self.timestamp_display}"
-        elif self.history_item_type == "x":
-            return f"{self.actor} ({self.actor.player_uuid}) promoted {self.other} ({self.other.player_uuid}) to leader of clan {self.clan} at {self.timestamp_display}"
-        elif self.history_item_type == "k":
-            return f"{self.actor} ({self.actor.player_uuid}) kicked {self.other} ({self.other.player_uuid}) from clan {self.clan} at {self.timestamp_display}"
-        elif self.history_item_type == "l":
-            return f"{self.actor} ({self.actor.player_uuid}) left clan {self.clan} at {self.timestamp_display}"
-        else:
+        try:
+            if self.history_item_type == "c":
+                return f"Clan {self.clan} created by {self.actor} ({self.actor.player_uuid}) at {self.timestamp_display}"
+            elif self.history_item_type == "d":
+                return f"Clan {self.clan} disbanded by {self.actor} ({self.actor.player_uuid}) at {self.timestamp_display}"
+            elif self.history_item_type == "n":
+                return f"{self.actor} ({self.actor.player_uuid}) changed clan name {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X to Y" format
+            elif self.history_item_type == "p":
+                return f"Clan {self.clan} photo updated by {self.actor} ({self.actor.player_uuid}) {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X.jpg to Y.jpg" format
+            elif self.history_item_type == "i":
+                return f"{self.actor} ({self.actor.player_uuid}) accepted invitation to clan {self.clan} at {self.timestamp_display}"
+            elif self.history_item_type == "r":
+                return f"{self.actor} ({self.actor.player_uuid}) accepted {self.other} ({self.other.player_uuid})'s request to join clan {self.clan} at {self.timestamp_display}"
+            elif self.history_item_type == "x":
+                return f"{self.actor} ({self.actor.player_uuid}) promoted {self.other} ({self.other.player_uuid}) to leader of clan {self.clan} at {self.timestamp_display}"
+            elif self.history_item_type == "k":
+                return f"{self.actor} ({self.actor.player_uuid}) kicked {self.other} ({self.other.player_uuid}) from clan {self.clan} at {self.timestamp_display}"
+            elif self.history_item_type == "l":
+                return f"{self.actor} ({self.actor.player_uuid}) left clan {self.clan} at {self.timestamp_display}"
             return "I don't know."
+        except:
+            return "I don't know."
+        
+class Announcement(models.Model):
+    post_time = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
+    long_form = tinymce_models.HTMLField(verbose_name="Full Announcement post")
+    short_form = models.TextField(verbose_name="Announcement header short-form",max_length=300)
+
+    def __str__(self) -> str:
+        return f"Announcement on {self.post_time}: {self.short_form}"
+    
+    @property
+    def timestamp_display(self):
+        return self.post_time.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M:%S')

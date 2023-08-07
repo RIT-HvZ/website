@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Edit Announcement {% endblock %}
+{% block extrahead %}
+{{ form.media }}
+{% endblock %}
+{% block body %}
+{% load crispy_forms_tags %}
+<div class="row justify-content-md-center armortitle">
+    <div class="col col-lg-8" style="display:inline-block;text-align: center;">
+        <h1>Announcement</h1>
+    </div>
+</div>
+<div class="row justify-content-md-center armormainrow">
+    <div class="col">
+        <form method="post">{% csrf_token %}
+            {{ form.errors }}
+            {{form | crispy}}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

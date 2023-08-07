@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}HvZ @ RIT{% endblock %}</title>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <link href="{% static 'css/base.css' %}" rel="stylesheet">
@@ -109,7 +110,19 @@ function decline_request(request_id) {
     })
 }
 
+function dismiss_announcement(announcement_id) {
+  document.cookie = "dismissannouncement_"+announcement_id+"=true; path=/"; 
+  $('#dismissannouncement_'+announcement_id).remove();
+}
 
+$(document).ready(function () {
+  $(".announcementrow").each(function(index, element) {
+    var cookie = $.cookie(element.id);
+    if (cookie == "true") {
+      $(element).remove();
+    }
+  });
+});
         </script>
     </head>
     <body class="text-light">
@@ -167,6 +180,7 @@ function decline_request(request_id) {
           <li><a class="dropdown-item" href="/admin/editpostgamesurveys/">Edit Post-Game Surveys</a></li>
           <li><a class="dropdown-item" href="/admin/print/">ID Card Print</a></li>
           <li><a class="dropdown-item" href="/admin/print_preview/">ID Card Print Preview</a></li>
+		      <li><a class="dropdown-item" href="/admin/manage_announcements/">Manage Announcements</a></li>
 		      <li><a class="dropdown-item" href="/admin/update_rules/">Update Rules</a></li>
 		      <li><a class="dropdown-item" href="/admin/view-avs">View AVs</a></li>
 		      <li><a class="dropdown-item" href="/admin/bodyarmors">View Body Armors</a></li>
@@ -213,7 +227,13 @@ function decline_request(request_id) {
               </div>
             </div>
           </nav>
-          
+        <div class="container">
+        {% for announcement in announcements %}
+        <div class="row center announcementrow" id="dismissannouncement_{{announcement.id}}"><div class="col center announcementdiv">
+        {{announcement.short_form}} <a href="/announcement/{{announcement.id}}/" class="announcementlink">...more</a> <a class="announcementdismiss" onclick="dismiss_announcement('{{announcement.id}}')"> dismiss </a>
+        </div></div>
+        {% endfor %}
+        </div>
         <div class="container" id="maincontainer">
         {% block body %}{% endblock %}
         </div>
