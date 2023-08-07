@@ -38,7 +38,7 @@ if settings.DISCORD_REPORT_WEBHOOK_URL:
 # Create your views here.
 def index(request):
     game = get_active_game()
-    humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v')).count()
+    humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v') | Q(status='e')).count()
     zombiecount = PlayerStatus.objects.filter(game=game).filter(Q(status='z') | Q(status='x') | Q(status='o')).count()
     most_tags = PlayerStatus.objects.filter(game=game).annotate(tag_count=Count("player__taggers", filter=Q(player__taggers__game=game))).filter(tag_count__gt=0).order_by("-tag_count")
     recent_tags = [ t for t in Tag.objects.filter(game=get_active_game()).order_by('-timestamp') ]
@@ -282,13 +282,12 @@ def blasterapproval(request):
     if request.method == "GET":     
         form = BlasterApprovalForm()
         form.fields['owner'].queryset = Person.objects.filter(playerstatus__game=get_active_game()) \
-                                                      .filter(playerstatus__status__in=['h','v','z','o','x']) \
+                                                      .filter(playerstatus__status__in=['h','v','e','z','o','x']) \
                                                       .annotate(num_status=Count('playerstatus')) \
                                                       .filter(num_status=1)
     else:
         form = BlasterApprovalForm(request.POST, request.FILES)
         if form.is_valid():
-            print("AHHH")
             blaster = Blaster()
             blaster.name = form.cleaned_data['name']
             blaster.owner = form.cleaned_data['owner']
@@ -429,6 +428,8 @@ def player_admin_tools(request, player_id, command):
         playerstatus.status = 'h'
     if command == "make_human_av":
         playerstatus.status = 'v'
+    if command == "make_human_extracted":
+        playerstatus.status = 'e'
     if command == "make_zombie":
         playerstatus.status = 'z'
     if command == "make_zombie_av":
@@ -485,7 +486,7 @@ def bodyarmor_get_loan_targets(request):
         search = r["search[value]"] 
     except AssertionError:
         raise
-    players = Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v'])
+    players = Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','e'])
     if search != "":
         players = players.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
     result = []
@@ -504,7 +505,7 @@ def bodyarmor_get_loan_targets(request):
             limit -= 1
     data = {
         "draw": int(r['draw']),
-        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','z','o','x','a','m']).count(),
+        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','e','z','o','x','a','m']).count(),
         "recordsFiltered": filtered_length,
         "data": result
     }
@@ -688,7 +689,7 @@ def players_api(request, game=None):
         #print(limit)
     except AssertionError:
         raise
-    query = Person.full_name_objects.filter(playerstatus__game=game, playerstatus__status__in=['h','v','z','o','x','a','m'])
+    query = Person.full_name_objects.filter(playerstatus__game=game, playerstatus__status__in=['h','v','e','z','o','x','a','m'])
     if search != "":
         query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
     if order_column_name != "tags":
@@ -709,17 +710,17 @@ def players_api(request, game=None):
             result.append({
                 "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
                 "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture_url}' class='dt_profile' /></a>""",
-                "status": {"h": "Human", "a": "Admin", "z": "Zombie", "m": "Mod", "v": "Human", "o": "Zombie", "n": "NonPlayer", "x": "Zombie"}[person_status.status],
+                "status": {"h": "Human", "a": "Admin", "z": "Zombie", "m": "Mod", "v": "Human", "o": "Zombie", "n": "NonPlayer", "x": "Zombie", "e": "Human (Extracted)"}[person_status.status],
                 "clan": None if person.clan is None else (f"""<a href="/clan/{person.clan.name}/" class="dt_clan_link">person.clan.name</a>""" if (person.clan is None or person.clan.picture is None) else f"""<a href="/clan/{person.clan.name}/" class="dt_clan_link"><img src='{person.clan.picture.url}' class='dt_clanpic' alt='{person.clan}' /><span class="dt_clanname">{person.clan}</span></a>"""),
                 "clan_pic": None if (person.clan is None or person.clan.picture is None) else person.clan.picture.url,
                 "tags": Tag.objects.filter(tagger=person,game=game).count(),
-                "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
+                "DT_RowClass": {"h": "dt_human", "v": "dt_human", "e": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
                 "DT_RowData": {"person_url": f"/player/{person.player_uuid}/", "clan_url": f"/clan/{person.clan.name}/" if person.clan is not None else ""}
             })
             limit -= 1
     data = {
         "draw": int(r['draw']),
-        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','z','o','x','a','m']).count(),
+        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','e','z','o','x','a','m']).count(),
         "recordsFiltered": filtered_length,
         "data": result
     }

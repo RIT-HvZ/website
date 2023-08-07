@@ -84,6 +84,8 @@ class TagForm(forms.Form):
             taggee_status = taggee_statuses[0]
             if not taggee_status.is_human():
                 raise ValidationError("Taggee is not a Human!")
+            if taggee_status.status == "e":
+                raise ValidationError("Cannot tag an extracted player!")
             if taggee_status.status == "v" and taggee != str(taggee_status.tag2_uuid):
                 raise ValidationError("Tag #1 ID given, but player has already used AV!")
             if taggee_status.status == "h" and taggee != str(taggee_status.tag1_uuid):
@@ -290,7 +292,7 @@ class ReportUpdateForm(forms.ModelForm):
         self.fields['note'].widget.attrs['cols'] = 80
         if report:
             self.fields['reportees'] = forms.ModelMultipleChoiceField(queryset=Person.objects.filter(playerstatus__game=get_active_game()) \
-                                                        .filter(playerstatus__status__in=['h','v','z','o','x']) \
+                                                        .filter(playerstatus__status__in=['h','v','e','z','o','x']) \
                                                         .annotate(num_status=Count('playerstatus')) \
                                                         .filter(num_status=1)   )
             self.fields['reportees'].initial = report.reportees.all()

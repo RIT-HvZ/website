@@ -192,7 +192,7 @@ class Person(AbstractUser):
 
     @property
     def has_ever_played(self):
-        return PlayerStatus.objects.filter(player=self, status__in=['h','v','z','o','m','a']).count() > 0
+        return PlayerStatus.objects.filter(player=self, status__in=['h','v','e','z','o','m','a']).count() > 0
 
     def save(self, *args, **kwargs):
         if self.picture and (self.picture != self.__original_picture):
@@ -203,7 +203,8 @@ class Person(AbstractUser):
 def generate_tag_id(length=10):
     import string
     import secrets
-    alphabet = string.ascii_letters + string.digits
+    # Don't use i, o or l as they can be confused for other symbols
+    alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789'
     return ''.join(secrets.choice(alphabet) for i in range(length))
 
 
@@ -215,7 +216,7 @@ class PlayerStatus(models.Model):
     printed = models.BooleanField(verbose_name="Has Player's ID card been printed?", default=False)
     activation_timestamp = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('z','Zombie'),('x','Zombie (used AV)'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='n', null=False)
+    status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('e', 'Human (Extracted)'),('z','Zombie'),('x','Zombie (used AV)'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='n', null=False)
 
     class Meta:
         unique_together = (('tag1_uuid', 'game'),
@@ -229,7 +230,7 @@ class PlayerStatus(models.Model):
         return self.status in ['z','o','x']
 
     def is_human(self):
-        return self.status in ['h','v']
+        return self.status in ['h','v','e']
 
     def is_mod(self):
         return self.status == 'm'
