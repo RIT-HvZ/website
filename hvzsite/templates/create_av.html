@@ -1,18 +1,29 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-  HvZ @ RIT - Create AV (Admin)
+HvZ @ RIT - Create AV (Admin)
 {% endblock %}
+
 {% block extrahead %}
-  <script>
-    $(document).ready(function () {
-      $('#id_av_code').attr('size', 36)
-      $('#id_player_id').attr('size', 36)
-    })
-  </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+<script>
+
+  $(document).ready(function () {
+    $("#id_expiration_time").attr("autocomplete","off");
+    $("#id_expiration_time").datetimepicker({format:'Y-m-d H:i'});
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    $('#id_av_code').attr('size', 36)
+    $('#id_player_id').attr('size', 36)
+  })
+</script>
 {% endblock %}
 {% block body %}
-  <div class="row">
+{% load crispy_forms_tags %}
+<div class="row">
     <div class="col">
       <h1 class="center">Create a New AV Code</h1>
     </div>
@@ -24,23 +35,22 @@
       {% endif %}
       <form method="post" id="create-av-form" class="center">
         {% csrf_token %}
-        {% if (form.non_field_errors|length) > 0 %}
+        {% if form.non_field_errors|length > 0 %}
           <div class="tagformerrors mb-3">{{ form.non_field_errors }}</div>
         {% endif %}
 
-        <div class="mb-3">
-          {{ form.errors }}
-          {{ form.av_code.errors }}
-          <label for="{{ form.av_code.id_for_label }}" class="form-label">AV Code</label>
-          {{ form.av_code }}
+          <div class="mb-3">
+            {{ form.av_code.errors }}
+            <label for="{{ form.av_code.id_for_label }}" class="form-label">AV Code</label>
+            {{ form.av_code }}
 
-          <br />
-          {{ form.expiration_time.errors }}
-          <label for="{{ form.expiration_time.id_for_label }}" class="form-label">Expires (YYYY-MM-DD hh:mm)</label>
-          {{ form.expiration_time }}
+            <br />
+            {{ form.expiration_time.errors }}
+            <label for="{{ form.expiration_time.id_for_label }}" class="form-label">Expiration Time</label>
+            {{ form.expiration_time }}
 
-          <br />
-          {{ form.game.errors }}
+            <br />
+            {{ form.game.errors }}
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
