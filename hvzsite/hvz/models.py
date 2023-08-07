@@ -272,7 +272,7 @@ class AntiVirus(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)#, default=get_latest_game)
     used_by = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)
     time_used = models.DateTimeField(null=True, blank=True)
-    expiration_time = models.DateTimeField(null=True, blank=True)
+    expiration_time = models.DateTimeField()
 
     @property
     def get_status(self):
