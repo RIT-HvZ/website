@@ -610,13 +610,13 @@ class ClanHistoryItem(models.Model):
     def __str__(self) -> str:
         try:
             if self.history_item_type == "c":
-                return f"Clan {self.clan} created by {self.actor} ({self.actor.player_uuid}) at {self.timestamp_display}"
+                return f"{self.actor} ({self.actor.player_uuid}) created clan {self.clan} at {self.timestamp_display}"
             elif self.history_item_type == "d":
-                return f"Clan {self.clan} disbanded by {self.actor} ({self.actor.player_uuid}) at {self.timestamp_display}"
+                return f"{self.actor} ({self.actor.player_uuid}) disbanded clan {self.clan} at {self.timestamp_display}"
             elif self.history_item_type == "n":
                 return f"{self.actor} ({self.actor.player_uuid}) changed clan name {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X to Y" format
             elif self.history_item_type == "p":
-                return f"Clan {self.clan} photo updated by {self.actor} ({self.actor.player_uuid}) {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X.jpg to Y.jpg" format
+                return f"{self.actor} ({self.actor.player_uuid}) updated clan photo {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X.jpg to Y.jpg" format
             elif self.history_item_type == "i":
                 return f"{self.actor} ({self.actor.player_uuid}) accepted invitation to clan {self.clan} at {self.timestamp_display}"
             elif self.history_item_type == "r":
@@ -627,6 +627,31 @@ class ClanHistoryItem(models.Model):
                 return f"{self.actor} ({self.actor.player_uuid}) kicked {self.other} ({self.other.player_uuid}) from clan {self.clan} at {self.timestamp_display}"
             elif self.history_item_type == "l":
                 return f"{self.actor} ({self.actor.player_uuid}) left clan {self.clan} at {self.timestamp_display}"
+            return "I don't know."
+        except:
+            return "I don't know."
+        
+    @property
+    def web_str(self):
+        try:
+            if self.history_item_type == "c":
+                return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> created clan at {self.timestamp_display}"
+            elif self.history_item_type == "d":
+                return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> disbanded clan at {self.timestamp_display}"
+            elif self.history_item_type == "n":
+                return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> changed clan name {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X to Y" format
+            elif self.history_item_type == "p":
+                return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> updated clan photo {self.additional_info} at {self.timestamp_display}" # additional_info should be "from X.jpg to Y.jpg" format
+            elif self.history_item_type == "i":
+                return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> accepted invitation at {self.timestamp_display}"
+            elif self.history_item_type == "r":
+                return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> accepted <a class='clan_link' href='/player/{self.other.player_uuid}/'>{self.other}</a>'s request to join at {self.timestamp_display}"
+            elif self.history_item_type == "x":
+                return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> promoted <a class='clan_link' href='/player/{self.other.player_uuid}/'>{self.other}</a> to leader of clan at {self.timestamp_display}"
+            elif self.history_item_type == "k":
+                return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> kicked <a class='clan_link' href='/player/{self.other.player_uuid}/'>{self.other}</a> at {self.timestamp_display}"
+            elif self.history_item_type == "l":
+                return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> left at {self.timestamp_display}"
             return "I don't know."
         except:
             return "I don't know."

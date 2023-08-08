@@ -401,7 +401,7 @@ def player_view(request, player_id, is_me=False, game=None, discord_code=None):
         'blasters': Blaster.objects.filter(owner=player, game_approved_in=game),
         'domain': request.build_absolute_uri('/tag/'),
         'discord_code': discord_code,
-        'is_user_clan_leader': Clan.objects.filter(leader=request.user).count() > 0,
+        'is_user_clan_leader': Clan.objects.filter(leader=request.user).count() > 0 if request.user.is_authenticated else False,
         'is_player_clan_leader': Clan.objects.filter(leader=player).count() > 0
     }
     

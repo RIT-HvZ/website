@@ -227,14 +227,14 @@ $(document).ready(function () {
               </div>
             </div>
           </nav>
-        <div class="container">
+        <div class="container-fluid">
         {% for announcement in announcements %}
         <div class="row center announcementrow" id="dismissannouncement_{{announcement.id}}"><div class="col center announcementdiv">
         {{announcement.short_form}} <a href="/announcement/{{announcement.id}}/" class="announcementlink">...more</a> <a class="announcementdismiss" onclick="dismiss_announcement('{{announcement.id}}')"> dismiss </a>
         </div></div>
         {% endfor %}
         </div>
-        <div class="container" id="maincontainer">
+        <div class="container-fluid" id="maincontainer">
         {% block body %}{% endblock %}
         </div>
     </body>

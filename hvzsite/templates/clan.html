@@ -167,7 +167,7 @@ function disband_clan(player_uuid) {
                 <h2>Clan History log</h2>
                 <div class="clanhistory">
                     {% for historyitem in history %}
-                    <span class="clanhistoryitem">{{historyitem}}</span>
+                    <span class="clanhistoryitem">{{historyitem.web_str | safe}}</span>
                     {% empty %}
                     <span class="clanhistoryitem">No history to show</span>
                     {% endfor %}

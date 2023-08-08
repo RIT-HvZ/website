@@ -10,7 +10,7 @@ input {
 
 h1, h2, h3, h4, h5 {
     color: #aaa;
-    text-shadow: #000 2px 2px 3px;
+    /*text-shadow: #000 2px 2px 3px;*/
 }
 
 .modal-title {
@@ -102,6 +102,8 @@ p, form {
 th, label {
     color: #aaa;
 }
+
+/*
 #maincontainer.zombiecontainer {
     background-color: rgba(16, 185, 1, 0.527);
 }
@@ -121,15 +123,19 @@ th, label {
 #maincontainer.admincontainer {
     background-color: rgba(255, 238, 0, 0.8);
 }
-
+*/
 #maincontainer.armorcontainer {
     background-color: transparent;
 }
 
-div.humancount, div.zombiecount {
-    padding: 4em;
-    border-radius: 2em;
-    margin: 2em;
+.humancountnumber, .zombiecountnumber {
+    font-weight: bold;
+    color: black;
+}
+
+.humancountlabel, .zombiecountlabel {
+    font-weight: bold;
+    color: black;
 }
 
 div.humancount {
@@ -140,21 +146,44 @@ div.zombiecount {
     background-color: rgb(16,185,1);
 }
 
-.humancountnumber, .zombiecountnumber {
-    font-size: 60pt;
-    font-weight: bold;
-    color: black;
+@media (min-width: 0px) {
+
+    div.humancount, div.zombiecount {
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px;
+    }
+
+    .humancountnumber, .zombiecountnumber {
+        font-size: 20pt;
+    }
+
+    .humancountlabel, .zombiecountlabel {
+        font-size: 20pt;
+    }
 }
 
-.humancountlabel, .zombiecountlabel {
-    font-size: 24pt;
-    font-weight: bold;
-    color: black;
+@media (min-width: 768px) {
+
+    div.humancount, div.zombiecount {
+        padding: 4em;
+        border-radius: 2em;
+        margin: 2em;
+        max-width: 30em;
+    }
+
+    .humancountnumber, .zombiecountnumber {
+        font-size: 60pt;
+    }
+
+    .humancountlabel, .zombiecountlabel {
+        font-size: 24pt;
+    }
 }
 
 .dt_name_link, .dt_clan_link{
     text-decoration: none;
-    color: rgb(30,30,30);
+    color: rgb(217, 217, 217);
 }
 
 .dt_name, .dt_size {
@@ -285,26 +314,38 @@ border-radius: 4px;
 }
 
 .clan_link img {
-    max-width: 100px;
-    max-height: 100px;
+    max-height: 1rem;
 }
 
 .clan_link, .login_alreadylogged a, #player_tags a, .player_tag_div {
     text-decoration: none;
-    color: rgb(30,30,30);
+    color: rgb(220,220,220);
 }
 
 .clan_link:hover, .login_alreadylogged a:hover, #player_tags a:hover {
-    color: rgb(60,60,60);
+    color: rgb(255,255,255);
 }
 
 .login-title, .login-description, .login-button, .center {
     text-align: center;
 }
 
-.player_blaster_img, .player_badge_img, .player_tag_img {
+.player_blaster_img, .player_badge_img {
     max-width: 100px;
     max-height: 100px;
+    min-width: 50px;
+    min-height: 50px;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.player_badge_img {
+    border-radius: 50%;
+}
+
+.player_tag_img {
+    max-height: 1rem;
 }
 
 #surveys thead tr, #surveys tbody tr td {
@@ -531,7 +572,7 @@ h2.cameralabel {
     padding: 5px;
     margin: 3px;
     border-radius: 5px;
-    word-break: break-all;
+    word-break:normal;
 }
 
 .announcementtitle {
@@ -565,4 +606,160 @@ h2.cameralabel {
     font-size: smaller;
     margin-left: 10px;
     font-weight: lighter;
+}
+
+.player_picture {
+    transform: translateY(50%);
+    border-radius: 50%;
+    border-width: 5px;
+    border-style: solid;
+    display: inline-block;
+    width: 100px ;
+    height: 100px ;
+    aspect-ratio: 1/1 !important;
+    margin-right: 12px;
+}
+
+.playernamerow {
+    margin-bottom: 50px;
+}
+
+
+.zombiecontainer .player_picture {
+    border-color: rgb(10, 116, 0);
+}
+
+.admincontainer .player_picture {
+    border-color: rgb(186, 183, 0);
+}
+
+.humancontainer .player_picture {
+    border-color: rgb(207, 117, 0);
+}
+
+.player_name {
+    color: white;
+    align-self: flex-end;
+    height: 100%;
+    vertical-align: bottom;
+}
+
+.playernamecol {
+    display: flex;
+}
+.humancontainer .playernamerow {
+    background-color: rgb(207, 117, 0);
+}
+
+.admincontainer .playernamerow {
+    background-color: rgb(186, 183, 0);
+}
+
+.admincontainer .playernamerow .player_name {
+    color:#000;
+}
+
+.zombiecontainer .playernamerow {
+    background-color: rgb(10, 116, 0);
+}
+
+dl.playerinfo dt {
+    text-align: right;
+    color: rgb(180,180,180)
+}
+
+dl.playerinfo dd {
+    text-align: left;
+    color:rgb(220, 220, 220);
+}
+
+table.playerinfo td:first-child{
+    text-align: right;
+    padding-right: 5px;
+    color: rgb(180,180,180)
+
+}
+
+table.playerinfo td:last-child{
+    text-align: left;
+    padding-left: 5px;
+    color:rgb(220, 220, 220);
+}
+
+table#player_tags, table.playerinfo {
+    width: 100%;
+}
+
+table#player_tags td:first-child{
+    text-align: left;
+    color: rgb(180,180,180)
+
+}
+
+table#player_tags td:last-child{
+    text-align: right;
+    color:rgb(220, 220, 220);
+}
+
+.playercontainer {
+    background-color: #222;
+}
+
+#tags_header {
+    width: 100%;
+    text-align: left;
+}
+
+h3.blasters, h3.badges {
+    text-align: left;
+    width: 100%;
+}
+
+.blastername {
+    font-weight: bold;
+    display: block;
+    height: 50%;
+}
+
+.blasterchrono {
+    color: rgb(180,180,180);
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.admintoolsdiv, .playername{
+    align-self: flex-end;
+}
+
+.admintoolsdiv button {
+    margin-bottom: 10px;
+    margin-left: 1em;
+}
+
+.blastertext {
+    text-align: left;
+}
+
+.playernamecontainer .row {
+    height: 100%;
+    align-items:flex-end;
+}
+
+.taglist tr:nth-child(even) {
+    background-color: rgba(255,255,255,0.05);
+}
+
+.badgefigure {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+table#clans {
+    background-color: rgb(80,80,80);
+}
+table#clans tr:nth-child(odd) {
+    background-color: rgb(40,40,40);
+}
+table#clans .dt_size {
+    color: rgb(200,200,200);
 }

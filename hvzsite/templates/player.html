@@ -116,119 +116,148 @@ function invite_player(player_uuid) {
 </script>
 {% endblock %}
 {% block body %}
-<div class="row justify-content-md-center playermainrow">
-    <div class="col col-md-4">
-        <div class="row justify-content-md-center">
-            <div class="col">
-                <h1 class="clan_name"> {{ player }} </h1>
-            </div>
+<div class="container playercontainer">
+    <div class="row playernamerow justify-content-md-center ">
+        <div class="col col-md-2 align-bottom playernamecol">
+            <img class="player_picture img-fluid" src="{{ player.picture_url }}"/>
         </div>
-        <div class="row">
-            <div class="col">
-                <div class="clan_picture"><img src="{{ player.picture_url }}"/></div>
-            </div>
-        </div>
-        {% if is_me or user.admin_this_game %}
-            {% if player.active_this_game %}
+        <div class="col col-md-10 playernamecontainer">
             <div class="row">
-                <div class="col" id="showidsdiv">
-                    <button class="btn btn-danger" type="button" id="showids" onclick="document.getElementById('player_ids').style.display='inline-block';document.getElementById('showidsdiv').style.display='none';">Show Human/Zombie IDs</button>
+                <div class="col">
+                    <div class="align-bottom playername playernamecol">
+                        <h2 class="player_name align-bottom"> {{ player }} </h2>
+                    </div>
                 </div>
-                <div class="col" id="player_ids" style="display:none">
-                    Tag #1 ID: {{ player.current_status.tag1_uuid}} <br/>
-                    Tag #2 ID: {{ player.current_status.tag2_uuid}} <br>
-                    Zombie ID: {{ player.current_status.zombie_uuid}}
+                {% if user.is_authenticated and user.current_status.is_admin %}
+                <div class="col align-bottom playernamecol">
+                    <div class="dropdown align-bottom admintoolsdiv">
+                        <button class="btn btn-outline-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Admin Tools</button>
+                        <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">ID Card</h6></li>
+                            <li><a class="dropdown-item" href="/admin/print_one/{{player.player_uuid}}/">Reprint Player ID Card</a></li>
+                            <li><h6 class="dropdown-header">Change Player Status</h6></li>
+                            <li><a class="dropdown-item" href="#" onclick="admintools('make_oz')">Make OZ</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="admintools('make_nonplayer')">Make Nonplayer</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="admintools('make_human')">Make Human</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="admintools('make_human_av')">Make Human (Used AV)</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="admintools('make_human_extracted')">Make Human (Extracted)</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="admintools('make_zombie')">Make Zombie</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="admintools('make_zombie_av')">Make Zombie (Used AV)</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="admintools('make_mod')">Make Mod</a></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            {% endif %}
-        {% endif %}
-        <div class="row">
-            <div class="col" id="player_role">
-                <h1> Status </h1>
-                <h5>{{player.current_status.get_status_display}}</h5>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col" id="player_role">
-                <h1> Clan </h1>
-                {% if player.clan %}
-                <a href="/clan/{{player.clan}}/" class="clan_link">
-                    {% if player.clan.picture %}<img src="{{player.clan.picture.url}}"/>{% endif %}
-                    <h5>{{player.clan}}</h5>
-                </a>
-                {% else %}
-                    <h5>None</h5>
-                {% endif %}
-                {% if is_user_clan_leader %}
-                    {% if is_player_clan_leader %}
-                    {% else %}
-                        {% if player.clan != user.clan %}
-                        <input type="button" class="btn btn-primary" value="Invite" onclick="invite_player('{{player.player_uuid}}')" />
-                        {% else %}
-                        <input type="button" class="btn btn-danger" value="Kick" onclick="kick_player('{{player.player_uuid}}')" />
-                        <input type="button" class="btn btn-warning" value="Promote" onclick="promote_player('{{player.player_uuid}}')" />
-                        {% endif %}
-                    {% endif %}
                 {% endif %}
             </div>
         </div>
-	{% if is_me or user.admin_this_game%}
-	<div class="row">	  
-          <div class="col" id="player_role">
-            <h1> Discord </h1>
-            {% if discord_code %}
-	    Use the following code: {{ discord_code }}
-            {% elif player.discord_id %}
-	    <h5>Linked: {{player.discord_id}}</h5>
-	    <a href="/discord-link">Reset your discord link</a>
-            {% else %}
-	    <a href="/discord-link">Generate a code to link your discord account</a>
-            {% endif %}
-          </div>
-        </div>
-	{% endif %}
     </div>
-    <div class="col col-lg-8">
-        <div class="row">
-            <div id="player_badges" class="col">
-                <h1> Badges </h1>
-                {% for badge in badges %} <img src="{{ badge.badge_type.picture.url }}" title="{{ badge.badge_type.badge_name }}" class="player_badge_img" /> {% empty %} <span class="nobadges">No badges to show </span>{% endfor %}
-            </div>
+
+    <div class="row justify-content-md-center playermainrow">
+        <div class="col col-12 col-sm-12 col-md-4 center">
+            <h3 id="tags_header">Info</h3>
+            <table class="playerinfo">
+                <tbody>
+                    <tr>
+                        <td> Status </td>
+                        <td>{{player.current_status.get_status_display}}</td>
+                    </tr>
+                    <tr>
+                        <td> Clan </td>
+                        <td> {% if player.clan %}<a href="/clan/{{player.clan}}/" class="clan_link">
+                                {% if player.clan.picture %}<img class="profile_clan_picture" src="{{player.clan.picture.url}}"/>{% endif %}{{player.clan}}</a>
+                            {% else %}
+                                None
+                            {% endif %}
+                            {% if is_user_clan_leader %}
+                                {% if is_player_clan_leader %}
+                                {% else %}
+                                    <br />
+                                    {% if player.clan != user.clan %}
+                                        <input type="button" class="btn btn-primary" value="Invite" onclick="invite_player('{{player.player_uuid}}')" />
+                                    {% else %}
+                                        <input type="button" class="btn btn-danger" value="Kick" onclick="kick_player('{{player.player_uuid}}')" />
+                                        <input type="button" class="btn btn-warning" value="Promote" onclick="promote_player('{{player.player_uuid}}')" />
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td> Discord </td>
+                        <td>
+                        {% if is_me %}
+                            {% if discord_code %}
+                                Use the following code: {{ discord_code }}
+                            {% elif player.discord_id %}
+                                {{player.discord_id}}
+                                <a href="/discord-link">Reset your discord link</a>
+                            {% else %}
+                                <a href="/discord-link">Generate a code to link your discord account</a>
+                            {% endif %}
+                        {% else %}
+                            {{player.discord_id}}
+                        {% endif %}
+                        </td>
+                    </tr>
+                    
+                    {% if is_me or user.admin_this_game%} {% if player.active_this_game %}
+                    <tr><td style="white-space: nowrap;">Tag 1 ID</td><td id="id_tag1">  <a href="#" class="clan_link" onclick="document.getElementById('id_tag1').innerHTML='{{ player.current_status.tag1_uuid}}'">Show</a></td></tr>
+                    <tr><td style="white-space: nowrap;">Tag 2 ID</td><td id="id_tag2">  <a href="#" class="clan_link" onclick="document.getElementById('id_tag2').innerHTML='{{ player.current_status.tag2_uuid}}'">Show</a></td></tr>
+                    <tr><td style="white-space: nowrap;">Zombie ID</td><td id="id_zombie"><a href="#" class="clan_link" onclick="document.getElementById('id_zombie').innerHTML='{{ player.current_status.zombie_uuid}}'">Show</a></td></tr>
+                    {% endif %}{% endif %}
+                </tbody>
+            </table>
         </div>
-        <div id="player_tags" class="row">
-            <div class="col">
-                <h1> Tags </h1>
-                {% for tag in tags %} <div class="player_tag_div">{% if tag.taggee %}<a href="/player/{{tag.taggee.player_uuid}}/"><div><img src="{{ tag.taggee.picture_url }}" class="player_tag_img" /></div><div>{{tag.taggee}}</div></a></div>{% else %}<div><img src="/media/bodyarmor.png" class="player_tag_img" /></div><div>Body Armor</div></a></div>{% endif %}
-                {% empty %}<span class="notags">No tags to show</span>{% endfor %}
-            </div>
+        <div class="col col-12 col-sm-12 col-md-4 center">
+            <h3 id="tags_header">Tags</h3>
+            {% if tags %}
+            <table class="playerinfo taglist" id="player_tags">
+                <tbody>
+                {% for tag in tags %}
+                    <tr>
+                        <td>
+                            {% if tag.taggee %}
+                                <a href="/player/{{tag.taggee.player_uuid}}/"><img src="{{ tag.taggee.picture_url }}" class="player_tag_img" />{{tag.taggee}}</a>
+                            {% else %}
+                                <img src="/media/bodyarmor.png" class="player_tag_img" />Body Armor
+                            {% endif %}
+                        </td>
+                        <td>{{tag.display_timestamp}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            No tags to show
+            {% endif %}
         </div>
-        <div id="player_blasters" class="row">
-            <div class="col">
-                <h1> Blasters </h1>
-                {% for blaster in blasters %} <div class="player_blaster_div"><img src="{{ blaster.picture.url }}" title="{{ blaster }}" class="player_blaster_img" /><div>{{blaster.name}}</div>{% empty %}<span class="noblasters">No blasters to show</span> {% endfor %}
-            </div>
-        </div>
-        {% if user.is_authenticated and user.current_status.is_admin %}
-        <div id="admin_tools" class="row">
-            <div class="col">
-                <h1>Admin Tools</h1>
-                <div class="admin_tool_div">
-                    <select onchange="admintools(this.value)" id="admin_tools">
-                        <option value="Tools" selected="selected">Alter Player Status</option> 
-                        <option value="make_oz" >Make OZ</option>
-                        <option value="make_nonplayer" >Make Nonplayer</option>
-                        <option value="make_human" >Make Human</option>
-                        <option value="make_human_av" >Make Human (Used AV)</option>
-                        <option value="make_human_extracted" >Make Human (Extracted)</option>
-                        <option value="make_zombie" >Make Zombie</option>
-                        <option value="make_zombie_av" >Make Zombie (Used AV)</option>
-                        <option value="make_mod" >Make Mod</option>
-                    </select>
+        <div class="col col-12 col-sm-12 col-md-4 center">
+            <h3 class="blasters">Blasters</h3>
+            {% for blaster in blasters %}
+                <div class="row blasterdetail">
+                    <div class="col blasterpic col-sm-4 col-md-4">
+                        <img src="{{ blaster.picture.url }}" title="{{ blaster }}" class="player_blaster_img" />
+                    </div>
+                    <div class="col blastertext col-sm-8 col-md-8">
+                        <div class="row blastername"><span class="blastername">{{blaster.name}}</span></div>
+                        <div class="row blasterchrono"><span class="blasterchrono">{{blaster.avg_chrono}} fps</span></div>
+                    </div>
                 </div>
-                <button onlick="admintools('print_id')" class="playeradmintool">Print ID</button>
-            </div>
+            {% empty %}
+                <span class="noblasters">No blasters to show</span>
+            {% endfor %}
         </div>
-        {% endif %}
+        <div class="col col-12 col-sm-12 col-md-12" id="player_badges">
+            <h3 class="badges"> Badges</h3>
+            {% for badge in badges %}
+                <figure class="badgefigure figure">
+                    <img src="{{ badge.badge_type.picture.url }}" title="{{ badge.badge_type.badge_name }}" class="player_badge_img" /> 
+                    <figcaption class="badgecaption">{{ badge.badge_type.badge_name }}</figcaption>
+                </figure>
+            {% empty %}
+                <span class="nobadges">No badges to show </span>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}
