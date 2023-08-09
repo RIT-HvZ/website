@@ -80,23 +80,23 @@ p, form {
 }
 
 .dt_human td{
-    background-color: rgba(201, 119, 13, 0.5);
+    background-color: rgb(146, 85, 6);
 }
 
 .dt_zombie td{
-    background-color: rgba(16, 185, 1, 0.527);
+    background-color: rgb(13, 105, 4);
 }
 
 .dt_mod td{
-    background-color: rgba(9, 111, 228, 0.644);
+    background-color: rgb(3, 57, 119);
 }
 
 .dt_admin td{
-    background-color: rgba(255, 238, 0, 0.8);
+    background-color: rgb(161, 150, 4);
 }
 
 .dt_nonplayer td{
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgb(156, 156, 156);
 }
 
 th, label {
@@ -182,8 +182,8 @@ div.zombiecount {
 }
 
 .dt_name_link, .dt_clan_link{
-    text-decoration: none;
-    color: rgb(217, 217, 217);
+    text-decoration: underline;
+    color: rgb(30, 30, 30);
 }
 
 .dt_name, .dt_size {
@@ -191,7 +191,7 @@ div.zombiecount {
 }
 
 .dt_name_link:hover, .dt_clan_link:hover{
-    color: rgb(60,60,60);
+    color: rgb(120,120,120);
 }
 
 .dt_clanname {
@@ -770,4 +770,9 @@ div.alert-error {
 
 div.alert-error ul li {
     list-style: none;
+}
+
+.clanphotopreview {
+    max-width: 200px;
+    max-height: 200px;
 }

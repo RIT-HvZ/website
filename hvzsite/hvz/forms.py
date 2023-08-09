@@ -307,7 +307,11 @@ class RulesUpdateForm(forms.ModelForm):
 class ClanCreateForm(forms.ModelForm):
     class Meta:
         model = Clan
-        fields = ["name", "picture"]
+        fields = ["name", "picture", "color"]
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['color'].widget = forms.TextInput(attrs={'data-coloris':''})
 
         
     def clean(self):

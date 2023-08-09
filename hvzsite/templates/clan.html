@@ -5,6 +5,17 @@
 <script>
 $(document).ready(function () {
     var datatable = $('#rostertable').DataTable({});
+    $('body').css("background-color","{{clan.color}}");
+    if ("{{clan.use_dark_text_color}}" == "true")
+    {
+        $('#maincontainer h1').css("color", "{{clan.get_text_color}}");
+        $('#maincontainer h2').css("color", "{{clan.get_text_color}}");
+        $('#maincontainer span').css("color", "{{clan.get_text_color}}");
+        $('#maincontainer a').css("color", "{{clan.get_text_color}}");
+        $('#maincontainer th').css("color", "{{clan.get_text_color}}");
+        $('#maincontainer div').css("color", "{{clan.get_text_color}}");
+        $('#maincontainer label').css("color", "{{clan.get_text_color}}");
+    }
 });
 
 function kick_player(player_uuid) {
@@ -139,7 +150,7 @@ function disband_clan(player_uuid) {
 </script>
 {% endblock %}
 {% block body %}
-<div class="row justify-content-md-center">
+<div class="row justify-content-md-center" id='clancontainer'>
     <div class="col col-md-4">
         <div class="row justify-content-md-center">
             <div class="col">

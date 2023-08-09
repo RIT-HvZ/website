@@ -11,6 +11,7 @@ from django.core.validators import RegexValidator
 from django.db.models.functions import Upper
 
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
+hex_rgb = RegexValidator(r'^#[0-9a-fA-F]{6}$', 'Only hex color codes e.g. #52fa3d are allowed.')
 
 import datetime
 import uuid
@@ -51,6 +52,7 @@ class Clan(models.Model):
     picture = models.ImageField(upload_to=get_clan_upload_path, null=True)
     leader = models.ForeignKey('Person', on_delete=models.SET_NULL, null=True, related_name="clan_leader")
     disband_timestamp = models.DateTimeField(null=True, blank=True)
+    color = models.CharField(max_length=7, verbose_name="Clan Color", validators=[hex_rgb], default="#222222")
 
     class Meta:
         constraints = [
@@ -70,6 +72,28 @@ class Clan(models.Model):
         if self.picture and (self.picture != self.__original_picture):
             self.picture = resize_image(self.picture, 400, 400, 'PNG')
         super().save()
+
+    @property
+    def get_text_color(self):
+        r = int(self.color[1:3], 16)
+        g = int(self.color[3:5], 16)
+        b = int(self.color[5:7], 16)
+        total_brightness = r+g+b
+        if total_brightness > 200:
+            return "#222222"
+        else:
+            return "#dddddd"
+        
+    @property
+    def use_dark_text_color(self):
+        r = int(self.color[1:3], 16)
+        g = int(self.color[3:5], 16)
+        b = int(self.color[5:7], 16)
+        total_brightness = r+g+b
+        if total_brightness > 200:
+            return "true"
+        else:
+            return "false"
 
 def get_person_upload_path(instance, filename):
     return os.path.join("profile_pictures",str(instance.player_uuid), filename)

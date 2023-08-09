@@ -848,9 +848,10 @@ def clans_api(request):
     result = []
     for clan in query[start:limit]:
         result.append({
-            "name": f"""<a class="dt_name_link" href="/clan/{clan.name}/">{clan.name}</a>""",
-            "pic": f"""<a class="dt_profile_link" href="/clan/{clan.name}/"><img src='{clan.picture.url}' class='dt_profile' /></a>""",
-            "size": clan.clan_members.count()
+            "name": f"""<a class="dt_name_link" style="color:{clan.get_text_color}" href="/clan/{clan.name}/">{clan.name}</a>""",
+            "pic": f"""<a  class="dt_profile_link" style="color:{clan.get_text_color}" href="/clan/{clan.name}/"><img src='{clan.picture.url}' class='dt_profile' /></a>""",
+            "DT_RowAttr": {"style": f'background-color:{clan.color}; color:{clan.get_text_color}' },
+            "size": f"""<span style="color:{clan.get_text_color}"> {clan.clan_members.count()} </span>"""
         })
     data = {
         "draw": int(r['draw']),
@@ -1312,7 +1313,7 @@ def create_clan_view(request):
             new_history_item = ClanHistoryItem.objects.create(clan=newclan, actor=request.user, history_item_type='c')
             new_history_item.save()
             return HttpResponseRedirect(f"/clan/{newclan.name}/")
-    return render(request, "create_clan.html", {'form':form})
+    return render(request, "create_clan.html", {'form':form,'newclan':True})
 
 def manage_announcements(request):
     if not request.user.is_authenticated or not request.user.admin_this_game:
@@ -1377,4 +1378,4 @@ def modify_clan_view(request, clan_name):
                 new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='p', additional_info=f"from {old_photo} to {new_photo}")
                 new_history_item.save()
             return HttpResponseRedirect(f"/clan/{clan.name}/")
-    return render(request, "create_clan.html", {'form':form})
+    return render(request, "create_clan.html", {'form':form,'newclan':False})
