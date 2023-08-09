@@ -1349,33 +1349,32 @@ def view_announcement(request, announcement_id):
 
 
 def modify_clan_view(request, clan_name):
-    pass
-#    if not request.user.is_authenticated:
-#        return HttpResponseRedirect("/")
-#    try:
-#        clan = Clan.objects.get(name=clan_name)
-#    except:
-#        return HttpResponseRedirect("/")
-#    
-#    if not request.user == clan.leader:
-#        return HttpResponseRedirect("/")
-#    
-#    if request.method == "GET":     
-#        form = ClanCreateForm(instance=clan)
-#    else:
-#        form = ClanCreateForm(request.POST, request.FILES, instance=clan)
-#
-#        if form.is_valid():
-#            old_name = clan.name
-#            old_photo = clan.picture.url
-#            form.save()
-#            new_name = clan.name
-#            new_photo = clan.picture.url
-#            if old_name != new_name:
-#                new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='n', additional_info=f"from {old_name} to {new_name}")
-#                new_history_item.save()
-#            if old_photo != new_photo:
-#                new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='p', additional_info=f"from {old_photo} to {new_photo}")
-#                new_history_item.save()
-#            return HttpResponseRedirect(f"/clan/{clan.name}/")
-#    return render(request, "create_clan.html", {'form':form})
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+    try:
+        clan = Clan.objects.get(name=clan_name)
+    except:
+        return HttpResponseRedirect("/")
+    
+    if not request.user == clan.leader:
+        return HttpResponseRedirect("/")
+    
+    if request.method == "GET":     
+        form = ClanCreateForm(instance=clan)
+    else:
+        form = ClanCreateForm(request.POST, request.FILES, instance=clan)
+
+        if form.is_valid():
+            old_name = clan.name
+            old_photo = clan.picture.url
+            form.save()
+            new_name = clan.name
+            new_photo = clan.picture.url
+            if old_name != new_name:
+                new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='n', additional_info=f"from {old_name} to {new_name}")
+                new_history_item.save()
+            if old_photo != new_photo:
+                new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='p', additional_info=f"from {old_photo} to {new_photo}")
+                new_history_item.save()
+            return HttpResponseRedirect(f"/clan/{clan.name}/")
+    return render(request, "create_clan.html", {'form':form})

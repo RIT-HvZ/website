@@ -7,6 +7,10 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.templatetags.static import static
+from django.core.validators import RegexValidator
+from django.db.models.functions import Upper
+
+alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
 
 import datetime
 import uuid
@@ -20,6 +24,7 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
+
 
 def resize_image(photo, width, height, format="JPEG"):
     im = Image.open(photo)
@@ -41,16 +46,29 @@ def get_clan_upload_path(instance, filename):
 get_team_upload_path = get_clan_upload_path
 
 class Clan(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Clan Name", primary_key=True)
+    name = models.CharField(max_length=100, verbose_name="Clan Name", primary_key=False, unique=True ,validators=[alphanumeric])
+    clan_uuid = models.UUIDField(primary_key=True, unique=True, default=uuid.uuid4, editable=False)
     picture = models.ImageField(upload_to=get_clan_upload_path, null=True)
     leader = models.ForeignKey('Person', on_delete=models.SET_NULL, null=True, related_name="clan_leader")
     disband_timestamp = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(Upper('name'), name='unique_upper_name_clan')
+        ]
+        
+    __original_picture = None
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_picture = self.picture
+
     def __str__(self) -> str:
         return self.name
 
     def save(self, *args, **kwargs):
-        if self.picture:
-            self.picture = resize_image(self.picture, 400, 400)
+        if self.picture and (self.picture != self.__original_picture):
+            self.picture = resize_image(self.picture, 400, 400, 'PNG')
         super().save()
 
 def get_person_upload_path(instance, filename):

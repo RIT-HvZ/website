@@ -763,3 +763,11 @@ table#clans tr:nth-child(odd) {
 table#clans .dt_size {
     color: rgb(200,200,200);
 }
+
+div.alert-error {
+    background-color: #822;
+}
+
+div.alert-error ul li {
+    list-style: none;
+}

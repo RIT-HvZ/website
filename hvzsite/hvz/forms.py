@@ -309,6 +309,14 @@ class ClanCreateForm(forms.ModelForm):
         model = Clan
         fields = ["name", "picture"]
 
+        
+    def clean(self):
+        cd = self.cleaned_data
+        existing_clans = Clan.objects.filter(name__iexact=cd['name'])
+        if existing_clans.count() > 0 and (self.instance is None or self.instance != existing_clans[0]):
+            raise ValidationError("A clan with that name already exists.")
+
+
 class AnnouncementForm(forms.ModelForm):
     class Meta:
         model = Announcement
