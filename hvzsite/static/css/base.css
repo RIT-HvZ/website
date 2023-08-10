@@ -608,6 +608,16 @@ h2.cameralabel {
     font-weight: lighter;
 }
 
+.banneddiv {
+    background-color: rgb(205, 0, 0);
+    color: black;
+    font-weight: bold;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    font-size: large;
+}
+
 .player_picture {
     transform: translateY(50%);
     border-radius: 50%;
@@ -637,6 +647,16 @@ h2.cameralabel {
     border-color: rgb(207, 117, 0);
 }
 
+.npcontainer .player_picture {
+    border-color: rgb(100,100,100);
+}
+
+.modcontainer .player_picture {
+    border-color: rgb(30, 69, 168);
+}
+.bannedcontainer .player_picture {
+    border-color: rgb(255, 0, 0);
+}
 .player_name {
     color: white;
     align-self: flex-end;
@@ -649,6 +669,17 @@ h2.cameralabel {
 }
 .humancontainer .playernamerow {
     background-color: rgb(207, 117, 0);
+}
+
+.bannedcontainer .playernamerow {
+    background-color: rgb(255, 0, 0);
+}
+
+.npcontainer .playernamerow {
+    background-color: rgb(100,100,100);
+}
+.modcontainer .playernamerow {
+    background-color: rgb(30, 69, 168);
 }
 
 .admincontainer .playernamerow {
@@ -775,4 +806,9 @@ div.alert-error ul li {
 .clanphotopreview {
     max-width: 200px;
     max-height: 200px;
+}
+
+div.controls ul {
+    list-style-type: none;
+    padding-left: 0;
 }

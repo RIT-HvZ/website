@@ -28,7 +28,7 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
-
+import random
 
 report_webhook = None
 if settings.DISCORD_REPORT_WEBHOOK_URL:
@@ -438,6 +438,48 @@ def player_admin_tools(request, player_id, command):
         playerstatus.status = 'x'
     if command == "make_mod":
         playerstatus.status = 'm'
+    if command == "ban":
+        playerstatus.status = 'n'
+        player.is_banned = True
+        player.ban_timestamp = timezone.now()
+        player.clan = None
+        player.save()
+        existing_leadership = Clan.objects.filter(leader=player)
+        # Remove from leadership of any clans
+        for led_clan in existing_leadership:
+            ClanHistoryItem(clan=led_clan, actor=player, history_item_type="a").save() # "Leader banned" history item
+            other_members = Person.objects.filter(clan=led_clan)
+
+            # If this clan didn't have any other members, disband it
+            if other_members.count() == 0:
+                led_clan.leader = None
+                led_clan.disband_timestamp = timezone.now()
+                led_clan.save()
+                ClanHistoryItem(clan=led_clan, history_item_type="e").save() # "Disbanded by system" history item
+
+            # Otherwise, attempt to find a suitable new leader
+            else:
+                suitable_leaders = other_members.filter(playerstatus__game=get_active_game(), playerstatus__status__in=['h','v','e','z','o','x','a','m'])
+
+                # If no suitable leaders can be found, disband the clan
+                if suitable_leaders.count() == 0:
+                    for clan_member in other_members:
+                        clan_member.clan = None
+                        clan_member.save()
+                    
+                    led_clan.leader = None
+                    led_clan.disband_timestamp = timezone.now()
+                    led_clan.save()
+                    ClanHistoryItem(clan=led_clan, history_item_type="e").save() # "Disbanded by system" history item
+                
+                # Otherwise, pick a new leader at random
+                else:
+                    new_leader = random.choice(suitable_leaders)
+                    led_clan.leader = new_leader
+                    led_clan.save()
+                    ClanHistoryItem(clan=led_clan, actor=new_leader, history_item_type="b").save() # "Promoted to leader by system" history item
+
+                    
     playerstatus.save()
 
     return JsonResponse({'status': 'success'})
@@ -766,7 +808,7 @@ def player_activation_api(request, game=None):
         search = r["search[value]"] 
     except AssertionError:
         raise
-    query = Person.full_name_objects.all()
+    query = Person.full_name_objects.filter(is_banned=False)
     if search != "":
         query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
     query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name"}[order_column_name]}""")

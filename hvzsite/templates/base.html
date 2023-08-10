@@ -123,7 +123,7 @@ $(document).ready(function () {
     }
   });
 });
-        </script>
+</script>
     </head>
     <body class="text-light">
       {% block prebody %}{% endblock %}
@@ -228,6 +228,11 @@ $(document).ready(function () {
             </div>
           </nav>
         <div class="container-fluid">
+        {% if is_banned %}
+        <div class="row center announcementrow"><div class="col center banneddiv">
+        You have been banned from HvZ at RIT. You may no longer interact with this site.
+        </div></div>
+        {% endif %}
         {% for announcement in announcements %}
         <div class="row center announcementrow" id="dismissannouncement_{{announcement.id}}"><div class="col center announcementdiv">
         {{announcement.short_form}} <a href="/announcement/{{announcement.id}}/" class="announcementlink">...more</a> <a class="announcementdismiss" onclick="dismiss_announcement('{{announcement.id}}')"> dismiss </a>

@@ -89,7 +89,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'hvz.contextprocessors.notification_context_processor.get_notifications',
-                'hvz.contextprocessors.announcement_context_processor.get_announcements'
+                'hvz.contextprocessors.announcement_context_processor.get_announcements',
+                'hvz.contextprocessors.banned_context_processor.is_player_banned'
             ],
         },
     },

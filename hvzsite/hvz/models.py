@@ -197,6 +197,8 @@ class Person(AbstractUser):
         max_length=255,
         unique=True,
     )
+    is_banned = models.BooleanField(verbose_name="Player is banned.",  default=False)
+    ban_timestamp = models.DateTimeField(null=True, blank=True, auto_now_add=False)
     #USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
@@ -659,7 +661,10 @@ class ClanHistoryItem(models.Model):
         ('r','player_added_by_request'),
         ('x','promote'),
         ('k','kick'),
-        ('l','leave')
+        ('l','leave'),
+        ('a','leader_banned'),
+        ('b','promoted_by_system'),
+        ('e','disbanded_by_system')
     ))
 
     @property
@@ -686,6 +691,12 @@ class ClanHistoryItem(models.Model):
                 return f"{self.actor} ({self.actor.player_uuid}) kicked {self.other} ({self.other.player_uuid}) from clan {self.clan} at {self.timestamp_display}"
             elif self.history_item_type == "l":
                 return f"{self.actor} ({self.actor.player_uuid}) left clan {self.clan} at {self.timestamp_display}"
+            elif self.history_item_type == "a":
+                return f"Leader {self.actor} ({self.actor.player_uuid}) was banned at {self.timestamp_display}"
+            elif self.history_item_type == "b":
+                return f"{self.actor} ({self.actor.player_uuid}) was promoted to leader by the system at {self.timestamp_display}"
+            elif self.history_item_type == "e":
+                return f"Clan was disbanded by the system at {self.timestamp_display}"
             return "I don't know."
         except:
             return "I don't know."
@@ -711,6 +722,12 @@ class ClanHistoryItem(models.Model):
                 return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> kicked <a class='clan_link' href='/player/{self.other.player_uuid}/'>{self.other}</a> at {self.timestamp_display}"
             elif self.history_item_type == "l":
                 return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> left at {self.timestamp_display}"
+            elif self.history_item_type == "a":
+                return f"Clan Leader <a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> was banned at {self.timestamp_display}"
+            elif self.history_item_type == "b":
+                return f"<a class='clan_link' href='/player/{self.actor.player_uuid}/'>{self.actor}</a> was promoted to leader by the system at {self.timestamp_display}"
+            elif self.history_item_type == "e":
+                return f"Clan was disbanded by the system at {self.timestamp_display}"
             return "I don't know."
         except:
             return "I don't know."

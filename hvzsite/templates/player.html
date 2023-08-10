@@ -4,6 +4,10 @@
 {% block extrahead %}
 <script>
 $(document).ready(function () {
+    if ("{{player.is_banned}}" == "True"){
+        $('#maincontainer').addClass("bannedcontainer");
+        return;
+    }
     if ("{{player.current_status.is_human}}" == "True") {
         $('#maincontainer').addClass("humancontainer");
     }
@@ -23,6 +27,10 @@ $(document).ready(function () {
 
 {% if user.is_authenticated and user.current_status.is_admin %}
 function admintools(command) {
+    if (command == "ban") {
+        if(confirm("Ban player from HvZ @ RIT? -- THIS IS VERY SEVERE AND CANNOT BE UNDONE, BE VERY SURE! --")){}
+        else { return; }
+    }
     if (command == "Tools") return;
     //window.location.href = "/admin/player_admin/tools/{{player.player_uuid}}/" + command;
     $.ajax("/admin/player_admin/tools/{{player.player_uuid}}/" + command,{
@@ -144,6 +152,8 @@ function invite_player(player_uuid) {
                             <li><a class="dropdown-item" href="#" onclick="admintools('make_zombie')">Make Zombie</a></li>
                             <li><a class="dropdown-item" href="#" onclick="admintools('make_zombie_av')">Make Zombie (Used AV)</a></li>
                             <li><a class="dropdown-item" href="#" onclick="admintools('make_mod')">Make Mod</a></li>
+                            <li><h6 class="dropdown-header">Ban Player</h6></li>
+                            <li><a class="dropdown-item" href="#" onclick="admintools('ban')">Permanently Ban Player</a></li>
                         </ul>
                     </div>
                 </div>
@@ -195,12 +205,16 @@ function invite_player(player_uuid) {
                             {% if is_user_clan_leader %}
                                 {% if is_player_clan_leader %}
                                 {% else %}
-                                    <br />
-                                    {% if player.clan != user.clan %}
-                                        <input type="button" class="btn btn-primary" value="Invite" onclick="invite_player('{{player.player_uuid}}')" />
-                                    {% else %}
-                                        <input type="button" class="btn btn-danger" value="Kick" onclick="kick_player('{{player.player_uuid}}')" />
-                                        <input type="button" class="btn btn-warning" value="Promote" onclick="promote_player('{{player.player_uuid}}')" />
+                                    {% if player.is_banned == False %}
+                                        {% if player.active_this_game %}
+                                            <br />
+                                            {% if player.clan != user.clan %}
+                                                <input type="button" class="btn btn-primary" value="Invite" onclick="invite_player('{{player.player_uuid}}')" />
+                                            {% else %}
+                                                <input type="button" class="btn btn-danger" value="Kick" onclick="kick_player('{{player.player_uuid}}')" />
+                                                <input type="button" class="btn btn-warning" value="Promote" onclick="promote_player('{{player.player_uuid}}')" />
+                                            {% endif %}
+                                        {% endif %}
                                     {% endif %}
                                 {% endif %}
                             {% endif %}
