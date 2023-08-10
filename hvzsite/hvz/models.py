@@ -517,6 +517,20 @@ class Tag(models.Model):
             badge = BadgeInstance.objects.create(badge_type=badge_type, player=self.tagger, game_awarded=self.game)
             badge.save()
 
+
+def generate_report_id(length=10):
+    import string
+    import secrets
+    # Don't use i, o or l as they can be confused for other symbols
+    alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789'
+    while True:
+        new_id = ''.join(secrets.choice(alphabet) for i in range(length))
+        existing_reports = Report.objects.filter(report_uuid=new_id)
+        if existing_reports.count() > 0:
+            continue
+        return new_id
+
+
 class Report(models.Model):
     report_text = models.TextField(verbose_name="Report Description")
     reporter_email = models.EmailField(verbose_name="Reporter Email", null=True, blank=True)
@@ -526,6 +540,7 @@ class Report(models.Model):
     status = models.CharField(max_length=1, null=False, default='n', choices=(('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
     game = models.ForeignKey(Game, null=False, on_delete=models.CASCADE)
     picture = models.ImageField(upload_to='report_images/', null=True, blank=True)
+    report_uuid = models.CharField(max_length=10, unique=True, editable=False, null=False, default=generate_report_id)
 
     __original_picture = None
 

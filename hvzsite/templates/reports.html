@@ -21,6 +21,7 @@
         <table id="surveys" class="table table-striped display">
             <thead>
                 <tr>
+                    <th class="foo">Report ID</th>
                     <th class="foo">Reporter</th>
                     <th class="foo">Timestamp</th>
                     <th class="foo">Status</th>
@@ -29,7 +30,8 @@
             </thead>
             <tbody>
                 {% for report in reports %}
-                <tr onclick="window.location.href='/admin/report/{{report.id}}/'">
+                <tr onclick="window.location.href='/admin/report/{{report.report_uuid}}/'">
+                    <td>{{report.report_uuid}}</td>
                     <td>{{report.get_reporter}}</td>
                     <td>{{report.timestamp}}</td>
                     <td>{{report.status_text}}</td>

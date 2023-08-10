@@ -908,7 +908,7 @@ def create_report(request):
             report.status = "n"
             report.save()
             report_complete = True
-            report_id = report.id
+            report_id = report.report_uuid
             form = ReportForm(authenticated=request.user.is_authenticated)
             if report_webhook:
                 report_webhook.send("!report " +
@@ -937,14 +937,14 @@ def reports(request):
 def report(request, report_id):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
-    report = Report.objects.get(id=report_id)
+    report = Report.objects.get(report_uuid=report_id)
     if request.method == "POST":
         form = ReportUpdateForm(request.POST, report=report)
         if form.is_valid():
             form_reportees = set(form.cleaned_data['reportees'])
             new_update = form.instance
             new_update.note_creator = request.user
-            new_update.report = Report.objects.get(id=report_id)
+            new_update.report = Report.objects.get(report_uuid=report_id)
             existing_reportees = set(new_update.report.reportees.get_queryset())
             new_reportees = form_reportees - existing_reportees
             deleted_reportees = existing_reportees - form_reportees
@@ -970,7 +970,7 @@ def report(request, report_id):
             form = ReportUpdateForm(report=report)
     else:
         form = ReportUpdateForm(report=report)
-    report = Report.objects.get(id=report_id)
+    report = Report.objects.get(report_uuid=report_id)
     context = {
         'report': report,
         'form': form
