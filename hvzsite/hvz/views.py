@@ -538,25 +538,27 @@ def clan_api(request, clan_name, command, person_id):
     if not request.user.is_authenticated:
         return JsonResponse({"status":"you must be logged in to use this"})
     clan = Clan.objects.get(name=clan_name)
-    if request.user.clan == clan and clan.leader != request.user and command=="leave":
-        request.user.clan=None
-        request.user.save()
-        new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='l')
-        new_history_item.save()
-        return JsonResponse({"status":"success"})
-    if command == "request_to_join":
-        if request.user.has_ever_played:
-            existing_requests = ClanJoinRequest.objects.filter(clan=clan, requestor=request.user, status__in=['n','r','e'])
-            if existing_requests.count() > 0:
-                return JsonResponse({"status":"request already exists"})
-            existing_leadership = Clan.objects.filter(leader=request.user)
-            if existing_leadership.count() > 0:
-                return JsonResponse({"status":"cannot request to join another clan while leading one"})
-            join_request = ClanJoinRequest.objects.create(requestor=request.user, clan=clan)
-            join_request.save()
+    if command=="leave":
+        if request.user.clan == clan and clan.leader != request.user:
+            request.user.clan=None
+            request.user.save()
+            new_history_item = ClanHistoryItem.objects.create(clan=clan, actor=request.user, history_item_type='l')
+            new_history_item.save()
             return JsonResponse({"status":"success"})
-        else:
+        return JsonResponse({"status":"not allowed"})
+    if command == "request_to_join":
+        if not request.user.has_ever_played:
             return JsonResponse({"status":"you must have been a player ever in order to use this"})
+        existing_requests = ClanJoinRequest.objects.filter(clan=clan, requestor=request.user, status__in=['n','r','e'])
+        if existing_requests.count() > 0:
+            return JsonResponse({"status":"request already exists"})
+        existing_leadership = Clan.objects.filter(leader=request.user)
+        if existing_leadership.count() > 0:
+            return JsonResponse({"status":"cannot request to join another clan while leading one"})
+        join_request = ClanJoinRequest.objects.create(requestor=request.user, clan=clan)
+        join_request.save()
+        return JsonResponse({"status":"success"})
+
     if (request.user != clan.leader) and not request.user.admin_this_game:
         return JsonResponse({"status":"not authorized"})
     target = Person.objects.get(player_uuid=person_id)
