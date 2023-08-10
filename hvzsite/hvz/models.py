@@ -553,6 +553,8 @@ class Report(models.Model):
             self.picture = resize_image(self.picture, 1000, 1000, "JPEG")
         super().save()
 
+    def __str__(self):
+        return f"Report ID {self.report_uuid} filed by {self.get_reporter} at {self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}"
     @property
     def get_reporter(self):
         if self.reporter:
