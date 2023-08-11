@@ -167,28 +167,39 @@ $(document).ready(function () {
                     <a class="nav-link" href="/report/">Report Player/Incident</a>
                   </li>
                   {% if user.is_authenticated and user.current_status.is_admin %}
-		  <li class="nav-item dropdown">
-		    <a class="nav-link dropdown-toggle admin-only" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-		      Admin Tools
-		    </a>
-		    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-		      <li><a class="dropdown-item" href="/blasterapproval/">Approve Blasters</a></li>
-		      <li><a class="dropdown-item" href="/player_activation/">Activate Players</a></li>
-		      <li><a class="dropdown-item" href="/admin/create-body-armor">Create a Body Armor</a></li>
-		      <li><a class="dropdown-item" href="/admin/create-av">Create an AV</a></li>
-          <li><a class="dropdown-item" href="/admin/editmissions/">Edit Missions</a></li>
-          <li><a class="dropdown-item" href="/admin/editpostgamesurveys/">Edit Post-Game Surveys</a></li>
-          <li><a class="dropdown-item" href="/admin/print/">ID Card Print</a></li>
-          <li><a class="dropdown-item" href="/admin/print_preview/">ID Card Print Preview</a></li>
-		      <li><a class="dropdown-item" href="/admin/manage_announcements/">Manage Announcements</a></li>
-		      <li><a class="dropdown-item" href="/admin/update_rules/">Update Rules</a></li>
-		      <li><a class="dropdown-item" href="/admin/view-avs">View AVs</a></li>
-		      <li><a class="dropdown-item" href="/admin/bodyarmors">View Body Armors</a></li>
-		      <li><a class="dropdown-item" href="/admin/reports/">View Reports</a></li>
-		    </ul>
-		  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle admin-only" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Admin Tools
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="/blasterapproval/">Approve Blasters</a></li>
+                      <li><a class="dropdown-item" href="/player_activation/">Activate Players</a></li>
+                      <li><a class="dropdown-item" href="/admin/create-body-armor">Create a Body Armor</a></li>
+                      <li><a class="dropdown-item" href="/admin/create-av">Create an AV</a></li>
+                      <li><a class="dropdown-item" href="/admin/editmissions/">Edit Missions</a></li>
+                      <li><a class="dropdown-item" href="/admin/editpostgamesurveys/">Edit Post-Game Surveys</a></li>
+                      <li><a class="dropdown-item" href="/admin/badge_grant_list/">Grant Badges</a></li>
+                      <li><a class="dropdown-item" href="/admin/print/">ID Card Print</a></li>
+                      <li><a class="dropdown-item" href="/admin/print_preview/">ID Card Print Preview</a></li>
+                      <li><a class="dropdown-item" href="/admin/manage_announcements/">Manage Announcements</a></li>
+                      <li><a class="dropdown-item" href="/admin/update_rules/">Update Rules</a></li>
+                      <li><a class="dropdown-item" href="/admin/view-avs">View AVs</a></li>
+                      <li><a class="dropdown-item" href="/admin/bodyarmors">View Body Armors</a></li>
+                      <li><a class="dropdown-item" href="/admin/reports/">View Reports</a></li>
+                    </ul>
+                  </li>
                   {% endif %}
-		</ul>
+                  {% if user.is_authenticated and user.mod_this_game %}
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle mod-only" href="#" id="navbarDropdownMod" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Mod Tools
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMod">
+                      <li><a class="dropdown-item" href="/admin/badge_grant_list/">Grant Badges</a></li>
+                    </ul>
+                  </li>
+                  {% endif %}
+		            </ul>
                 {% if user.is_authenticated %}
                 {% if notification_count > 0 %}
                   <ul class="notifications navbar-nav ms-auto">

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Badge Grant List {% endblock %}
+
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable = $('#badges').DataTable({'ordering':false});
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Badge Granting </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="badges" class="table table-striped display adminlist">
+            <thead>
+                <tr>
+                    <th class="foo">Badge Icon</th>
+                    <th class="foo">Badge Name</th>
+                    <th class="foo">Badge Description</th>
+                    <th class="foo">Badge Type</th>
+            </thead>
+            <tbody>
+                {% for badge in badge_choices %}
+                <tr onclick="window.location.href='/admin/badge_grant/{{badge.id}}/'">
+                    <td><img src="{{badge.picture.url}}"/></td>
+                    <td>{{badge.badge_name}}</td>
+                    <td>{{badge.badge_description}}</td>
+                    <td>{{badge.badge_type_display}}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td> No badges available for granting </td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

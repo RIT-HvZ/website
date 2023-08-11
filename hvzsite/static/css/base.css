@@ -52,7 +52,15 @@ p, form {
     display: inline-block;
 }
 .admin-only {
-    background-color: rgba(255, 238, 0, 0.4);
+    background-color: rgb(114, 107, 2);
+    border-radius: 0.4em;
+    margin-left: .4em;
+    margin-right: .4em;
+    color: #ddd;
+}
+
+.mod-only {
+    background-color: rgb(30, 69, 168);
     border-radius: 0.4em;
     margin-left: .4em;
     margin-right: .4em;
@@ -811,4 +819,14 @@ div.alert-error ul li {
 div.controls ul {
     list-style-type: none;
     padding-left: 0;
+}
+
+#scannerdiv {
+    display: inline-block;
+}
+
+#reader {
+    max-width: 600px;
+    max-height: 600px;
+    display: inline-block;
 }

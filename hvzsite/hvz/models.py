@@ -233,6 +233,10 @@ class Person(AbstractUser):
             return self.picture.url
         else:
             return static('/images/noprofile.png')
+        
+    @property
+    def is_a_clan_leader(self):
+        return Clan.objects.filter(leader=self).count() > 0
 
     @property
     def has_ever_played(self):
@@ -343,6 +347,8 @@ class BadgeType(models.Model):
     picture = models.ImageField(upload_to="badge_icons/", null=True)
     badge_type = models.CharField(verbose_name="Badge Type", choices=[('a','Account (persistent)'),('g','Game (resets after each game)')], max_length=1, null=False, default='g')
     badge_description = models.CharField(verbose_name="Badge Description", max_length=256, null=False)
+    mod_grantable = models.BooleanField(verbose_name="Can Moderators (not just admins) grant this badge", default=False)
+    active = models.BooleanField(verbose_name="Is this badge still able to be earned / granted?", default=True)
     def __str__(self) -> str:
         return f"{self.badge_name}"
 

@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
+from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
 from .forms import AnnouncementForm, TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -1349,7 +1349,9 @@ class ApiCreateBodyArmor(APIView):
 
 
 def create_clan_view(request):
-    if not request.user.is_authenticated or not request.user.active_this_game:
+    if  not request.user.is_authenticated or \
+        not request.user.active_this_game or \
+        request.user.is_a_clan_leader:
         return HttpResponseRedirect("/")
     
     if request.method == "GET":     
@@ -1432,3 +1434,54 @@ def modify_clan_view(request, clan_name):
                 new_history_item.save()
             return HttpResponseRedirect(f"/clan/{clan.name}/")
     return render(request, "create_clan.html", {'form':form,'newclan':False})
+
+
+def badge_grant_list(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+    if request.user.mod_this_game:
+        grantable_badges = BadgeType.objects.filter(mod_grantable=True, active=True)
+    elif request.user.admin_this_game:
+        grantable_badges = BadgeType.objects.filter(active=True)
+    else:
+        return HttpResponseRedirect("/")
+    return render(request, "badge_grant_list.html", {'badge_choices': grantable_badges})
+    
+
+def badge_grant(request, badge_type_id):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+    try:
+        badge_type = BadgeType.objects.get(id=badge_type_id, active=True)
+    except:
+        return HttpResponseRedirect("/")
+    if (request.user.admin_this_game) or (request.user.mod_this_game and badge_type.mod_grantable):
+        pass
+    else:
+        return HttpResponseRedirect("/")
+    return render(request, "badge_grant.html", {'badge_type': badge_type})
+
+
+@api_view(["POST"])
+def badge_grant_api(request, badge_type_id, player_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({"status":"not authorized"})
+    try:
+        badge_type = BadgeType.objects.get(id=badge_type_id, active=True)
+    except:
+        return JsonResponse({"status":"badge type not found"})
+    if (request.user.admin_this_game) or (request.user.mod_this_game and badge_type.mod_grantable):
+        pass
+    else:
+        return JsonResponse({"status":"not authorized"})
+    try:
+        player = Person.objects.get(player_uuid=player_id)
+    except:
+        return JsonResponse({"status":"player not found"})
+    try:
+        BadgeInstance(badge_type=badge_type, player=player, game_awarded=get_active_game()).save()
+        import time
+        time.sleep(2)
+        return JsonResponse({"status":"success", "playername": str(player)})
+    except:
+        return JsonResponse({"status":"failed to save"})

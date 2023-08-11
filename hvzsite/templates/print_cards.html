@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<!-- saved from url=(0025)https://hvz.rit.edu/print -->
+{% load static %}
 <html lang="en">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script> -->
 <link href="https://fonts.cdnfonts.com/css/droid-sans-mono-2" rel="stylesheet">
+<script src="{% static 'js/datamatrix.min.js' %}"></script>
 <script>
 function markprinted() {
     confirm = window.confirm("Mark all players as printed? Note: THIS CANNOT BE UNDONE!");
@@ -11,6 +12,16 @@ function markprinted() {
         window.location.href='/admin/mark_printed/';
     }
 }
+$(document).ready(function () {
+    $("p.name").each(function(index, name_elem){
+        var name_length = $(name_elem).text().length;
+        if( name_length > 37 && name_length <= 43){
+            $(name_elem).addClass("longassname");
+        } else if (name_length > 43 ){
+            $(name_elem).addClass("reallylongassname");
+        }
+    });
+})
 </script>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -28,12 +39,15 @@ function markprinted() {
 
         .card {
             float: left;
-            width: 8cm;
-            height: 4.5cm;
+            width: 3.5in;
+            height: 2in;
             background-color: #FFF;
             border: 0.10in #00CC00 solid;
             overflow: hidden;
             border-radius: 10px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
         }
 
         .card.mod {
@@ -56,52 +70,53 @@ function markprinted() {
             word-wrap: break-word;
         }
 
-        .card .info .name {
+        .card .name {
             font-weight: bold;
+            white-space: nowrap; 
+            max-width:100%;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: clip;
         }
 
         .card .avatar img {
-            width: 100px;
-            height: 100px;
+            width: 66px;
+            height: 66px;
             max-height: 100%;
             max-width: 100%;
-            float: left;
-            background-color: #D4D4D4;
-        }
-
-        .card .qr {
             float: right;
+            background-color: #D4D4D4;
         }
 
-        .card .qr canvas {
+        .card .qr svg {
             margin-top: 0px;
-            padding-top: 0px;
-            width: 65px;
-            height: 65px;
+            padding-top: 2px;
+            padding-left: 4px;
+            padding-bottom: 0;
+            width: 98px;
+            height: 98px;
             max-height: 100%;
             max-width: 100%;
-            background-color: #D4D4D4;
+            background-color: #fff;
         }
 
         .card .top {
-            width: inherit;
-            height: 3.175cm;
+            width: 3.3in;
+            height: 1.2in;
         }
 
-        .card .bottom {
-            width: inherit;
+        .card .id_number {
+            width: 3.3in;
             text-align: center;
             color: black;
-            font-size: 0.9em;
+            font-size: 0.8em;
         }
 
-        .card p {
-            line-height: 1.2em;
+        .card .bottom .ids {
+            height: 3.5em;
         }
-
-        .card hr {
-            margin-top: -0.4cm;
-            margin-bottom: -0.1cm;
+        .card .id_number {
+            line-height: 1.3em;
         }
 
         .card .human-id {
@@ -113,7 +128,49 @@ function markprinted() {
                 display: none;
             }
         }
-
+        .playercardtable {
+            width: 3.3in;
+            padding: 0;
+            margin: 0;
+            border-spacing: 0px;
+        }
+        .toprow {
+            font-size: 14px;
+            color: black;            
+            font-weight: bold;
+            line-height: 1.2em;
+            text-align: center;
+        }
+        .toprow td {
+            width: 3.3in;
+            max-width: 3.3in;
+        }
+        tr, td, p {
+            padding: 0;
+            margin: 0;
+        }
+        .card  img {
+            width: 100px;
+            height: 100px;
+            max-height: 100%;
+            max-width: 100%;
+            background-color: #D4D4D4;
+        }
+        .scan_and_image td{
+            text-align: center;
+        }
+        .border_sandwich td{
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+        .card .toprow p.name.longassname {
+            font-size: 12px;
+        }
+        .card .toprow p.name.reallylongassname {
+            font-size: 10px;
+            white-space: normal;
+            line-height: 10px;
+        }
     </style>
 </head>
 <body>
@@ -121,40 +178,51 @@ function markprinted() {
     {% for player in players %}
         {% if forloop.counter0|divisibleby:2 %}<br style="clear:both">{%endif%}
         <div class="card {% if player.admin_this_game %}admin{% endif %}{% if player.mod_this_game %}mod{% endif %}">
-            <div class="top">
-                <div class="avatar">
-                    <img src="{{player.picture_url}}" alt="avatar">
-                </div>
-                <div class="qr">
-                    <span id="qr_url_{{player.player_uuid}}" style="display:none">{{url}}/player/{{player.player_uuid}}/</span>
-                    <canvas id="qrcode_{{player.player_uuid}}"></canvas>
-                    <script type="text/javascript">
-                        var qr_{{forloop.counter0}} = new QRious({
-                            element: document.getElementById("qrcode_{{player.player_uuid}}"),
-                            background: '#fff',
-                            backgroundAlpha: 1,
-                            foreground: '#000',
-                            foregroundAlpha: 1,
-                            level: 'L',
-                            padding: 0,
-                            size: 100,
-                            value: document.getElementById('qr_url_{{player.player_uuid}}').innerText
-                        });
-                    </script>
-                </div>
-                <div class="info">
-                    <p class="name">{{player.first_name}} {{player.last_name}}</p>
-                    <p>Zombie Id: {% if not preview %}{{player.current_status.zombie_uuid}}{% endif %}</p>
-                </div>
-            </div>
-            <div class="bottom">
-                <div class="ids">
-                    <hr>
-                    <p class="human-id">Human Id #2: {% if not preview %}{{player.current_status.tag2_uuid}}{% endif %}</p>
-                    <hr>
-                    <p class="human-id">Human Id #1: {% if not preview %}{{player.current_status.tag1_uuid}}{% endif %}</p>
-                </div>
-            </div>
+            <table class="playercardtable">
+                <tbody>
+                    <tr class="toprow">
+                        <td colspan="2"><p class="name">{{player.first_name}} {{player.last_name}}</p></td>
+                    </tr>
+                    <tr class="scan_and_image">
+                        <td><img src="{{player.picture_url}}" alt="avatar"></td>
+                        <td>
+                            <div class="qr" id="qr_container_{{player.player_uuid}}">
+                            <span id="qr_url_{{player.player_uuid}}" style="display:none">{{url}}/player/{{player.player_uuid}}/</span>
+                            <!--<canvas id="qrcode_{{player.player_uuid}}"></canvas>-->
+                            <script type="text/javascript">
+                                //var qr_{{forloop.counter0}} = new QRious({
+                                //    element: document.getElementById("qrcode_{{player.player_uuid}}"),
+                                //    background: '#fff',
+                                //    backgroundAlpha: 1,
+                                //    foreground: '#000',
+                                //    foregroundAlpha: 1,
+                                //    level: 'L',
+                                //    padding: 0,
+                                //    size: 100,
+                                //    value: document.getElementById('qr_url_{{player.player_uuid}}').innerText
+                                //});
+                                const datamatrix_{{forloop.counter0}} = DATAMatrix({
+                                    msg: document.getElementById('qr_url_{{player.player_uuid}}').innerText,
+                                    dim: 98,
+                                    pad: 0,
+                                    rct: 0,
+                                    pal: ["#000000", "#ffffff"]
+                                });
+                                document.getElementById("qr_container_{{player.player_uuid}}").appendChild(datamatrix_{{forloop.counter0}});
+                            </script>
+                        </td>
+                    </tr>
+                    <tr class="id_number">
+                        <td colspan="2">Zombie Id: {% if not preview %}{{player.current_status.zombie_uuid}}{% endif %}</td>
+                    </tr>
+                    <tr class="id_number border_sandwich">
+                        <td colspan="2">Human Id #2: {% if not preview %}{{player.current_status.tag2_uuid}}{% endif %}</td>
+                    </tr>
+                    <tr class="id_number">
+                        <td colspan="2">Human Id #1: {% if not preview %}{{player.current_status.tag1_uuid}}{% endif %}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     {% empty %}
     No cards to print!

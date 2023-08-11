@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "badge_name": "Tag Streak: Twin-Tag",
-      "picture": "badge_icons/streak-02.jpg",
+      "picture": "badge_icons/streak-02.png",
       "badge_type": "g",
       "badge_description": "You tagged two humans within an hour!"
     }
@@ -14,7 +14,7 @@
     "pk": 2,
     "fields": {
       "badge_name": "Tag Streak: Triple-Tag",
-      "picture": "badge_icons/streak-03.jpg",
+      "picture": "badge_icons/streak-03.png",
       "badge_type": "g",
       "badge_description": "You tagged three humans within an hour!"
     }
@@ -24,7 +24,7 @@
     "pk": 3,
     "fields": {
       "badge_name": "Tag Streak: Quad-Tag",
-      "picture": "badge_icons/streak-04.jpg",
+      "picture": "badge_icons/streak-04.png",
       "badge_type": "g",
       "badge_description": "You tagged four humans within an hour!"
     }
@@ -34,7 +34,7 @@
     "pk": 4,
     "fields": {
       "badge_name": "Tag Streak: Pentag",
-      "picture": "badge_icons/streak-05_O4kOYjI.jpg",
+      "picture": "badge_icons/streak-05.png",
       "badge_type": "g",
       "badge_description": "You tagged five humans within an hour!"
     }
@@ -44,7 +44,7 @@
     "pk": 5,
     "fields": {
       "badge_name": "Tag Streak: Overkill",
-      "picture": "badge_icons/streak-06.jpg",
+      "picture": "badge_icons/streak-06.png",
       "badge_type": "g",
       "badge_description": "You tagged six humans within an hour!"
     }
@@ -54,7 +54,7 @@
     "pk": 6,
     "fields": {
       "badge_name": "Tag Streak: Lucky 7",
-      "picture": "badge_icons/streak-07.jpg",
+      "picture": "badge_icons/streak-07.png",
       "badge_type": "g",
       "badge_description": "You tagged seven humans within an hour!"
     }
@@ -64,7 +64,7 @@
     "pk": 7,
     "fields": {
       "badge_name": "Tag Streak: Tagalicious",
-      "picture": "badge_icons/streak-08.jpg",
+      "picture": "badge_icons/streak-08.png",
       "badge_type": "g",
       "badge_description": "You tagged eight humans within an hour!"
     }
@@ -74,7 +74,7 @@
     "pk": 8,
     "fields": {
       "badge_name": "Tag Streak: Unstoppable",
-      "picture": "badge_icons/streak-09.jpg",
+      "picture": "badge_icons/streak-09.png",
       "badge_type": "g",
       "badge_description": "You tagged nine humans within an hour!"
     }
@@ -84,7 +84,7 @@
     "pk": 9,
     "fields": {
       "badge_name": "Tag Streak: Apocalypse",
-      "picture": "badge_icons/streak-10.jpg",
+      "picture": "badge_icons/streak-10.png",
       "badge_type": "g",
       "badge_description": "You tagged TEN or more humans within an hour!"
     }

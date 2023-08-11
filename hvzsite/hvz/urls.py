@@ -64,6 +64,9 @@ urlpatterns = [
     re_path(r'^admin/mark_printed/?$', views.mark_printed),
     re_path(r'^admin/manage_announcements/?$', views.manage_announcements),
     re_path(r'^admin/announcement/(?P<announcement_id>[^/]+)/?$', views.edit_announcement),
+    re_path(r'^admin/badge_grant/(?P<badge_type_id>[^/]+)/?$', views.badge_grant),
+    re_path(r'^admin/badge_grant_list/?$', views.badge_grant_list),
+    re_path(r'^admin/badge_grant_api/(?P<badge_type_id>[^/]+)/(?P<player_id>[^/]+)/?$', views.badge_grant_api),
 
     # API Routes
     # re_path(r'^api/?', include(router.urls)),

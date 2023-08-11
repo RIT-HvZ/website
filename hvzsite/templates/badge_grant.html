@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Grant Badge {% endblock %}
+{% block extrahead %}
+<script src="https://unpkg.com/@zxing/library@latest" type="text/javascript"></script>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script type="text/javascript">
+var last_scanned = "";
+
+function strip_playerid_from_url(url) {
+    $("#infotoast .toast-body").text(url);
+    $("#infotoast").toast("show");
+    console.log("stripping id from " + url);
+    var playerid = /((\w{4,12}-?)){5}/.exec(url)[0];
+    console.log(playerid);
+    return playerid;
+}
+
+function send_qr(qrcode) {
+    var url = "/admin/badge_grant_api/{{badge_type.id}}/" + qrcode + "/";
+    console.log(url);
+    $.ajax(url,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            $("#successtoast .toast-body").text("Badge successfully granted for player " + data.playername);
+            $("#successtoast").toast("show");
+        }
+        else {
+            $("#errortoast .toast-body").text("Error granting badge: " + data.status);
+            $("#errortoast").toast("show");
+        }
+    })
+}
+
+//window.addEventListener('load', function () {
+//    const codeReader = new ZXing.BrowserQRCodeReader();
+//    function decodeContinuously(codeReader) {
+//        codeReader.decodeFromInputVideoDeviceContinuously(undefined, 'video', (result, err) => {
+//            if (result) 
+//            {
+//                if (last_scanned !== result.text)
+//                {
+//                    last_scanned = result.text;
+//                    console.log("READ QR CODE: "+result.text);
+//                    var player_id = strip_playerid_from_url(result.text);
+//                    $("#infotoast .toast-body").text("Sending badge request for player ID " + player_id);
+//                    $("#infotoast").toast("show");
+//                    send_qr(player_id);
+//                }
+//                else
+//                {
+//                    console.log("Last scanned: " + last_scanned);
+//                    console.log("Result: " + result.text);
+//                }
+//            }
+//        })
+//    }
+//    decodeContinuously(codeReader);
+//})
+
+
+
+$(document).ready(function () {
+    function onScanSuccess(decodedText, decodedResult) {
+        if (decodedText) 
+        {
+            if (last_scanned !== decodedText)
+            {
+                last_scanned = decodedText;
+                console.log("READ QR CODE: "+decodedText);
+                var player_id = strip_playerid_from_url(decodedText);
+                $("#infotoast .toast-body").text("Sending badge request for player ID " + player_id);
+                $("#infotoast").toast("show");
+                send_qr(player_id);
+            }
+            else
+            {
+                console.log("Last scanned: " + last_scanned);
+                console.log("Result: " + decodedText);
+            }
+        }
+    }
+
+    function onScanFailure(error) {
+    // handle scan failure, usually better to ignore and keep scanning.
+    // for example:
+    console.warn(`Code scan error = ${error}`);
+    }
+
+    let html5QrcodeScanner = new Html5QrcodeScanner( "scannerdiv",
+        { fps: 10, qrbox: {width: 250, height: 250}, useBarCodeDetectorIfSupported: false, formatsToSupport: ['QR_CODE', 'DATA_MATRIX']},
+        /* verbose= */ false);
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+});
+
+</script>
+{% endblock %}
+{% block prebody %}
+<div class="toast-container d-flex justify-content-center align-items-center w-100">
+    <div class="toast bg-success" data-bs-delay="2000" role="alert" aria-live="assertive" aria-atomic="true" id="successtoast">
+        <div class="d-flex">
+            <div class="toast-body" >
+                Hello, world! This is a toast message.
+            </div>
+        </div>
+    </div>
+    <div class="toast bg-primary" data-bs-delay="2000" role="alert" aria-live="assertive" aria-atomic="true" id="infotoast">
+        <div class="d-flex">
+            <div class="toast-body">
+                Hello, world! This is a toast message.
+            </div>
+        </div>
+    </div>
+    <div class="toast bg-danger" data-bs-delay="2000" role="alert" aria-live="assertive" aria-atomic="true"  id="errortoast">
+        <div class="d-flex">
+            <div class="toast-body">
+                Hello, world! This is a toast message.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Grant Badge </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col center">
+        <img src="{{badge_type.picture.url}}"/><br />
+        Currently granting badge: {{badge_type.badge_name}}<br />
+        Scan players' ID cards and wait for the Success message to appear before scanning another
+    </div>
+</div>
+<!--<div class="row" id="videorow">
+    <div class="col center">
+        <video id="video" width="640" height="480" style="border: 1px solid gray"></video>
+    </div>
+</div>-->
+<div class="row center" id="qrcoderow">
+    <div class="col col-12 col-sm-4 offset-sm-4 center" id="scannerdiv">
+    </div>
+</div>
+{% endblock %}
