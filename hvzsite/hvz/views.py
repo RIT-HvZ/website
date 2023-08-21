@@ -330,13 +330,6 @@ def admin_view_avs(request):
     return render(request, "view_avs.html", context)
 
 
-def admin_control_panel(request):
-    if (not request.user.is_authenticated) or (not request.user.admin_this_game):
-        return HttpResponseRedirect("/")
-    
-    return render(request, "admincontrolpanel.html")
-    
-
 def admin_reset_game(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")

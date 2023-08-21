@@ -47,7 +47,7 @@ def get_clan_upload_path(instance, filename):
 get_team_upload_path = get_clan_upload_path
 
 class Clan(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Clan Name", primary_key=False, unique=True ,validators=[alphanumeric])
+    name = models.CharField(max_length=100, verbose_name="Clan Name", unique=True, validators=[alphanumeric])
     clan_uuid = models.UUIDField(primary_key=True, unique=True, default=uuid.uuid4, editable=False)
     picture = models.ImageField(upload_to=get_clan_upload_path, null=True)
     leader = models.ForeignKey('Person', on_delete=models.SET_NULL, null=True, related_name="clan_leader")
@@ -197,7 +197,7 @@ class Person(AbstractUser):
         max_length=255,
         unique=True,
     )
-    is_banned = models.BooleanField(verbose_name="Player is banned.",  default=False)
+    is_banned = models.BooleanField(verbose_name="Player is banned.", default=False)
     ban_timestamp = models.DateTimeField(null=True, blank=True, auto_now_add=False)
     #USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
