@@ -27,6 +27,29 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
 
 
+def generate_id(length=10):
+    import secrets
+    # Don't use i, o or l as they can be confused for other symbols
+    alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789'
+    return ''.join(secrets.choice(alphabet) for i in range(length))
+
+def generate_tag_id(length=10):
+    while True:
+        new_id = generate_id(length)
+        game = get_active_game()
+        existing_ids = PlayerStatus.objects.filter(Q(game=game) & (Q(tag1_uuid=new_id) | Q(tag2_uuid=new_id) | Q(zombie_uuid=new_id)))
+        if existing_ids.count() > 0:
+            continue
+        return new_id
+
+def generate_report_id(length=10):
+    while True:
+        new_id = generate_id(length)
+        existing_reports = Report.objects.filter(report_uuid=new_id)
+        if existing_reports.count() > 0:
+            continue
+        return new_id
+
 def resize_image(photo, width, height, format="JPEG"):
     im = Image.open(photo)
     output = BytesIO()
@@ -233,7 +256,7 @@ class Person(AbstractUser):
             return self.picture.url
         else:
             return static('/images/noprofile.png')
-        
+
     @property
     def is_a_clan_leader(self):
         return Clan.objects.filter(leader=self).count() > 0
@@ -246,15 +269,6 @@ class Person(AbstractUser):
         if self.picture and (self.picture != self.__original_picture):
             self.picture = resize_image(self.picture, 400, 400, 'PNG')
         super().save()
-
-
-def generate_tag_id(length=10):
-    import string
-    import secrets
-    # Don't use i, o or l as they can be confused for other symbols
-    alphabet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789'
-    return ''.join(secrets.choice(alphabet) for i in range(length))
-
 
 class PlayerStatus(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE)
@@ -312,7 +326,6 @@ class Rules(SingletonModel):
 
 def gen_default_code(k=10):
     return ''.join(random.choices(string.ascii_letters, k=k))
-
 
 class AntiVirus(models.Model):
     av_uuid = models.UUIDField(verbose_name="AV UUID (Unique)", editable=False, default=uuid.uuid4, primary_key=True)
@@ -526,19 +539,6 @@ class Tag(models.Model):
             badge.save()
 
 
-def generate_report_id(length=10):
-    import string
-    import secrets
-    # Don't use i, o or l as they can be confused for other symbols
-    alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ123456789'
-    while True:
-        new_id = ''.join(secrets.choice(alphabet) for i in range(length))
-        existing_reports = Report.objects.filter(report_uuid=new_id)
-        if existing_reports.count() > 0:
-            continue
-        return new_id
-
-
 class Report(models.Model):
     report_text = models.TextField(verbose_name="Report Description")
     reporter_email = models.EmailField(verbose_name="Reporter Email", null=True, blank=True)
@@ -737,7 +737,7 @@ class ClanHistoryItem(models.Model):
             return "I don't know."
         except:
             return "I don't know."
-        
+
 class Announcement(models.Model):
     post_time = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
@@ -746,7 +746,7 @@ class Announcement(models.Model):
 
     def __str__(self) -> str:
         return f"Announcement on {self.post_time}: {self.short_form}"
-    
+
     @property
     def timestamp_display(self):
         return self.post_time.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M:%S')
