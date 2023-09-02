@@ -26,16 +26,16 @@
       datatable.ajax.reload( null, false ); // user paging is not reset on reload
     }, 2000);
 
-    var enable_button = $("#enableozs")[0];
+    var enable_button = $("#confirmenable")[0];
     enable_button.addEventListener("click", function(event){
       event.preventDefault();
+      $('#enablemodal').modal('hide');
       $.ajax('/api/player_oz_enable',{
         method: "POST",
         data: {
           csrfmiddlewaretoken: '{{ csrf_token }}'
         }
       }).done( function (data) {
-        console.log(data);
         if (data.status == "success") {
           alert("All OZs successfully activated")
         }
@@ -112,6 +112,28 @@
     </div>
   </div>
 </div>
+<div class="modal fade modal-lg" id="enablemodal" tabindex="-1" role="dialog" aria-labelledby="activationmodal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Enable OZs</h3>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body center">
+        Enable all OZs, marking the affected players as zombies publicly?
+        <br />
+        NOTE: This will cause all pending OZs to be marked as OZs <b><i>immediately</i></b>.
+      </div>
+      <div class="modal-footer">
+        <span id="modal_status"></span>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button id="confirmenable" type="button" class="btn btn-primary">Enable OZs</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block body %}
@@ -120,7 +142,6 @@
     <h1 class="center">Set Game OZs </h1>
   </div>
 </div>
-<button id="enableozs">Enable All OZs</button>
 <div class="row">
   <div class="col">
     <table id="players" class="table table-striped display">
@@ -134,4 +155,6 @@
     </table>
   </div>
 </div>
+<br /><br />
+<button id="enableozs" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#enablemodal">Enable All OZs</button>
 {% endblock %}
