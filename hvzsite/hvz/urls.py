@@ -39,6 +39,10 @@ urlpatterns = [
     re_path(r'^player_activation/?$', views.player_activation),
     re_path(r'^api/player_activation_api/?$', views.player_activation_api),
     re_path(r'^api/player_activation_rest/?$', views.player_activation_rest),
+    re_path(r'^player_oz_activation/?$', views.player_oz_activation),
+    re_path(r'^api/player_oz_activation_api/?$', views.player_oz_activation_api),
+    re_path(r'^api/player_oz_activation_rest/?$', views.player_oz_activation_rest),
+    re_path(r'^api/player_oz_enable/?$', views.player_oz_enable),
 
     # Admin Routes
     re_path(r'^admin/reset-game/?$', views.admin_reset_game),

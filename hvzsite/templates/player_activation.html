@@ -3,6 +3,8 @@
 {% block title %} HvZ @ RIT - Player Activation {% endblock %}
 
 {% block extrahead %}
+<link href="{% static 'css/player_activation.css' %}" rel="stylesheet">
+
 <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
 <script>
 function clearphoto() {
@@ -12,7 +14,7 @@ function clearphoto() {
     const data = canvas.toDataURL("image/jpeg");
     photo.setAttribute("src", data);
   }
-  
+
 (() => {
   // The width and height of the captured photo. We will set the
   // width to the value defined here, but the height will be
@@ -199,70 +201,16 @@ function clearphoto() {
               datatable.ajax.reload(null, false);
             })
           });
-          
+
           // and then do the updating in a callback.
           //
           // Update the modal's content.
           var modal_name = exampleModal.querySelector('#activation_name')
           modal_name.textContent = activated_name
-          
         })
     });
-    
 
 </script>
-<style type="text/css">
-#video {
-  border: 1px solid black;
-  box-shadow: 2px 2px 3px black;
-  width: 640px;
-  height: 480px;
-}
-
-#photo {
-  border: 1px solid black;
-  box-shadow: 2px 2px 3px black;
-  width: 640px;
-  height: 480px;
-}
-
-#canvas {
-  display: none;
-}
-
-.camera {
-  width: 640px;
-  height: 480px;
-  display: inline-block;
-}
-
-.output {
-  width: 640px;
-  height: 480px;
-  display: inline-block;
-  vertical-align: top;
-}
-
-#startbutton {
-  display: block;
-  position: relative;
-  margin-left: auto;
-  margin-right: auto;
-  bottom: 32px;
-  background-color: rgba(0, 150, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: 0px 0px 1px 2px rgba(0, 0, 0, 0.2);
-  font-size: 14px;
-  font-family: "Lucida Grande", "Arial", sans-serif;
-  color: rgba(255, 255, 255, 1);
-}
-
-.contentarea {
-  font-size: 16px;
-  font-family: "Lucida Grande", "Arial", sans-serif;
-  width: 760px;
-}
-</style>
 {% endblock %}
 
 {% block prebody %}
@@ -276,7 +224,8 @@ function clearphoto() {
           </button>
         </div>
         <div class="modal-body center">
-          Activate user <span id="activation_name"></span>
+          Activate user <span id="activation_name"></span>?
+          <br />
           <h2 class="cameralabel">Live Camera Feed</h2>
           <div class="camera">
             <video id="video">Video stream not available.</video>

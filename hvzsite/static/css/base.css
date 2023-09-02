@@ -1,5 +1,5 @@
 body {
-    background-color: #111;
+    background-color: #181818;
     padding-top: 75px;
     font-family: "Noto Sans";
 }
@@ -11,11 +11,6 @@ input {
 h1, h2, h3, h4, h5 {
     color: #aaa;
     /*text-shadow: #000 2px 2px 3px;*/
-}
-
-.modal-title {
-    text-shadow: none;
-    color: black;
 }
 
 p, form {
@@ -191,7 +186,7 @@ div.zombiecount {
 
 .dt_name_link, .dt_clan_link{
     text-decoration: underline;
-    color: rgb(30, 30, 30);
+    color: rgb(200, 200, 200);
 }
 
 .dt_name, .dt_size {
@@ -199,7 +194,7 @@ div.zombiecount {
 }
 
 .dt_name_link:hover, .dt_clan_link:hover{
-    color: rgb(120,120,120);
+    color: rgb(220,220,220);
 }
 
 .dt_clanname {
@@ -541,12 +536,6 @@ div.countdown {
     color: black;
     font-size: xx-large;
     border-radius: 10px;
-}
-
-h2.cameralabel {
-    color: black;
-    text-decoration: none;
-    text-shadow: none;
 }
 
 .qrcontainer {

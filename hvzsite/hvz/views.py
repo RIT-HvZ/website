@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode
+from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode, OZEntry
 from .forms import AnnouncementForm, TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -21,7 +21,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from rest_framework.views import APIView
 from rest_framework_api_key.models import APIKey
 from rest_framework_api_key.permissions import HasAPIKey
-import json 
+import json
 import discord
 import base64
 from PIL import Image
@@ -779,12 +779,11 @@ def player_activation(request):
     context = {}
     return render(request, "player_activation.html", context)
 
-
+#TODO: Returning raw HTML to embed in the page is a bad idea, find a better solution
 @api_view(["GET"])
 def player_activation_api(request, game=None):
     if not request.user.is_authenticated or not request.user.admin_this_game:
-        #print("Not admin")
-        return JsonResponse({})
+        return HttpResponse(status=403, content='Only admins can use this API')
 
     if game is None:
         game = get_active_game()
@@ -798,7 +797,7 @@ def player_activation_api(request, game=None):
         assert order_direction in ("asc","desc")
         limit = int(request.query_params["length"])
         start = int(request.query_params["start"])
-        search = r["search[value]"] 
+        search = r["search[value]"]
     except AssertionError:
         raise
     query = Person.full_name_objects.filter(is_banned=False)
@@ -838,11 +837,8 @@ def player_activation_api(request, game=None):
 def player_activation_rest(request):
     game = get_active_game()
     if not request.user.is_authenticated or not request.user.admin_this_game:
-        #print("Not admin")
-        return JsonResponse({"status":"error","error":"Not Authorized"})
-    #print(request.POST["activated_player"])
-    import time
-    time.sleep(1)
+        return HttpResponse(status=403, content='Only admins can use this API')
+
     try:
         requested_player = Person.objects.get(player_uuid=request.POST["activated_player"])
         image_base64 = request.POST['player_photo'].replace('data:image/jpeg;base64,', '').replace(" ","+")
@@ -867,10 +863,93 @@ def player_activation_rest(request):
         return JsonResponse({"status":"error", "error": str(e)})
 
 
+def player_oz_activation(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect('/')
+    context = {}
+    return render(request, "player_oz_activation.html", context)
+
+
+@api_view(["GET"])
+def player_oz_activation_api(request, game=None):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponse(status=403, content='Only admins can use this API')
+
+    if game is None:
+        game = get_active_game()
+    r = request.query_params
+    order_column = int(r.get("order[0][column]"))
+    assert order_column == 1
+    order_column_name = r.get(f"columns[{order_column}][name]")
+    assert order_column_name in ("name",)
+    order_direction = r.get("order[0][dir]")
+    assert order_direction in ("asc","desc")
+    limit = int(request.query_params["length"])
+    start = int(request.query_params["start"])
+    search = r["search[value]"]
+
+    query = PlayerStatus.objects.filter(Q(game=game) & ~Q(status='n'))
+    if search != "":
+        query = query.filter(Q(player__first_name__icontains=search) | Q(player__last_name__icontains=search))
+    result = []
+    filtered_length = len(query)
+    result = [
+        {
+            "name": f"{player_status.player.first_name} {player_status.player.last_name}",
+            "pic": f"<img src='{player_status.player.picture_url}' class='dt_profile' />",
+            "email": f"{player_status.player.email}",
+            "uuid": f"{player_status.player.player_uuid}",
+            "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[player_status.status],
+            "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{player_status.player.first_name} {player_status.player.last_name}" data-bs-activationid="{player_status.player.player_uuid}">Make OZ</button>""",
+        } for player_status in query[start:start + limit]
+    ]
+
+    data = {
+        "draw": int(r['draw']),
+        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status='n').count(),
+        "recordsFiltered": filtered_length,
+        "data": result
+    }
+    return JsonResponse(data)
+
+
+@api_view(["POST"])
+def player_oz_activation_rest(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponse(status=403, content='Only admins can use this API')
+
+    try:
+        requested_player = Person.objects.get(player_uuid=request.POST["activated_player"])
+        game = get_active_game()
+        if len(OZEntry.objects.filter(player=requested_player, game=game)) > 0:
+            return JsonResponse({"status":"error", "error": "This player is already set as an OZ"})
+
+        OZEntry.objects.create(player=requested_player, game=game)
+
+        return JsonResponse({"status":"success"})
+    except Exception as e:
+        return JsonResponse({"status":"error", "error": str(e)})
+
+
+@api_view(["POST"])
+def player_oz_enable(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponse(status=403, content='Only admins can use this API')
+
+    try:
+        game = get_active_game()
+        for entry in OZEntry.objects.filter(game=game):
+            player_status = entry.player.current_status
+            player_status.status = 'o'
+            player_status.save()
+            entry.delete()
+        return JsonResponse({"status":"success"})
+    except Exception as e:
+        return JsonResponse({"status":"error", "error": str(e)})
+
 def clans(request):
     context = {}
     return render(request, "clans.html", context)
-
 
 @api_view(["GET"])
 def clans_api(request):
@@ -884,7 +963,7 @@ def clans_api(request):
         assert order_direction in ("asc","desc")
         limit = int(request.query_params["length"])
         start = int(request.query_params["start"])
-        search = r["search[value]"] 
+        search = r["search[value]"]
     except AssertionError:
         raise
     query = Clan.objects.all().annotate(clan_member_count=Count('clan_members'))
@@ -1473,8 +1552,6 @@ def badge_grant_api(request, badge_type_id, player_id):
         return JsonResponse({"status":"player not found"})
     try:
         BadgeInstance(badge_type=badge_type, player=player, game_awarded=get_active_game()).save()
-        import time
-        time.sleep(2)
         return JsonResponse({"status":"success", "playername": str(player)})
     except:
         return JsonResponse({"status":"failed to save"})

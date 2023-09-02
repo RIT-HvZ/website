@@ -270,6 +270,13 @@ class Person(AbstractUser):
             self.picture = resize_image(self.picture, 400, 400, 'PNG')
         super().save()
 
+class OZEntry(models.Model):
+    player = models.ForeignKey(Person, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f'Player "{self.player}" for game "{self.game}"'
+
 class PlayerStatus(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE)
     tag1_uuid =   models.CharField(verbose_name="Tag #1 ID", editable=True, default=generate_tag_id, max_length=36)
