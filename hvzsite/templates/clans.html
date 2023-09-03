@@ -3,22 +3,23 @@
 {% block title %} HvZ @ RIT - Clan List {% endblock %}
 
 {% block extrahead %}
+<link href="{% static 'css/clans.css' %}" rel="stylesheet">
 <script>
-    $(document).ready(function () {
-        var datatable = $('#clans').DataTable( {
-            "serverSide": true,
-            "ajax": {
-                "url": '/api/datatables/clans',
-                "type": 'GET'
-            },
-            "order": [[1, 'asc']],
-            "columns": [
-                {"className": "dt_profilepic", "name": "picture", "data": "pic", "orderable": false},
-                {"className": "dt_name", "name": "name", "data": "name"},
-                {"className": "dt_size", "name": "size", "data": "size"},
-            ],
-        } );
-    });
+  $(document).ready(function () {
+    var datatable = $('#clans').DataTable( {
+      "serverSide": true,
+      "ajax": {
+        "url": '/api/datatables/clans',
+        "type": 'GET'
+      },
+      "order": [[1, 'asc']],
+      "columns": [
+        {"className": "dt_profilepic", "name": "picture", "data": "pic", "orderable": false},
+        {"className": "dt_name", "name": "name", "data": "name"},
+        {"className": "dt_size", "name": "size", "data": "size"},
+      ],
+    } );
+  });
 </script>
 {% endblock %}
 

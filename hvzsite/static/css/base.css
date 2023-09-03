@@ -82,11 +82,6 @@ a:hover {
     max-width: 110px;
 }
 
-.dt_clanpic {
-    max-width: 60px;
-    max-height: 60px;
-}
-
 .dt_human td{
     background-color: rgb(146, 85, 6);
 }
@@ -171,10 +166,11 @@ div.humancount, div.zombiecount, div.versussection {
     vertical-align: middle;
 }
 
-.dt_clanname {
-    padding-left: 5px;
-    padding-right: 1px;
+.dt_clanpic {
+    max-width: 60px;
+    max-height: 60px;
 }
+
 #player_name h1 {
     display: inline-block;
 }
@@ -197,7 +193,7 @@ div.humancount, div.zombiecount, div.versussection {
     width: 100%;
     text-align: center;
 }
- 
+
 .clan_picture {
     width: 100%;
     text-align: center;
@@ -519,22 +515,6 @@ div.countdown {
     padding-right:  .5em;
 }
 
-.clanhistory span:nth-child(odd) {
-    background-color: rgba(200,200,200,0.2);
-}
-
-.clanhistory span:nth-child(even) {
-    background-color: rgba(200,200,200,0.1);
-}
-
-.clanhistoryitem {
-    display: block;
-    padding: 5px;
-    margin: 3px;
-    border-radius: 5px;
-    word-break:normal;
-}
-
 .announcementdiv {
     background-color: rgb(135, 0, 135);
     color: white;
@@ -734,16 +714,6 @@ h3.blasters, h3.badges {
 .badgefigure {
     padding-left: 10px;
     padding-right: 10px;
-}
-
-table#clans {
-    background-color: rgb(80,80,80);
-}
-table#clans tr:nth-child(odd) {
-    background-color: rgb(40,40,40);
-}
-table#clans .dt_size {
-    color: rgb(200,200,200);
 }
 
 div.alert-error {
