@@ -11,6 +11,9 @@ from rest_framework.schemas import get_schema_view
 # router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
+    # favicon
+    re_path(r'favicon.ico/?$', views.favicon),
+
     # Primary Game View Routes
     re_path(r'^player/(?P<player_id>[^/]+)/?$', views.player_view),
     re_path(r'^me/?$', views.me),

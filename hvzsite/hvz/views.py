@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseNotFound, FileResponse
 from django.conf import settings
 from django.core import exceptions
 from rest_framework.response import Response
@@ -34,8 +34,10 @@ report_webhook = None
 if settings.DISCORD_REPORT_WEBHOOK_URL:
     report_webhook = discord.SyncWebhook.from_url(settings.DISCORD_REPORT_WEBHOOK_URL)
 
+def favicon(request):
+    file = (settings.BASE_DIR / "static" / "images" / "favicon.png").open('rb')
+    return FileResponse(file)
 
-# Create your views here.
 def index(request):
     game = get_active_game()
     humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v') | Q(status='e')).count()
@@ -54,7 +56,7 @@ def index(request):
         else:
             break
 
-    
+
     return render(request, "index.html", {'game': game, 'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_events': merged_recents})
 
 
