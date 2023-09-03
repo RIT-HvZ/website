@@ -31,7 +31,7 @@ function accept_invitation(invite_id) {
         console.log(data);
         if (data.status == "success") {
             console.log("SUCCESSFULLY ACCEPTED INVITATION");
-            location.reload();
+            window.location.href = data.redirect_url;
         }
         else {
             console.log("FAILED TO ACCEPT INVITATION");

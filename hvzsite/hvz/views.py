@@ -673,7 +673,7 @@ def clan_api_userresponse(request, invite_id, command):
             other_invitation.save()
         new_history_item = ClanHistoryItem.objects.create(clan=invite.clan, actor=request.user, history_item_type='i')
         new_history_item.save()
-        return JsonResponse({"status":"success"})
+        return JsonResponse({"status":"success", "redirect_url": f"/clan/{invite.clan.name}/"})
     if command == "reject":
         invite.status = "r"
         invite.response_timestamp = timezone.now()
