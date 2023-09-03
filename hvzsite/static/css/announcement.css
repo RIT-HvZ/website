@@ -1,0 +1,14 @@
+.announcementtitle {
+    margin-top: 10px;
+}
+
+.announcementbody {
+    padding-left: 2vw;
+    padding-right: 2vw;
+}
+
+.postdate {
+    color: rgb(80,80,80);
+    margin-bottom: 2em;
+    display: inline-block;
+}
