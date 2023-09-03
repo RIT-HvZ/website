@@ -50,6 +50,19 @@ def generate_report_id(length=10):
             continue
         return new_id
 
+def get_relative_time(delta):
+    if delta.days > 30:
+        return f'{delta.days//30} months ago'
+    if delta.days > 7:
+        return f'{delta.days//7} weeks ago'
+    if delta.days > 0:
+        return f'{delta.days} days ago'
+    if delta.seconds > 3600:
+        return f'{delta.seconds // 3600} hours ago'
+    if delta.seconds > 60:
+        return f'{delta.seconds // 60} mins ago'
+    return 'just a moment ago!'
+
 def resize_image(photo, width, height, format="JPEG"):
     im = Image.open(photo)
     output = BytesIO()
@@ -361,6 +374,10 @@ class AntiVirus(models.Model):
         remainder = self.time_used.astimezone(timezone.get_current_timezone()).strftime("%M %p").lower()
         return f"{day} at {hour}:{remainder}"
 
+    @property
+    def relative_time_str(self):
+        delta = (timezone.localtime() - self.time_used)
+        return get_relative_time(delta)
 
 class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)
@@ -502,6 +519,11 @@ class Tag(models.Model):
         hour = str(int(self.timestamp.astimezone(timezone.get_current_timezone()).strftime("%I")))
         remainder = self.timestamp.astimezone(timezone.get_current_timezone()).strftime("%M %p").lower()
         return f"{day} at {hour}:{remainder}"
+
+    @property
+    def relative_time_str(self):
+        delta = (timezone.localtime() - self.timestamp)
+        return get_relative_time(delta)
 
     def handle_streak_badges(self):
         '''

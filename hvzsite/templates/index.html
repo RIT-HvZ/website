@@ -63,53 +63,48 @@ document.getElementById("countdowntext").innerHTML = "Game over!";
   </div>
 </div>
 <div class="row center">
-  <div class="col humancount mx-auto">
-    <div class="row">
-      <div class="col">
-        <span class="humancountlabel">Humans</span>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <span class="humancountnumber">{{humancount}}</span>
-      </div>
-    </div>
+  <div class="col-md-5 humancount mx-auto">
+    <span class="humancountnumber">{{humancount}}</span>
+    <br />
+    <span class="humancountlabel">Humans</span>
   </div>
-  <div class="col zombiecount mx-auto">
-    <div class="row">
-      <div class="col">
-        <span class="humancountlabel">Zombies</span>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <span class="humancountnumber">{{zombiecount}}</span>
-      </div>
-    </div>
-    
+  <div class="col-md-1 versussection mx-auto">
+    <span class="versuslabel"> VS </span>
+  </div>
+  <div class="col-md-5 zombiecount mx-auto">
+    <span class="humancountnumber">{{zombiecount}}</span>
+    <br />
+    <span class="humancountlabel">Zombies</span>
   </div>
 </div>
 
+<br />
 
 <div class="row center">
-  <div class="col recent-tags">
-    <h3>Recent Events:</h3>
+  <div class="col-md-6 recent-tags">
+    <h2>Recent Events</h2>
     {% for t in recent_events %}
       {% if t.datatype == "Tag" %}
-        {% if t.taggee %}<a class="statuspage" href="/player/{{t.taggee.player_uuid}}">{{t.taggee}}</a>{% else %}Body Armor{% endif %} was tagged by <a class="statuspage" href="player/{{t.tagger.player_uuid}}">{{t.tagger}}</a> {{ t.display_timestamp }} <br />    
+        {% if t.taggee %}
+          <a class="statuspage" href="/player/{{t.taggee.player_uuid}}">{{t.taggee}}</a>
+        {% else %}
+          Body Armor
+        {% endif %}
+        was tagged by <a class="statuspage" href="player/{{t.tagger.player_uuid}}">{{t.tagger}}</a>
+        <span class="timestamp" title="{{t.display_timestamp}}">{{t.relative_time_str}}</span> <br />
       {% else %}
-        <a class="statuspage" href="/player/{{t.used_by.player_uuid}}">{{ t.used_by }}</a> used Antivirus {{t.display_timestamp}} <br />
+        <a class="statuspage" href="/player/{{t.used_by.player_uuid}}">{{ t.used_by }}</a>
+        used an antivirus
+        <span class="timestamp" title="{{t.display_timestamp}}">{{t.relative_time_str}}</span> <br />
       {% endif %}
     {% endfor %}
   </div>
 
-  <div class="col leaderboard">
-    <h3>Most Tags:</h3>
+  <div class="col-md-6 leaderboard">
+    <h2>Most Tags</h2>
     {% for p in most_tags %}
 
-    <a class="statuspage" href="player/{{p.player.player_uuid}}">{{p.player}}</a>: {{p.num_tags}} <br />
-  
+    <a class="statuspage" href="player/{{p.player.player_uuid}}">{{p.player}}</a> with <b>{{p.num_tags}}</b> tags <br />
     {% endfor %}
   </div>
 </div>

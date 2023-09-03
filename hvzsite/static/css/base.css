@@ -13,13 +13,16 @@ h1, h2, h3, h4, h5 {
     /*text-shadow: #000 2px 2px 3px;*/
 }
 
-p, form {
-    color: #aaa;
+a {
+    text-decoration: none;
+    color: #3ae;
 }
 
-.logout-link {
-    color: rgb(160,160,160);
+a:hover {
+    text-decoration: none;
+    color: #4bf;
 }
+
 .container {
     border-radius: 2em;
     background-color: none;
@@ -30,6 +33,7 @@ p, form {
     margin: 5px;
     background-color: rgba(255,255,255,0.1);
 }
+
 .optionpair {
     display: block;
     border-radius: 2px;
@@ -46,6 +50,7 @@ p, form {
 .option_name, .option_text, .option_delete {
     display: inline-block;
 }
+
 .admin-only {
     background-color: rgb(114, 107, 2);
     border-radius: 0.4em;
@@ -106,27 +111,6 @@ th, label {
     color: #aaa;
 }
 
-/*
-#maincontainer.zombiecontainer {
-    background-color: rgba(16, 185, 1, 0.527);
-}
-
-#maincontainer.humancontainer {
-    background-color: rgba(201, 119, 13, 0.5);
-}
-
-#maincontainer.npcontainer {
-    background-color: rgb(100,100,100);
-}
-
-#maincontainer.modcontainer {
-    background-color: rgba(9, 111, 228, 0.644);
-}
-
-#maincontainer.admincontainer {
-    background-color: rgba(255, 238, 0, 0.8);
-}
-*/
 #maincontainer.armorcontainer {
     background-color: transparent;
 }
@@ -141,6 +125,19 @@ th, label {
     color: black;
 }
 
+.versussection {
+    margin: auto;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.versuslabel {
+    font-weight: bold;
+    color: white;
+    font-size: 32pt;
+    margin: auto;
+}
+
 div.humancount {
     background-color: rgb(201, 119, 13);
 }
@@ -149,52 +146,28 @@ div.zombiecount {
     background-color: rgb(16,185,1);
 }
 
-@media (min-width: 0px) {
-
-    div.humancount, div.zombiecount {
-        padding: 10px;
-        border-radius: 5px;
-        margin: 10px;
-    }
-
-    .humancountnumber, .zombiecountnumber {
-        font-size: 20pt;
-    }
-
-    .humancountlabel, .zombiecountlabel {
-        font-size: 20pt;
-    }
+div.humancount, div.zombiecount, div.versussection {
+    padding: 10px;
+    border-radius: 5px;
+    margin: 10px;
+    min-height: 10vw;
 }
 
-@media (min-width: 768px) {
+.humancountnumber, .zombiecountnumber {
+    font-size: 48pt;
+    color: white;
+}
 
-    div.humancount, div.zombiecount {
-        padding: 4em;
-        border-radius: 2em;
-        margin: 2em;
-        max-width: 30em;
-    }
-
-    .humancountnumber, .zombiecountnumber {
-        font-size: 60pt;
-    }
-
-    .humancountlabel, .zombiecountlabel {
-        font-size: 24pt;
-    }
+.humancountlabel, .zombiecountlabel {
+    font-size: 24pt;
 }
 
 .dt_name_link, .dt_clan_link{
     text-decoration: underline;
-    color: rgb(200, 200, 200);
 }
 
 .dt_name, .dt_size {
     vertical-align: middle;
-}
-
-.dt_name_link:hover, .dt_clan_link:hover{
-    color: rgb(220,220,220);
 }
 
 .dt_clanname {
@@ -320,15 +293,6 @@ border-radius: 4px;
     max-height: 1rem;
 }
 
-.clan_link, .login_alreadylogged a, #player_tags a, .player_tag_div {
-    text-decoration: none;
-    color: rgb(220,220,220);
-}
-
-.clan_link:hover, .login_alreadylogged a:hover, #player_tags a:hover {
-    color: rgb(255,255,255);
-}
-
 .login-title, .login-description, .login-button, .center {
     text-align: center;
 }
@@ -394,7 +358,7 @@ border-radius: 4px;
     background-color: rgb(4, 121, 199);
 }
 .hoverhand {
-    cursor:pointer; 
+    cursor:pointer;
 }
 .player_blaster_div, .player_tag_div {
     display: inline-block;
@@ -512,13 +476,11 @@ a.missionlink {
 a.statuspage {
     text-decoration: none;
     font-weight: bold;
-    color: #777;
 }
 
 a.statuspage:hover {
     text-decoration: none;
     font-weight: bold;
-    color: #bbb;
 }
 
 .blacktext {
@@ -818,4 +780,15 @@ div.controls ul {
     max-width: 600px;
     max-height: 600px;
     display: inline-block;
+}
+
+.timestamp {
+    border-bottom: thin dotted;
+}
+
+.leaderboard h2, .recent-tags h2 {
+    margin-top: 15px;
+    color: white;
+    font-size: 32pt;
+    font-weight: bold;
 }
