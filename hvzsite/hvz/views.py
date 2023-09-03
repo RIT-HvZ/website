@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseNotFound, FileResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.conf import settings
 from django.core import exceptions
 from rest_framework.response import Response
@@ -33,10 +33,6 @@ import random
 report_webhook = None
 if settings.DISCORD_REPORT_WEBHOOK_URL:
     report_webhook = discord.SyncWebhook.from_url(settings.DISCORD_REPORT_WEBHOOK_URL)
-
-def favicon(request):
-    file = (settings.BASE_DIR / "static" / "images" / "favicon.png").open('rb')
-    return FileResponse(file)
 
 def index(request):
     game = get_active_game()
