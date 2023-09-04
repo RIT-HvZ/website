@@ -14,6 +14,7 @@ alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters 
 hex_rgb = RegexValidator(r'^#[0-9a-fA-F]{6}$', 'Only hex color codes e.g. #52fa3d are allowed.')
 
 import datetime
+import html
 import uuid
 import os
 import random
@@ -279,6 +280,8 @@ class Person(AbstractUser):
         return PlayerStatus.objects.filter(player=self, status__in=['h','v','e','z','o','m','a']).count() > 0
 
     def save(self, *args, **kwargs):
+        self.first_name = html.escape(self.first_name)
+        self.last_name = html.escape(self.last_name)
         if self.picture and (self.picture != self.__original_picture):
             self.picture = resize_image(self.picture, 400, 400, 'PNG')
         super().save()
