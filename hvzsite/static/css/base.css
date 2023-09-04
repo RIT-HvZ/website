@@ -74,12 +74,15 @@ a:hover {
 }
 
 .dt_profile {
-    max-width: 100px;
-    max-height: 100px;
+    width: 100px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 .dt_profilepic {
-    max-width: 110px;
+    width: 110px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 .dt_human td{
@@ -171,8 +174,9 @@ div.humancount, div.zombiecount, div.versussection {
 }
 
 .dt_clanpic {
-    max-width: 60px;
-    max-height: 60px;
+    width: 60px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 #player_name h1 {
@@ -189,8 +193,9 @@ div.humancount, div.zombiecount, div.versussection {
 }
 
 .clan_picture img {
-    max-width: 300px;
-    max-height: 300px;
+    width: 300px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 .clan_name {
@@ -290,7 +295,7 @@ border-radius: 4px;
     text-align: center;
 }
 
-.player_blaster_img, .player_badge_img {
+.player_blaster_img {
     max-width: 100px;
     max-height: 100px;
     min-width: 50px;
@@ -301,7 +306,17 @@ border-radius: 4px;
 }
 
 .player_badge_img {
+    width: 50px;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.player_badge_img {
     border-radius: 50%;
+}
+
+.badgecaption {
+    font-size: small;
 }
 
 .player_tag_img {
@@ -462,8 +477,9 @@ a.missionlink {
 }
 
 #players img {
-    max-width: 50px;
-    max-height: 50px;
+    width: 50px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 a.statuspage {
@@ -552,16 +568,15 @@ div.countdown {
     border-width: 5px;
     border-style: solid;
     display: inline-block;
-    width: 100px ;
-    height: 100px ;
-    aspect-ratio: 1/1 !important;
+    width: 100px;
+    aspect-ratio: 1;
+    object-fit: cover;
     margin-right: 12px;
 }
 
 .playernamerow {
     margin-bottom: 50px;
 }
-
 
 .zombiecontainer .player_picture {
     border-color: #0faa01;
@@ -722,8 +737,9 @@ div.alert-error ul li {
 }
 
 .clanphotopreview {
-    max-width: 200px;
-    max-height: 200px;
+    width: 200px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 div.controls ul {
