@@ -139,7 +139,7 @@ function invite_player(player_uuid) {
                 {% if user.is_authenticated and user.current_status.is_admin %}
                 <div class="col align-bottom playernamecol">
                     <div class="dropdown align-bottom admintoolsdiv">
-                        <button class="btn btn-outline-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Admin Tools</button>
+                        <button class="btn btn-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Admin Tools</button>
                         <ul class="dropdown-menu">
                             <li><h6 class="dropdown-header">ID Card</h6></li>
                             <li><a class="dropdown-item" href="/admin/print_one/{{player.player_uuid}}/">Reprint Player ID Card</a></li>
@@ -159,7 +159,7 @@ function invite_player(player_uuid) {
                 </div>
                 <div class="col align-bottom playernamecol">
                     <div class="dropdown align-bottom admintoolsdiv">
-                        <button class="btn btn-outline-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reports Filed: {{reporters|length}}</button>
+                        <button class="btn btn-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reports Filed: {{reporters|length}}</button>
                         <ul class="dropdown-menu">
                             {% for report in reporters %}
                             <li><a class="dropdown-item" href="/admin/report/{{report.report_uuid}}/">{{report.report_uuid}}</a></li>
@@ -171,7 +171,7 @@ function invite_player(player_uuid) {
                 </div>
                 <div class="col align-bottom playernamecol">
                     <div class="dropdown align-bottom admintoolsdiv">
-                        <button class="btn btn-outline-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reports Against: {{reportees|length}}</button>
+                        <button class="btn btn-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reports Against: {{reportees|length}}</button>
                         <ul class="dropdown-menu">
                             {% for report in reportees %}
                             <li><a class="dropdown-item" href="/admin/report/{{report.report_uuid}}/">{{report.report_uuid}}</a></li>

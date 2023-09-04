@@ -52,15 +52,15 @@ a:hover {
 }
 
 .admin-only {
-    background-color: rgb(114, 107, 2);
+    background-color: #aa0;
     border-radius: 0.4em;
     margin-left: .4em;
     margin-right: .4em;
-    color: #ddd;
+    color: white;
 }
 
 .mod-only {
-    background-color: rgb(30, 69, 168);
+    background-color: #0820b8;
     border-radius: 0.4em;
     margin-left: .4em;
     margin-right: .4em;
@@ -83,23 +83,23 @@ a:hover {
 }
 
 .dt_human td{
-    background-color: rgb(146, 85, 6);
+    background-color: #d86611;
 }
 
 .dt_zombie td{
-    background-color: rgb(13, 105, 4);
+    background-color: #0faa01;
 }
 
 .dt_mod td{
-    background-color: rgb(3, 57, 119);
+    background-color: #0820b8;
 }
 
 .dt_admin td{
-    background-color: rgb(161, 150, 4);
+    background-color: #aa0;
 }
 
 .dt_nonplayer td{
-    background-color: rgb(156, 156, 156);
+    background-color: #777;
 }
 
 th, label {
@@ -134,11 +134,11 @@ th, label {
 }
 
 div.humancount {
-    background-color: rgb(201, 119, 13);
+    background-color: #d86611;
 }
 
 div.zombiecount {
-    background-color: rgb(16,185,1);
+    background-color: #0faa01;
 }
 
 div.humancount, div.zombiecount, div.versussection {
@@ -160,6 +160,10 @@ div.humancount, div.zombiecount, div.versussection {
 .dt_name_link, .dt_clan_link{
     color: white;
     font-weight: bold;
+}
+
+.dt_name_link:hover, .dt_clan_link:hover, .announcementdiv a:hover {
+    color: #dddddd;
 }
 
 .dt_name, .dt_size {
@@ -216,7 +220,7 @@ div.humancount, div.zombiecount, div.versussection {
 }
 
 .adminlist tbody tr td.ba-returned-True {
-    background-color: #1f1;
+    background-color: #0faa01;
 }
 
 #qr_url {
@@ -274,16 +278,8 @@ border-radius: 4px;
     width: 100% !important;
 }
 
-.playermainrow, .playeradmintools, .armormainrow {
+.playermainrow, .armormainrow {
     text-align: center;
-}
-
-.playeradmintool {
-    width: fit-content;
-    padding: .5em;
-    background-color: rgba(255, 238, 0, 0.4);
-    border-radius: 1em;
-    margin: 1em;
 }
 
 .clan_link img {
@@ -371,7 +367,7 @@ border-radius: 4px;
 }
 
 .tagnotification, .avnotification {
-    background-color: #1f1;
+    background-color: #0faa01;
     border-radius: 10px;
     color: #111;
     padding: 10px;
@@ -567,26 +563,26 @@ div.countdown {
 
 
 .zombiecontainer .player_picture {
-    border-color: rgb(10, 116, 0);
+    border-color: #0faa01;
 }
 
 .admincontainer .player_picture {
-    border-color: rgb(186, 183, 0);
+    border-color: #aa0;
 }
 
 .humancontainer .player_picture {
-    border-color: rgb(207, 117, 0);
+    border-color: #d86611;
 }
 
 .npcontainer .player_picture {
-    border-color: rgb(100,100,100);
+    border-color: #777;
 }
 
 .modcontainer .player_picture {
-    border-color: rgb(30, 69, 168);
+    border-color: #0820b8;
 }
 .bannedcontainer .player_picture {
-    border-color: rgb(255, 0, 0);
+    border-color: #f00;
 }
 .player_name {
     color: white;
@@ -599,22 +595,22 @@ div.countdown {
     display: flex;
 }
 .humancontainer .playernamerow {
-    background-color: rgb(207, 117, 0);
+    background-color: #d86611;
 }
 
 .bannedcontainer .playernamerow {
-    background-color: rgb(255, 0, 0);
+    background-color: #f00;
 }
 
 .npcontainer .playernamerow {
-    background-color: rgb(100,100,100);
+    background-color: #777;
 }
 .modcontainer .playernamerow {
-    background-color: rgb(30, 69, 168);
+    background-color: #0820b8;
 }
 
 .admincontainer .playernamerow {
-    background-color: rgb(186, 183, 0);
+    background-color: #aa0;
 }
 
 .admincontainer .playernamerow .player_name {
@@ -622,7 +618,7 @@ div.countdown {
 }
 
 .zombiecontainer .playernamerow {
-    background-color: rgb(10, 116, 0);
+    background-color: #0faa01;
 }
 
 dl.playerinfo dt {
