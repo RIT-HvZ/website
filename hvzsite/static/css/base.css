@@ -748,9 +748,13 @@ div.controls ul {
     border-bottom: thin dotted;
 }
 
-.leaderboard h2, .recent-tags h2 {
+.leaderboard h2, .recent-tags h2, .recent-announcements h2 {
     margin-top: 15px;
     color: white;
     font-size: 32pt;
+    font-weight: bold;
+}
+
+.recent-announcements .announcement-short {
     font-weight: bold;
 }
