@@ -51,17 +51,20 @@ document.getElementById("countdowntext").innerHTML = "Game over!";
 </script>
 {% endblock %}
 {% block body %}
-<div class="row">
-  <div class="col">
-    <h1 class="center"> HvZ @ RIT</h1>
-  </div>
-</div>
 <div class="row center">
   <div class="col countdown">
     <span class="countdownlabel" id="countdownprefix"></span>
     <span class="countdowntext" id="countdowntext"></span>
   </div>
 </div>
+
+<div class="container mainpage-container">
+<div class="row">
+  <div class="col">
+    <h1 class="main-title center"> HvZ @ RIT</h1>
+  </div>
+</div>
+
 <div class="row center">
   <div class="col-md-5 humancount mx-auto">
     <span class="humancountnumber">{{humancount}}</span>
@@ -124,5 +127,6 @@ document.getElementById("countdowntext").innerHTML = "Game over!";
     {% endfor %}
   </div>
   <div class="col-md-3"></div>
+</div>
 </div>
 {% endblock %}

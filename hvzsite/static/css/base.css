@@ -126,7 +126,7 @@ th, label {
     vertical-align: middle;
 }
 
-.versuslabel {
+.main-title, .versuslabel {
     font-weight: bold;
     color: white;
     font-size: 32pt;
@@ -487,10 +487,11 @@ a.statuspage:hover {
 div.countdown {
     width: 80%;
     display: block;
-    background-color: rgb(100,100,100);
+    background-color: #777;
     color: black;
     font-size: xx-large;
     border-radius: 10px;
+    margin: 5px;
 }
 
 .qrcontainer {
@@ -753,4 +754,10 @@ div.controls ul {
 
 .recent-announcements .announcement-short {
     font-weight: bold;
+}
+
+.mainpage-container {
+    background-color: #222;
+    padding: 10px;
+    border-radius-top: 0;
 }
