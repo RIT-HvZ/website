@@ -781,3 +781,8 @@ display: none !important;
     padding: 10px;
     border-radius-top: 0;
 }
+
+.navbar-nav {
+    max-height: 75vh;
+    overflow-y: auto;
+}
