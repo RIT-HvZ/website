@@ -11,13 +11,13 @@ function strip_playerid_from_url(url) {
     $("#infotoast .toast-body").text(url);
     $("#infotoast").toast("show");
     console.log("stripping id from " + url);
-    var playerid = /((\w{4,12}-?)){5}/.exec(url)[0];
+    var playerid = /\w+\|\w+\|(\w+)/.exec(url)[0];
     console.log(playerid);
     return playerid;
 }
 
-function send_qr(qrcode) {
-    var url = "/admin/badge_grant_api/{{badge_type.id}}/" + qrcode + "/";
+function send_qr(zombie_id) {
+    var url = "/admin/badge_grant_api/{{badge_type.id}}/" + zombie_id + "/";
     console.log(url);
     $.ajax(url,{
         method: "POST",
@@ -36,6 +36,31 @@ function send_qr(qrcode) {
         }
     })
 }
+
+
+function send_manual() {
+    var zombie_id = $("#badge-entry").val();
+    $("#badge-entry").val("");
+    var url = "/admin/badge_grant_api/{{badge_type.id}}/" + zombie_id + "/";
+    console.log(url);
+    $.ajax(url,{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            $("#successtoast .toast-body").text("Badge successfully granted for player " + data.playername);
+            $("#successtoast").toast("show");
+        }
+        else {
+            $("#errortoast .toast-body").text("Error granting badge: " + data.status);
+            $("#errortoast").toast("show");
+        }
+    })
+}
+
 
 //window.addEventListener('load', function () {
 //    const codeReader = new ZXing.BrowserQRCodeReader();
@@ -102,21 +127,21 @@ $(document).ready(function () {
 {% endblock %}
 {% block prebody %}
 <div class="toast-container d-flex justify-content-center align-items-center w-100">
-    <div class="toast bg-success" data-bs-delay="2000" role="alert" aria-live="assertive" aria-atomic="true" id="successtoast">
+    <div class="toast bg-success" data-bs-delay="5000" role="alert" aria-live="assertive" aria-atomic="true" id="successtoast">
         <div class="d-flex">
             <div class="toast-body" >
                 Hello, world! This is a toast message.
             </div>
         </div>
     </div>
-    <div class="toast bg-primary" data-bs-delay="2000" role="alert" aria-live="assertive" aria-atomic="true" id="infotoast">
+    <div class="toast bg-primary" data-bs-delay="5000" role="alert" aria-live="assertive" aria-atomic="true" id="infotoast">
         <div class="d-flex">
             <div class="toast-body">
                 Hello, world! This is a toast message.
             </div>
         </div>
     </div>
-    <div class="toast bg-danger" data-bs-delay="2000" role="alert" aria-live="assertive" aria-atomic="true"  id="errortoast">
+    <div class="toast bg-danger" data-bs-delay="5000" role="alert" aria-live="assertive" aria-atomic="true"  id="errortoast">
         <div class="d-flex">
             <div class="toast-body">
                 Hello, world! This is a toast message.
@@ -131,6 +156,13 @@ $(document).ready(function () {
 <div class="row">
     <div class="col">
         <h1 class="center"> Grant Badge </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col center">
+        <span>Manual Entry (Player's Zombie ID)</span>
+        <input id="badge-entry">
+        <button id="badge-entry-button" class="button" onclick="send_manual()">Submit</button>
     </div>
 </div>
 <div class="row">

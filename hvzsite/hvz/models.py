@@ -279,6 +279,11 @@ class Person(AbstractUser):
     def has_ever_played(self):
         return PlayerStatus.objects.filter(player=self, status__in=['h','v','e','z','o','m','a']).count() > 0
 
+    @property
+    def id_card_values(self):
+        s = self.current_status
+        return f"{s.tag1_uuid}|{s.tag2_uuid}|{s.zombie_uuid}"
+    
     def save(self, *args, **kwargs):
         self.first_name = html.escape(self.first_name)
         self.last_name = html.escape(self.last_name)

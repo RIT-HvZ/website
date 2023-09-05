@@ -210,6 +210,13 @@ def tag(request):
         qr = player.current_status.tag2_uuid
     else:
         qr = None
+    scanned_values = request.GET.get('scan')
+    scanned_status = None
+    if scanned_values is not None:
+        scan_tag1, scan_tag2, scan_zombie = scanned_values.split("|")
+        statuses = PlayerStatus.objects.filter(tag1_uuid=scan_tag1,tag2_uuid=scan_tag2,zombie_uuid=scan_zombie)
+        if len(statuses) > 0:
+            scanned_status = statuses[0]
     if request.method == "GET":
         data = {}
         player = request.user
@@ -223,6 +230,15 @@ def tag(request):
                 data['taggee_id'] = status.tag2_uuid
         prefilled_zombie = request.GET.get('z',None)
         prefilled_human = request.GET.get('h',None)
+        if scanned_status:
+            if scanned_status.is_human():
+                if scanned_status.status == "h":
+                    data['taggee_id'] = scanned_status.tag1_uuid
+                elif scanned_status.status == "v":
+                    data['taggee_id'] = scanned_status.tag2_uuid
+            elif scanned_status.is_zombie() or scanned_status.is_staff():
+                data['tagger_id'] = scanned_status.zombie_uuid
+                
         if prefilled_zombie:
             data['tagger_id'] = prefilled_zombie
         if prefilled_human:
@@ -1545,7 +1561,8 @@ def badge_grant_api(request, badge_type_id, player_id):
     else:
         return JsonResponse({"status":"not authorized"})
     try:
-        player = Person.objects.get(player_uuid=player_id)
+        status = PlayerStatus.objects.get(zombie_uuid=player_id)
+        player = status.player
     except:
         return JsonResponse({"status":"player not found"})
     try:

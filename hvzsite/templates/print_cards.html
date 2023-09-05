@@ -2,7 +2,7 @@
 {% load static %}
 <html lang="en">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <link href="https://fonts.cdnfonts.com/css/droid-sans-mono-2" rel="stylesheet">
 <script src="{% static 'js/datamatrix.min.js' %}"></script>
 <script>
@@ -187,28 +187,32 @@ $(document).ready(function () {
                         <td><img src="{{player.picture_url}}" alt="avatar"></td>
                         <td>
                             <div class="qr" id="qr_container_{{player.player_uuid}}">
-                            <span id="qr_url_{{player.player_uuid}}" style="display:none">{{url}}/player/{{player.player_uuid}}/</span>
-                            <!--<canvas id="qrcode_{{player.player_uuid}}"></canvas>-->
+                            {% if preview %}
+                                <span id="qr_url_{{player.player_uuid}}" style="display:none">https://www.youtube.com/watch?v=dQw4w9WgXcQ</span>
+                            {% else %}
+                                <span id="qr_url_{{player.player_uuid}}" style="display:none">{{url}}/tag/?scan={{player.id_card_values}}</span>
+                            {% endif %}
+                            <canvas id="qrcode_{{player.player_uuid}}"></canvas>
                             <script type="text/javascript">
-                                //var qr_{{forloop.counter0}} = new QRious({
-                                //    element: document.getElementById("qrcode_{{player.player_uuid}}"),
-                                //    background: '#fff',
-                                //    backgroundAlpha: 1,
-                                //    foreground: '#000',
-                                //    foregroundAlpha: 1,
-                                //    level: 'L',
-                                //    padding: 0,
-                                //    size: 100,
-                                //    value: document.getElementById('qr_url_{{player.player_uuid}}').innerText
-                                //});
-                                const datamatrix_{{forloop.counter0}} = DATAMatrix({
-                                    msg: document.getElementById('qr_url_{{player.player_uuid}}').innerText,
-                                    dim: 98,
-                                    pad: 0,
-                                    rct: 0,
-                                    pal: ["#000000", "#ffffff"]
+                                var qr_{{forloop.counter0}} = new QRious({
+                                    element: document.getElementById("qrcode_{{player.player_uuid}}"),
+                                    background: '#fff',
+                                    backgroundAlpha: 1,
+                                    foreground: '#000',
+                                    foregroundAlpha: 1,
+                                    level: 'L',
+                                    padding: 0,
+                                    size: 100,
+                                    value: document.getElementById('qr_url_{{player.player_uuid}}').innerText
                                 });
-                                document.getElementById("qr_container_{{player.player_uuid}}").appendChild(datamatrix_{{forloop.counter0}});
+                                //const datamatrix_{{forloop.counter0}} = DATAMatrix({
+                                //    msg: document.getElementById('qr_url_{{player.player_uuid}}').innerText,
+                                //    dim: 98,
+                                //    pad: 0,
+                                //    rct: 0,
+                                //    pal: ["#000000", "#ffffff"]
+                                //});
+                                //document.getElementById("qr_container_{{player.player_uuid}}").appendChild(datamatrix_{{forloop.counter0}});
                             </script>
                         </td>
                     </tr>
