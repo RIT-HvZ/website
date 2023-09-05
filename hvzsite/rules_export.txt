@@ -1,0 +1,1399 @@
+<div class="video-container"><iframe style="box-sizing: border-box; border-width: 0px; border-style: initial; color: #f8f9fa; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; font-size: 16px; white-space: normal; background-color: #111111;" title="Humans vs. Zombies @ RIT - Rules and How to Play" src="https://www.youtube.com/embed/19MRPji6Lis" width="100%" height="auto" frameborder="0" allowfullscreen=""></iframe></div>
+<section>
+<h2>Section 1: General</h2>
+<div>
+<h3>Players will:</h3>
+<ol>
+<li>
+<p>remove their bandana while they are inside for academic reasons.</p>
+</li>
+<li>
+<p>keep their blasters lowered and as out-of-sight as possible while they are inside any academic building at any time.</p>
+</li>
+<li>
+<p>sign a waiver before participating in the game.</p>
+</li>
+<li>
+<p>carry their HVZ Identification card with them at all times that they are in play.</p>
+</li>
+<li>
+<p>dress in a manner which is suitable for a publicly visible college club activity.</p>
+</li>
+<li>
+<p>show respect to players, non-players, moderators, and administrators.</p>
+</li>
+<li>
+<p>return game items and props in their possession to moderators or admins at the end of missions.</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Players will not:</h3>
+<ol>
+<li>
+<p>discharge their foam blaster while inside any building.</p>
+</li>
+<li>
+<p>use any form of melee weapon at any time.</p>
+</li>
+<li>
+<p>engage in gameplay while indoors or while otherwise out of play.</p>
+</li>
+<li>
+<p>cause any sort of disruption in dedicated study areas (ex. Erdle Commons, Bates Study Center, etc.).</p>
+</li>
+<li>
+<p>wear any form of clothing which may cause another student, faculty member, or any other non player to be given the impression that anything other than a game of tag is occurring.</p>
+<ul>
+<li>
+<p>This includes facemasks that do not serve as protection from illnesses.</p>
+</li>
+<li>
+<p>Further guidelines can be found below under Player Appearance Rules.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>use shields.</p>
+<ul>
+<li>
+<p>This includes non players and out-of-play players.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>chase, yell at, or interfere with non-players.</p>
+</li>
+<li>
+<p>enter Eastman after 8:00 PM.</p>
+</li>
+<li>
+<p>remove themselves from play for the sole reason that they have electronics or expensive equipment.</p>
+</li>
+<li>
+<p>use any form of a laser pointer during the game.</p>
+</li>
+<li>
+<p>shine flashlights in other players&rsquo; faces.</p>
+</li>
+<li>
+<p>wear or display moderator or admin bandanas.</p>
+</li>
+<li>
+<p>act in any way that will harm themselves or another player.</p>
+</li>
+<li>
+<p>jump from or climb obstacles (e.x. trees, high walls or statues).</p>
+</li>
+<li>
+<p>disguise their face while playing.</p>
+</li>
+<li>
+<p>disguise themselves as a member of the opposing team.</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Players will wear their HVZ Identification bandana at all times except when the player is...</h3>
+<p>&nbsp;</p>
+<ol>
+<li>
+<p>in a non-play zone (such as a building or vehicle),</p>
+</li>
+<li>
+<p>wearing business attire while on their way to or from presentation, job interview, or formal event,</p>
+</li>
+<li>
+<p>participating in an activity related to school or work (such as a photo-shoot for class, meeting outside for class, or working with FMS),</p>
+</li>
+<li>
+<p>participating in, or traveling to, a sporting event in which the player is a member of the team,</p>
+</li>
+<li>
+<p>in uniform for another RIT activity that they are participating in at that moment (such as ROTC or RITA)</p>
+</li>
+</ol>
+<h3>Player Appearance Rules</h3>
+<ol>
+<li>
+<p>Players will use appropriate language to describe the game, for example:</p>
+<ul>
+<li>
+<p>&ldquo;Blaster&rdquo;, not &ldquo;gun&rdquo;</p>
+</li>
+<li>
+<p>&ldquo;Dart&rdquo;, not &ldquo;bullet&rdquo;</p>
+</li>
+<li>
+<p>&ldquo;Stun&rdquo; or &ldquo;tag&rdquo;, not &ldquo;kill&rdquo;</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Players will not wear tactical gear beyond that mounted to a belt during general class hours.</p>
+</li>
+<li>
+<p>Any tactical gear used must have prominently displayed &ldquo;silly colors&rdquo; comprising at least half of the visible area.</p>
+<ul>
+<li>
+<p>&ldquo;Silly colors&rdquo; refers to bright colors including (but not limited to) bright yellows, greens, reds, oranges, and blues, which are distinct from coloration found on &ldquo;traditional&rdquo; tactical gear or weapons.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Any blasters used must conform to the appearance rules as defined in Section 11: Blasters, Throwables, and Darts</p>
+</li>
+<li>
+<p>Players will carry their blasters in a non-threatening manner while out of play and not about to enter play, for example:</p>
+<ul>
+<li>
+<p>Hand away from the handle/trigger</p>
+</li>
+<li>
+<p>Blaster not carried at the shoulder</p>
+</li>
+<li>
+<p>Blaster not intentionally pointed toward others</p>
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 2: Tagging and Stunning</h2>
+<div>
+<h3>Tagging:</h3>
+<p>An unstunned zombie may infect a human player by tagging any part of their body (be appropriate)</p>
+<ol>
+<li>
+<p>Tagging anything being worn by the human still counts. (backpacks, clothing, capes, inactive blasters...etc)</p>
+</li>
+<li>
+<p>Tagging a human's active blaster (one which they are holding), does not count.</p>
+<ul>
+<li>
+<p>Dangling components that are essential to an active blasters&rsquo; function such as feed belts, hoses, or cables count as part of the active blaster. If that components has an end point or secondary essential component that is securely attached to the human players&rsquo; clothing or equipment, that worn component is not considered part of the active blaster.</p>
+<ul>
+<li>
+<p>For example, on a blaster fed via a hose from one&rsquo;s backpack, the held blaster and hose are the &ldquo;active blaster&rdquo;, but the backpack feeding it is not.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Tackling someone is an invalid tag, and may result in temporary suspension from the game.</p>
+<ul>
+<li>
+<p>This includes tags in which the human&rsquo;s blaster or other equipment is unnecessarily damaged, or in which the humans&rsquo; person is unnecessarily injured.</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Stunning:</h3>
+<p>Humans can stun zombies with foam projectiles and throwables</p>
+<p>&nbsp;</p>
+<ol>
+<li>
+<p>Foam projectiles must be fired from blasters</p>
+</li>
+<li>
+<p>Throwables must be thrown in order to count as a stun.</p>
+<ul>
+<li>
+<p>i.e. they must leave a human's hand before making contact with the zombie</p>
+</li>
+</ul>
+</li>
+<li>
+<p>A foam projectile/throwable cannot ricochet off of a wall or the ground before stunning a zombie.</p>
+</li>
+<li>
+<p>Each foam projectile/throwable can only stun 1 zombie each time it is fired/thrown.</p>
+<ul>
+<li>
+<p>i.e. if a dart bounces off of a zombie and hits a second zombie, only the first zombie is stunned.</p>
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 3: Human Gameplay</h2>
+<div>
+<h3>Human players will</h3>
+<ol>
+<li>
+<p>wear their HVZ Identification bandana on their upper arm at all times while in play.</p>
+<ul>
+<li>
+<p>The bandana will be unobstructed from view.</p>
+</li>
+<li>
+<p>The bandana will be at least two (2) inches tall on the arm and the &ldquo;HVZ&rdquo; logo will be completely visible.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>aim and/or blast their blasters only at other players.</p>
+</li>
+<li>
+<p>be considered inside and out of play if they have at least one foot on the ground inside of any building.</p>
+<ul>
+<li>
+<p>This means that a human player with one foot in a building cannot be tagged by a zombie but also cannot use their blasters or throwables to stun zombies.</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Human players will not</h3>
+<ol>
+<li>
+<p>aim and/or blast their blasters at the head of any player.</p>
+</li>
+<li>
+<p>intentionally follow stunned zombies.</p>
+</li>
+<li>
+<p>throw their blasters.</p>
+</li>
+<li>
+<p>remove their bandanas while outside solely due to the fact that they are carrying expensive/bulky equipment.</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<p>To stun a zombie as defined in section 2: Tagging and Stunning, a human must use a legal foam blaster and/or throwable as described in section 11: Blasters, Throwables, and Darts.</p>
+<p>Unless defined as allowed in the mission information, a human player will not move, disguise, or obstruct any zombie objective.</p>
+<p>&nbsp;</p>
+<p>Upon being tagged by a zombie, as defined in section 2: Tagging and Stunning of this document, a human player will allow the zombie player to register the tag on the game website, either via communicating their player ID number or by scanning the ID&rsquo;s QR code. Once the zombie registers the tag on the website, the human player now enters play as a zombie.</p>
+<p>&nbsp;</p>
+<h3>Human Tagging Process and Options:</h3>
+<ol>
+<li>
+<p>If a human player is tagged and the zombie player is given the tag information, the tagged human player is out of play and may not wear their bandanna until the tag has been registered.</p>
+</li>
+<li>
+<p>If the zombie player does not register the human player&rsquo;s ID in a timely manner, the tagged human should contact a game Admin in order to have the tag registered.</p>
+</li>
+<li>
+<p>If it is more convenient, humans may also register themselves as tagged by entering the zombie player&rsquo;s zombie ID number into the register infection tab on the website.</p>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 4: Zombie Gameplay</h2>
+<div>
+<ol>
+<li>
+<p>Zombie players will wear their bandana upon their head at all times that they are in play. The bandana will be unobstructed from view from any direction.</p>
+</li>
+<li>
+<p>A zombie player who chooses to remove their bandana while outside is considered stunned, and must wait the full stun timer (5 minutes) before re-entering play.</p>
+</li>
+<li>
+<p>A zombie player, who is outside and who puts on their bandana must wait for a 30 second period of time before they are able to tag human players.</p>
+<ul>
+<li>
+<p>During this 30 second period of time, the zombie player will be vulnerable to being stunned by human players.</p>
+</li>
+<li>
+<p>If the zombie puts on their headband while inside they will not have to wait the 30 seconds upon exiting the building.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>A zombie player who tags a human will ask the human to show or tell them their first player ID number or ID QR code. The zombie player will promptly use the website to record the tag.</p>
+<ul>
+<li>
+<p>The zombie player will surrender their player identification number if prompted by the human player that they tagged.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Unless defined as allowed in the mission information, a zombie player will not move, disguise, or obstruct any human objective.</p>
+</li>
+<li>
+<p>Upon being struck by a clean throwable thrown by a human player or a foam projectile launched from a valid blaster, the struck zombie player will remove their bandana from their head for a period no shorter than five (5) minutes.</p>
+</li>
+<li>
+<p>A Zombie player</p>
+<ul>
+<li>
+<p>will not follow a human player inside and throughout a building.</p>
+</li>
+<li>
+<p>who has been stunned will not follow human players.</p>
+</li>
+<li>
+<p>who has been stunned will not report any game relevant information to any players or non-players.</p>
+<ol>
+<li>
+<p>This includes yelling, &ldquo;Human.&rdquo;</p>
+</li>
+<li>
+<p>This also includes using electronic devices to communicate by text, voice, or other methods.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>will not interact with any foam projectiles or throwables except for the explicit purpose of returning the darts intact to the human players and/or moderators.</p>
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 5: Special Items</h2>
+<div>
+<p>Elephant Blaster</p>
+<ol>
+<li>
+<p>A special blaster which can be used to remove special zombie shirts from play</p>
+<ul>
+<li>
+<p>If an unstunned special zombie is hit by an elephant blaster, that zombie must remove its special shirt and turn it into the closest mod or admin.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Elephant blasters will always use large/unconventional ammo types.</p>
+<ul>
+<li>
+<p>e.x. a Big Bad Bow, Titan, or XBZ.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>The Elephant Blaster will have string lights on it and will be accompanied by a mod.</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<p>Deployable Cover</p>
+<p>A cardboard box which can be used to generate a temporary safe zone</p>
+<ol>
+<li>
+<p>A human player must crush the box on the ground and announce in some way that the deployable cover is active in order to generate the safe zone.</p>
+</li>
+<li>
+<p>The safe zone has a 5ft radius.</p>
+</li>
+<li>
+<p>The safe zone lasts for 5 minutes.</p>
+</li>
+<li>
+<p>Will be accompanied by a mod.</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<p>Deplorable Cover</p>
+<p>A traffic cone covered in yellow duct tape that when used creates a temporary zombie respawn point.</p>
+<ol>
+<li>
+<p>A deplorable cover is activated when:</p>
+<ul>
+<li>
+<p>An unstunned zombie player chooses to activate it</p>
+</li>
+<li>
+<p>The zombie player carrying the deplorable cover becomes stunned.&nbsp;</p>
+</li>
+</ul>
+</li>
+<li>
+<p>The cone is activated when a zombie places it on the ground standing up.</p>
+<ul>
+<li>
+<p>After being activated, the cone will act as a respawn point for half of the current stun timer (2.5minutes)</p>
+<ul>
+<li>
+<p>Similar to the respawn point described in the &ldquo;Boomer&rdquo; rules in section 7.</p>
+</li>
+<li>
+<p>The moderator assigned to the zombie carrying the deplorable cover will remove the traffic cone once half of the current stun timer has passed.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Zombie stun timer will be reduced to 0 seconds when touched.</p>
+<ul>
+<li>
+<p>Zombies will still have to wait the additional 30 second bandana timer.</p>
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 6: Merchants</h2>
+<div>
+<p>Merchants are Admins that will sell items, special shirts, and information for the current game&rsquo;s currency.</p>
+<ol>
+<li>
+<p>Currency will be distributed throughout the week by mods/admins for various reasons i.e. mission rewards.</p>
+<ul>
+<li>
+<p>The use of counterfeit currency is strictly prohibited. Merchants have the right to confiscate currency they believe to be counterfeit.&nbsp; Players who are suspected of using counterfeit currency may be removed from the game.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Merchants will be open from 9:00pm-9:15pm and 10:00pm-10:15pm.</p>
+<ul>
+<li>
+<p>The zombie merchant will spawn in front of the Bausch &amp; Lomb Center.</p>
+</li>
+<li>
+<p>The human merchant will spawn in the Gosnell Atrium.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>They can be identified by their "Blinged Out" (gold) backpacks</p>
+</li>
+<li>
+<p>The available items and prices will vary throughout the week.</p>
+<ul>
+<li>
+<p>Item prices are generally included at the end of the mission text.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Coupons and vouchers may be handed out as rewards during the week.</p>
+<ul>
+<li>
+<p>Coupons apply a discount on one or more items</p>
+</li>
+<li>
+<p>Vouchers can be exchanged for a specific item, free of charge.</p>
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 7: Special Zombies</h2>
+<div>
+<h3>General information:</h3>
+<ol>
+<li>
+<p>Special Zombies will only appear during Night and Midday Missions.</p>
+</li>
+<li>
+<p>They can be identified by their Pink HvZ headband and special zombie shirt.</p>
+<ul>
+<li>
+<p>The pink HvZ bandana will replace their green one while they are wearing a special zombie shirt.</p>
+</li>
+<li>
+<p>Special zombies are recommended to wear their green bandanna around their necks.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Specials are not allowed to self stun.</p>
+</li>
+<li>
+<p>All Specials are still subject to the 30 second bandanna timer in which they are in play and stunnable, but may not tag humans in addition to their stated stun timer.</p>
+</li>
+<li>
+<p>Specials must return their shirt and associated items to the nearest mod or admin after a mission ends, or if they are stunned with an Elephant Blaster.</p>
+</li>
+</ol>
+<h3>Tanks:</h3>
+<p>Tanks wear a bright pink shirt that says "Tank" and a pink bandana around their head.</p>
+<ol>
+<li>
+<p>Tanks can only be stunned by legal throwables</p>
+</li>
+<li>
+<p>Tanks have half the normal zombie stun timer.</p>
+<ul>
+<li>
+<p>If the normal stun timer is 5 minutes, the tank's stun timer is 2.5 minutes plus the permanent 30 second bandanna timer.&nbsp;</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Jackals:</h3>
+<p>Jackals wear white shirts that say "Jackal" and a pink bandana around their head.</p>
+<ol>
+<li>
+<p>Jackals have half the normal zombie stun timer.</p>
+<ul>
+<li>
+<p>If the normal stun timer is 5 minutes, the jackal&rsquo;s stun timer is 2.5 minutes plus the permanent 30 second bandanna timer.&nbsp;&nbsp;</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3>Boomer:</h3>
+<p>Boomers wear a yellow shirt that says "Boomer", a pink bandana around their head, and carry a traffic cone.</p>
+<ol>
+<li>
+<p>When stunned, the boomer drops their traffic cone upright on the ground, which will act as a respawn point for zombies.</p>
+</li>
+<li>
+<p>Touching the deployed cone will get rid of a stunned zombie's remaining stun timer.</p>
+</li>
+<li>
+<p>Any zombie who uses a boomer cone to respawn must still wait 30 seconds after putting their bandana before they can tag anyone.</p>
+</li>
+<li>
+<p>The boomer's stun timer is the same as a regular zombie's (5 minutes)</p>
+</li>
+<li>
+<p>The cone only stays active for the first half of the boomer's stun timer (The first 2.5 minutes).&nbsp;</p>
+<ul>
+<li>
+<p>After this time has passed, the cone should be knocked over to show that it is inactive.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>A boomer cannot use any method to shorten their stun timer, such as using a boomer cone, using a deplorable cover, or being revived by the necromancer</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Spitter:</h3>
+<p>Spitters wear a red shirt and a pink bandana on their head, and are equipped with a plush eyeball.</p>
+<ol>
+<li>
+<p>Spitters can throw their spitter eye at humans. A human hit with a spitter eye must kneel and is subject to the spittered condition.&nbsp;</p>
+<ul>
+<li>
+<p>The spitter effect is as follows:</p>
+<ul>
+<li>
+<p>The spitter eye can only affect one human per throw.</p>
+</li>
+<li>
+<p>When the thrown spitter eye hits a player or any other object or surface the eye becomes inert.</p>
+</li>
+<li>
+<p>After 30 seconds, another human can touch a spittered human to remove the spitter effect.</p>
+</li>
+<li>
+<p>After 60 seconds, the spitter effect wears off and the affected human is free to move again.</p>
+</li>
+<li>
+<p>If a player is unable to easily kneel, they may remain standing but abide by the other spitter effect rules and instead verbally announce they have been spittered.&nbsp;</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Spittered humans can be tagged, fire blasters, throw throwables, hold items or objectives and make progress on capture timers.</p>
+</li>
+<li>
+<p>Humans can be spittered in safe zones.</p>
+</li>
+<li>
+<p>If a spitter eye hits an object held by a human such as an item or active blaster, that human is subject to the spitter condition.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Spitter Eye Handling Rules:</p>
+<ul>
+<li>
+<p>Humans cannot move the eye except to return it. Players cannot disguise it. Other unstunned zombies can return the eye. Only the Spitter can throw it.</p>
+</li>
+<li>
+<p>The Spitter can retrieve their eye while they are stunned.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Spitters have half the normal zombie stun timer. (So if the normal stun timer is 5 minutes, the Spitter&rsquo;s stun timer is 2.5 minutes)</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Necromancer:</h3>
+<p>Necromancers wear a green shirt that says &ldquo;Necromancer&rdquo; and a pink bandana on their head.</p>
+<ol>
+<li>
+<p>When unstunned, they may tag a stunned zombie to start the process of removing that zombie&rsquo;s stun timer.</p>
+</li>
+<li>
+<p>After tagging, both the zombie and the Necromancer put their hands on their heads and count to 20 seconds out loud, after which the zombie is unstunned with their bandana timer complete.</p>
+<ul>
+<li>
+<p>NEITHER PLAYER MAY MOVE FROM THAT LOCATION DURING THIS TIME.</p>
+</li>
+<li>
+<p>The Necromancer can be stunned with a dart or throwable, or hit with an Elephant Blaster during this time, either of which would cancel the attempted unstun on the stunned zombie. The stunned zombie&rsquo;s timer would continue as it would, as if the necromancer was never there.</p>
+<ul>
+<li>
+<p>For example: A zombie stunned at 9:15 pm visits a necromancer at 9:16 pm. Part of the way through the resurrection process the necromancer is stunned, canceling the resurrection. The zombie player would become unstunned at 9:20 pm, as per their usual stun timer.&nbsp;</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Necromancers have the standard stun timer.</p>
+</li>
+<li>
+<p>Stunned zombie players may walk to a Necromancer within line of sight.</p>
+<ul>
+<li>
+<p>Stunned zombie players should not walk excessive distances to the Necromancer - it&rsquo;s the necromancer&rsquo;s job to find the other zombies, not the other way around.</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Snake Charmer: (Obsolescent)&nbsp;</h3>
+<p>Snake Charmers wear a green shirt that says "Snake Charmer", and a pink bandana around their head.</p>
+<ol>
+<li>
+<p>A snake charmer will have a light wand that can be used to charm a witch.</p>
+<ul>
+<li>
+<p>To charm a witch, the snake charmer must wave the lightwand in the witch&rsquo;s direction to get their attention.</p>
+</li>
+<li>
+<p>The witch will then approach the snake charmer and confirm that they are charmed</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Once a witch is charmed it can be commanded by the snake charmer.</p>
+<ul>
+<li>
+<p>All commands must be relevant to game play.</p>
+</li>
+<li>
+<p>Commands must not endanger any players.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>The Snake charmer must remain within line of sight of the charmed witch, or else the witch will no longer be charmed.</p>
+</li>
+<li>
+<p>If the snake charmer is stunned, the witch will cease to be charmed (and can stun zombies again).</p>
+<ul>
+<li>
+<p>The witch may stun a few zombies in its immediate vicinity after being freed.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>A snake charmer cannot charm more than one witch at a time.</p>
+<ul>
+<li>
+<p>If the snake charmer is controlling a witch, it cannot charm a different witch until the first witch becomes uncharmed (i.e. the charmer is stunned or breaks line of sight with the witch).</p>
+</li>
+<li>
+<p>If a snake charmer attempts to charm an additional witch, the second witch will stun the snake charmer.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Snake charmers have regular zombie stun timers (i.e. 5 minutes)</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Witch:</h3>
+<p>Witches wear blue shirts that say "Witch", a pink bandana on their head, and a mod or admin bandana around their neck.</p>
+<ol>
+<li>
+<p>Will only be played by mods and admins.</p>
+</li>
+<li>
+<p>They can tag both humans and zombies.</p>
+</li>
+<li>
+<p>Witches have a 10 second stun timer.</p>
+</li>
+<li>
+<p>Witches cannot be stunned by zombies.</p>
+</li>
+<li>
+<p>When stunned, a witch will place their hands on their head.</p>
+</li>
+<li>
+<p>They can start tagging immediately after they come back into play (it doesn't have to wait 30 seconds)</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Twitch:</h3>
+<p>Twitches wear Purple shirts that say "Twitch", a pink bandana on their head, and a mod or admin bandana around their neck.</p>
+<ol>
+<li>
+<p>Will only be played by mods and admins.</p>
+</li>
+<li>
+<p>They can tag both humans and zombies.</p>
+</li>
+<li>
+<p>Twitches has a 10 second stun timer.</p>
+</li>
+<li>
+<p>Can only be stunned by legal throwables.</p>
+</li>
+<li>
+<p>Twitches cannot be stunned by zombies.</p>
+</li>
+<li>
+<p>When stunned, a twitch will place their hands on their head.</p>
+</li>
+<li>
+<p>They can start tagging immediately after they come back into play (it doesn't have to wait 30 seconds)</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Headhunter:</h3>
+<p>Headhunters wear regular clothing, an orange bandana on their head or upper arm, and a mod or admin bandana around their neck.</p>
+<ol>
+<li>
+<p>Will only be played by mods and admins.</p>
+</li>
+<li>
+<p>They can blast both humans and zombies.</p>
+</li>
+<li>
+<p>They can appear outside of missions.</p>
+</li>
+<li>
+<p>Projectiles launched by Headhunters apply a spitter effect to both human and zombie players upon impact.</p>
+<ul>
+<li>
+<p>See Spitter rules, above.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Projectiles launched by players apply a spitter effect to Headhunters upon impact.</p>
+</li>
+<li>
+<p>Headhunters can be tagged by either team to neutralize them.</p>
+</li>
+<li>
+<p>Headhunters may have mission-specific behavior - be sure to read the mission text!</p>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 8: Gameplay Boundaries</h2>
+<div>
+<ol>
+<li>
+<p>The game is played outdoors on RIT Property, 24/7.</p>
+</li>
+<li>
+<p>The main campus area of play includes:</p>
+<ul>
+<li>
+<p>Academic and Dorm sides</p>
+</li>
+<li>
+<p>University Commons</p>
+</li>
+<li>
+<p>Riverknoll</p>
+</li>
+<li>
+<p>Global Village</p>
+</li>
+<li>
+<p>Perkins</p>
+</li>
+<li>
+<p>Red Barn</p>
+</li>
+<li>
+<p>The outer loop</p>
+</li>
+<li>
+<p>The northern and southern fields beyond the outer loop</p>
+</li>
+<li>
+<p>Lobozzo Alumni House</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Indoors is out-of-play</p>
+</li>
+<li>
+<p>Do not enter construction sites.&nbsp;&nbsp;</p>
+<ul>
+<li>
+<p>Avoid them as much as possible.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Building 1/Eastman is off limits after 8:00 PM.</p>
+</li>
+<li>
+<p>Do not go near the windows in the front of Institute Hall near the study area on the first floor during missions.</p>
+<ul>
+<li>
+<p>There are multiple motion sensors that will activate if you are inside OR within several feet of the outside windows.</p>
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 9: Safe Zones &amp; Vehicles</h2>
+<div>
+<p>Safe Zones:</p>
+<ol>
+<li>
+<p>A Safe zone is an area which is still in play, but&nbsp;in which no player can be tagged.</p>
+</li>
+<li>
+<p>Human players may still stun zombies in safe zones.</p>
+<ul>
+<li>
+<p>Human players may also fire out from safe zones.</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>&nbsp;</p>
+<p>Door Safe Zone criteria:</p>
+<ol>
+<li>
+<p>The door(s) must have a vestibule in order to be considered a safe zone.</p>
+<ul>
+<li>
+<p>A vestibule is a structure that partitions the indoor and outdoor climate from one another by having two sets of door(s) between them. Usually this is fairly clear, but sometimes can be confusing. Generally, if you can open an outside door to a building and can immediately see a door within close proximity that leads to the rest of the building, it is a vestibule.</p>
+</li>
+<li>
+<p>Use your best judgment on this.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>The outer door of the vestibule must be unlocked.</p>
+</li>
+<li>
+<p>A vestibule safe zone extends in a 15ft radius from the center of the outer door(s).</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<p>General Vehicle rules:</p>
+<ul>
+<li>
+<p>Humans cannot use vehicles to get from one part of campus to another.</p>
+<ul>
+<li>
+<p>If a zombie uses a vehicle, they are out of play and must take their headband off.</p>
+</li>
+<li>
+<p>Humans may use vehicles for the sole purpose of traveling to and from an off-campus location, such as a store, their off-campus home, other destinations.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Car safe zones:</p>
+<ol>
+<li>
+<p>Only a legally parked car may generate a safe zone.</p>
+</li>
+<li>
+<p>A 15ft safe zone is created around a car when it is first parked on campus.</p>
+<ul>
+<li>
+<p>This safe zone goes away once all the humans leave the safe zone.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>A 15ft safe zone will be created around a car when a human sticks any body part within the car.</p>
+<ul>
+<li>
+<p>This safe zone is active for the legal number of occupants for the car.</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>&nbsp;</p>
+<p>Bikes:</p>
+<ol>
+<li>
+<p>Bikes should only be used to go to and from campus.</p>
+<ul>
+<li>
+<p>When arriving on campus, a player should dismount their bike at the first possible bike rack.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>A human is safe as long as they have at least one hand on their bike or bike lock.</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<p>Buses:</p>
+<ol>
+<li>
+<p>Humans are safe if they are in line to get on the bus.</p>
+<ul>
+<li>
+<p>They are not safe while waiting for the bus or at the bus stop.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Upon exiting the bus, there is a 15ft safe zone around the bus door.</p>
+<ul>
+<li>
+<p>The safe zone disappears as soon as the bus pulls away.</p>
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 10: Missions</h2>
+<div>
+<h3>General Mission Rules:</h3>
+<ol>
+<li>
+<p>Players will not disclose any mission information to the opposing team.</p>
+<ul>
+<li>
+<p>When a human is tagged and becomes a zombie they are free to share the human mission.</p>
+</li>
+<li>
+<p>If a zombie uses an antivirus to rejoin the human team, they are free to share the zombie mission.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Unless defined as allowed in the mission information, players will not move, disguise, or obstruct any of the opposing team&rsquo;s objectives.</p>
+</li>
+<li>
+<p>Missions are not mandatory</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Night Missions:</h3>
+<ol>
+<li>
+<p>There will be a night mission every night from 9-11pm, except on Friday. Friday's Mission will be from 6-8pm.</p>
+</li>
+<li>
+<p>Missions will be posted on the website. If the website is down, missions will be distributed in front of the Bausch &amp; Lomb Center for zombies and the Gosnell Atrium for humans.</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Midday Missions:</h3>
+<ol>
+<li>
+<p>Will take place every day around noon.</p>
+<ul>
+<li>
+<p>Specific times and locations will be given out on the website and on the discord server.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Mission details will be handed out in-person at the start of the mission.</p>
+</li>
+<li>
+<p>Successfully completing a midday will provide the winning team with a bonus</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Side Missions:</h3>
+<ol>
+<li>
+<p>Side missions will take place throughout the week.</p>
+<ul>
+<li>
+<p>Mostly during the day.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>These missions will vary in size and difficulty.</p>
+</li>
+<li>
+<p>Completing side missions may earn players a variety of different rewards, including but not limited to:</p>
+<ul>
+<li>
+<p>Currency</p>
+</li>
+<li>
+<p>Item vouchers</p>
+</li>
+<li>
+<p>Bonuses for a night mission</p>
+</li>
+<li>
+<p>A website badge</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Times and locations of most side missions will be announced on the website and/or discord server.</p>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 11: Blasters, Throwables, and Darts</h2>
+<div>
+<h3>General Blaster Rules:</h3>
+<ol>
+<li>
+<p>All blasters must have an average muzzle velocity less than or equal to 100 feet per second.</p>
+<ul>
+<li>
+<p>This average will be determined by 5 readings over the club chronograph.</p>
+</li>
+<li>
+<p>Outliers up to 110 fps are tolerated so long as the average is below 100, however any reading above 110 fps will immediately disqualify the blaster.</p>
+</li>
+<li>
+<p>Flywheel blasters must be measured after revving for at least two full seconds.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>All blasters must resemble a toy.</p>
+<ul>
+<li>
+<p>Relevant factors for this determination are:</p>
+<ul>
+<li>
+<p>Coloration, especially within the context of nighttime lighting conditions</p>
+</li>
+<li>
+<p>Silhouette</p>
+</li>
+<li>
+<p>Materials and processes used (see Homemade Blaster Rules)</p>
+</li>
+<li>
+<p>Sounds, lights or other factors</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Blasters must have a non-threatening appearance</p>
+<ul>
+<li>
+<p>At least half of the blaster&rsquo;s surface must comprise of &ldquo;silly colors&rdquo;, using the color guidelines described in the Player Appearance Rules in Section 1: General&nbsp;</p>
+</li>
+</ul>
+</li>
+<li>
+<p>The Admin team reserves the right to apply liberal amounts of bright and gaudy duct tape to blasters that are inappropriately colored as we see fit.</p>
+<ul>
+<li>
+<p>Some blasters are required to have added orange for any use in game. See &ldquo;part 8 of Specific Blaster Rules&rdquo; below.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>All blasters must have AT LEAST 1 square inch of blaze orange tip visible from any orientation in which the front of the blaster is reasonably visible.</p>
+<ul>
+<li>
+<p>This is our approach to complying with New York State law and Federal law regarding toy coloration.</p>
+</li>
+<li>
+<p>Exceeding this requirement is greatly appreciated and preferred by the admin team.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Dark-colored stocks, grips, and magazines must have orange color applied, via paint or tape.</p>
+<ul>
+<li>
+<p>The admin team will have tape available at registration sessions.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Any blaster brought to class must be able to be completely stowed upon the request of RIT faculty or staff while out of play.</p>
+</li>
+<li>
+<p>No blaster may have hazardous construction, such as excessive exposed wiring or sharp corners/edges.</p>
+</li>
+<li>
+<p>Any modified blaster must be approved by at least three of the five eboard members.</p>
+<ul>
+<li>
+<p>This applies to both performance and aesthetic modifications</p>
+</li>
+</ul>
+</li>
+<li>
+<p>The Admin team reserves the right to disallow specific blasters as they see fit with or without reason regardless of compliance with all other rules.</p>
+</li>
+<li>
+<p>Modification or adjustment of blaster performance or aesthetics after approval of the Admin team during the course of the game is forbidden.</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Homemade Blaster Rules:</h3>
+<ul>
+<li>
+<p>Homemade Blaster - A blaster that cannot be purchased in a store.</p>
+</li>
+<li>
+<p>Homemade blasters must resemble a toy. Every homemade blaster must receive approval from a majority admin vote. Players must be able to describe the composition and inner workings of their blaster in detail. Homemade blasters must have a detailed design spec/description for approval (Materials used, Firing mechanism, Muzzle Velocity, Power source if one is present, etc.). Homemade blasters will also need to pass all regulations for Modified Blasters [shown above].</p>
+</li>
+<li>
+<p>When designing a homemade blaster you should adhere to the following guidelines. Keep your blaster brightly colored, or obviously a toy; the blaster must be non-threatening. Attempt to encase the blaster in an exterior shell to prevent any exposed internals. Avoid exposed wiring or other potential safety hazards. Do not use hazardous materials (such as metal) for exterior casing.</p>
+</li>
+</ul>
+<p><br />&nbsp;</p>
+<h3>Specific Blaster Rules:</h3>
+<ol>
+<li>
+<p>Rival blasters:&nbsp;</p>
+<ul>
+<li>
+<p>May not be modified in a way that increases muzzle velocity.</p>
+</li>
+<li>
+<p>Are subject to a hard 110 fps cap rather than a 100 fps average cap due to some models exceeding the average limit out of the box.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Vortex blasters:&nbsp;</p>
+<ul>
+<li>
+<p>Are subject to a 75 FPS average velocity limit.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Mega XL blasters:</p>
+<ul>
+<li>
+<p>Are subject to a 75 FPS average velocity limit.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Blowpipes are not allowed.</p>
+</li>
+<li>
+<p>Mechanically powered party poppers are allowed.</p>
+</li>
+<li>
+<p>Modular absolvers are allowed, so long as all attachments intended to be used pass FPS testing and admin approval.&nbsp;</p>
+</li>
+<li>
+<p>High-Powered blasters from product lines such as (but not limited to) Dart Zone Pro, Dart Zone Max, Adventure Force Pro, Game Face, Worker, Nerf Ultra, and Nerf Hyper must pass admin inspection and comply with the 100 fps cap.</p>
+</li>
+<li>
+<p>A non-exhaustive list of known blasters that must receive added orange coloration are as follows:</p>
+<ul>
+<li>
+<p>Dart Zone Pro MK-2</p>
+</li>
+<li>
+<p>Dart Zone Pro MK-2.1</p>
+</li>
+<li>
+<p>ZWK Fire Rat</p>
+</li>
+<li>
+<p>118 Designs Zinc</p>
+</li>
+<li>
+<p>Colonel Wasp 76</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>&nbsp;</p>
+<h3>Darts:</h3>
+<ol>
+<li>
+<p>Darts may only be modified aesthetically. This means that the size, mass, shape, and composition of the dart must remain the same.&nbsp;</p>
+</li>
+<li>
+<p>Homemade darts are not allowed.</p>
+</li>
+<li>
+<p>Off brand darts - Darts that are not sold/produced by a commercial blaster manufacturer (Nerf, Buzzbee, Boomco, &hellip;etc):</p>
+<ul>
+<li>
+<p>Off brand darts must have a tip that is able to deform similarly to on-brand, production darts.</p>
+<ul>
+<li>
+<p>Off brand darts may not have a hard tip or hard construction</p>
+<ul>
+<li>
+<p>Rival ammo from the brand Headshot has recently been found to be excessively hard. Avoid using Headshot branded ammo until their manufacturing improves.</p>
+</li>
+<li>
+<p>Some off brand Elite-style darts have excessively rigid dart heads, or solid dart heads.These darts do not meaningfully compress when squeezed. Avoid using these darts.&nbsp;</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>The following is a non-exhaustive list of off brand darts that are allowed in our games:</p>
+</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>
+<p>Dart Zone</p>
+</li>
+<li>
+<p>Game Face</p>
+</li>
+<li>
+<p>Ekind</p>
+</li>
+<li>
+<p>X-Shot</p>
+</li>
+<li>
+<p>Proton</p>
+</li>
+<li>
+<p>Koosh</p>
+</li>
+<li>
+<p>Men-gun</p>
+</li>
+<li>
+<p>Accurge</p>
+</li>
+<li>
+<p>Accufake</p>
+</li>
+<li>
+<p>Worker</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>Be aware that different dart brands have different masses, and thus changing to lighter ammo may cause your blaster to break the FPS cap if it comes in close under the cap using heavy darts. Be responsible about your choice of darts.</p>
+<p>&nbsp;</p>
+<h3>Throwables:</h3>
+<ol>
+<li>
+<p>Throwables may only be thrown, completely leaving your hand, in order to stun a zombie. Each throwable can stun only one zombie per throw.&nbsp;</p>
+</li>
+<li>
+<p>Throwable Construction:</p>
+<ol>
+<li>
+<p>Socks: Must only be made up of socks (no tape, string, glue).&nbsp;</p>
+<ol>
+<li>
+<p>Baby, infant, and child socks are not allowed.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>Other Throwables: Will consist of soft fabric or closed-cell foam, and may not contain any hard components.&nbsp;</p>
+<ol>
+<li>
+<p>Must fit within a cube that is four inches to a side, and must measure at least one inch across at its narrowest point.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>Throwables must be reasonably clean and dry for use in game.</p>
+</li>
+</ol>
+</li>
+</ol>
+</div>
+</section>
+<section>
+<h2>Section 12: Administration and Moderator Rules</h2>
+<div>
+<p>Moderators:</p>
+<ol>
+<li>
+<p>Are volunteers who help run the game.</p>
+</li>
+<li>
+<p>Wear a blue bandana around their neck.</p>
+</li>
+<li>
+<p>Will oversee mission objectives throughout the week.</p>
+</li>
+<li>
+<p>Act as game referees</p>
+</li>
+</ol>
+<p>Admins</p>
+<ol>
+<li>
+<p>Are the club's elected officials and appointed chairs</p>
+</li>
+<li>
+<p>Wear a yellow bandana around their neck</p>
+</li>
+<li>
+<p>Have final say over rules/game decisions</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<p>In addition to listening to both mods and admins, obey all instructions from Public Safety Officers. They are here to ensure the safety of everyone on campus (and potentially have tasers)</p>
+<p>&nbsp;</p>
+<p>Moderators and Admins:</p>
+<ol>
+<li>
+<p>must be unbiased at all times.</p>
+</li>
+<li>
+<p>must do their best to stay out of players ways at all times.</p>
+</li>
+<li>
+<p>may use any form of transportation.</p>
+</li>
+<li>
+<p>may remove their bandanas at times to pretend to be non players if they see suspicious activity.</p>
+</li>
+</ol>
+<p>&nbsp;</p>
+<p>While the game is played outside, Moderators and Admins have jurisdiction over players everywhere inside or out.</p>
+<p>&nbsp;</p>
+<p>If Moderators make a ruling, players must abide by the ruling.</p>
+<p>If Administrators make a ruling, players and Moderators must abide by the ruling.</p>
+<p>&nbsp;</p>
+<p>If a player has an issue with another player, he or she must contact a Moderator or Admin via email or Discord as soon as possible.</p>
+<p>If a player has an issue with a Moderator, he or she must contact an Administrator via email or discord immediately.</p>
+<p>If a player has an issue with an Administrator he or she must contact another Administrator immediately (preferably the President).</p>
+<p>&nbsp;</p>
+<p>In order to become a moderator, the person in question MUST have played two entire week long games.</p>
+<ul>
+<li>
+<p>The person must also complete a quiz and undergo any other forms of testing deemed appropriate by the current secretary.</p>
+</li>
+</ul>
+<p>&nbsp;</p>
+<p>In order to become an administrator, one must have played two entire week long games and moderated an entire week long game</p>
+<ul>
+<li>
+<p>Must have been an active moderator (showed up to most registration sessions, was helpful and around most missions, and was generally an asset).</p>
+</li>
+</ul>
+</div>
+</section>
