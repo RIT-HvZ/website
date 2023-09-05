@@ -74,7 +74,7 @@ a:hover {
 }
 
 .dt_profile {
-    width: 100px;
+    width: 70px;
     aspect-ratio: 1;
     object-fit: cover;
 }
@@ -474,12 +474,6 @@ a.missionlink {
 
 .reporteelist li {
     padding: 0;
-}
-
-#players img {
-    width: 50px;
-    aspect-ratio: 1;
-    object-fit: cover;
 }
 
 a.statuspage {
