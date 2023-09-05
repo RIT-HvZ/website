@@ -1,7 +1,7 @@
 body {
     background-color: #181818;
     padding-top: 75px;
-    font-family: "Noto Sans";
+    font-family: "Noto Sans", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 input {
@@ -74,7 +74,7 @@ a:hover {
 }
 
 .dt_profile {
-    width: 100px;
+    width: 70px;
     aspect-ratio: 1;
     object-fit: cover;
 }
@@ -185,11 +185,6 @@ div.humancount, div.zombiecount, div.versussection {
 
 #player_name div {
     display: inline-block;
-}
-
-.roster_pic img{
-    max-width: 100px;
-    max-height: 100px;
 }
 
 .clan_picture img {
@@ -474,12 +469,6 @@ a.missionlink {
 
 .reporteelist li {
     padding: 0;
-}
-
-#players img {
-    width: 50px;
-    aspect-ratio: 1;
-    object-fit: cover;
 }
 
 a.statuspage {
@@ -791,4 +780,11 @@ display: none !important;
     background-color: #222;
     padding: 10px;
     border-radius-top: 0;
+}
+
+@media only screen and (max-width: 992px) {
+    .navbar-nav {
+        max-height: 75vh;
+        overflow-y: auto;
+    }
 }

@@ -298,7 +298,7 @@ function invite_player(player_uuid) {
             <h3 class="badges"> Badges</h3>
             {% for badge in badges %}
                 <figure class="badgefigure figure">
-                    <img src="{{ badge.badge_type.picture.url }}" title="{{ badge.badge_type.badge_name }}" class="player_badge_img" />
+                    <img src="{{ badge.badge_type.picture.url }}" title="{{ badge.badge_type.badge_description }}" class="player_badge_img" />
                     <figcaption class="badgecaption">{{ badge.badge_type.badge_name }}</figcaption>
                 </figure>
             {% empty %}

@@ -12,8 +12,8 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode, OZEntry
-from .forms import AnnouncementForm, TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
+from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, About, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode, OZEntry
+from .forms import AnnouncementForm, TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, AboutUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -1005,6 +1005,10 @@ def rules(request):
     return render(request, "rules.html", {'rules': Rules.load()})
 
 
+def about(request):
+    return render(request, "about.html", {'about': About.load()})
+
+
 def bodyarmors(request):
     game = get_active_game()
     if not request.user.is_authenticated or not request.user.admin_this_game:
@@ -1136,6 +1140,27 @@ def rules_update(request):
         'form': form
     }
     return render(request, "rules_update.html", context)
+
+
+def about_update(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    if request.method == "POST":
+        form = AboutUpdateForm(request.POST)
+        if form.is_valid():
+            about_obj = form.instance
+            about_obj.last_edited_by = request.user
+            about_obj.last_edited_datetime = timezone.localtime()
+            about_obj.save()
+            return HttpResponseRedirect("/about/")
+    else:
+        form = AboutUpdateForm(instance=About.load())
+    about = About.load()
+    context = {
+        'about': about,
+        'form': form
+    }
+    return render(request, "about_update.html", context)
 
 
 def print_one(request, player_uuid):

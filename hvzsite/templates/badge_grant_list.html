@@ -29,7 +29,7 @@
             <tbody>
                 {% for badge in badge_choices %}
                 <tr onclick="window.location.href='/admin/badge_grant/{{badge.id}}/'">
-                    <td><img src="{{badge.picture.url}}"/></td>
+                    <td><img class="dt_profile" src="{{badge.picture.url}}"/></td>
                     <td>{{badge.badge_name}}</td>
                     <td>{{badge.badge_description}}</td>
                     <td>{{badge.badge_type_display}}</td>

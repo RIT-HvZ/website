@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Update About Page {% endblock %}
+{% block extrahead %}
+{{ form.media }}
+{% endblock %}
+{% block body %}
+{% load crispy_forms_tags %}
+<div class="row">
+  <div class="col">
+    <h1 class="center"> Update the About </h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <form method="post" id="aboutupdateform" class="center">{% csrf_token %}
+      {% if form.non_field_errors|length > 0 %}<div class="avformerrors mb-3">{{ form.non_field_errors }}</div>{% endif %}
+      {{ form | crispy}}
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
