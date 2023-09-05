@@ -21,13 +21,11 @@
     <h1 class="center"> About Us </h1>
   </div>
 </div>
-<div class="row totalcontainer">
-  <div class="col missionscrollercol">
-    <div class="missionscroller" id="links">
+<div class="row">
+  <div class="col container-fluid">
+    <div class="container rulescontainer">
+      {{ about.about_text | safe}}
     </div>
-  </div>
-  <div class="col missionscontainer rulescontainer">
-    {{ about.about_text | safe}}
   </div>
 </div>
 {% endblock %}

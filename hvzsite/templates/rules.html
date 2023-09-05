@@ -27,13 +27,11 @@ $(document).ready(function () {
         <iframe src="https://www.youtube.com/embed/19MRPji6Lis" title="Humans vs. Zombies @ RIT - Rules and How to Play" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
 </div>-->
-<div class="row totalcontainer">
-    <div class="col missionscrollercol">
-        <div class="missionscroller" id="links">
-        </div>
+<div class="row">
+  <div class="col container-fluid">
+    <div class="container rulescontainer">
+      {{ rules.rules_text | safe}}
     </div>
-    <div class="col missionscontainer rulescontainer">
-        {{ rules.rules_text | safe}}
-    </div>
+  </div>
 </div>
 {% endblock %}
