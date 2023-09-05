@@ -454,6 +454,8 @@ a.missionlink {
 }
 .rulescontainer {
     font-family: "Noto Sans", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    overflow-y: scroll;
+    max-height: 84vh;
 }
 
 .reportee_link {
