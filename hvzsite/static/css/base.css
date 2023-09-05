@@ -187,11 +187,6 @@ div.humancount, div.zombiecount, div.versussection {
     display: inline-block;
 }
 
-.roster_pic img{
-    max-width: 100px;
-    max-height: 100px;
-}
-
 .clan_picture img {
     width: 300px;
     aspect-ratio: 1;

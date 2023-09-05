@@ -209,7 +209,7 @@
                     <tbody>
                         {% for player in roster %}
                         <tr class="{% if player.current_status.is_zombie %}dt_zombie{% elif player.current_status.is_human %}dt_human{% elif player.current_status.is_mod %}dt_mod{% elif player.current_status.is_admin %}dt_admin{% elif player.current_status.is_nonplayer %}dt_nonplayer{% endif %}">
-                            <td class="roster_pic"><a class="dt_profile" href="/player/{{player.player_uuid}}/"><img src="{{ player.picture_url }}"/></a></td>
+                          <td class="roster_pic"><a href="/player/{{player.player_uuid}}/"><img class="dt_profile" src="{{ player.picture_url }}"/></a></td>
                             <td class="roster_name">{% if player == clan.leader %}<span title="Clan Leader" class="clanleaderspan">&#128081;</span>{% endif %}<a class="dt_name_link" href="/player/{{player.player_uuid}}/">{{player}}</a></td>
                             <td class="roster_status">{{ player.current_status.get_status_display }}</td>
                             <td class="roster_tags">{{player.current_status.num_tags}}</td>
