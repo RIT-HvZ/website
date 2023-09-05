@@ -351,6 +351,13 @@ class Rules(SingletonModel):
     def __str__(self):
         return f"Da Rules. Last edited by {self.last_edited_by} at {self.last_edited_datetime.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}"
 
+class About(SingletonModel):
+    about_text = tinymce_models.HTMLField(verbose_name="About Us")
+    last_edited_by = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)
+    last_edited_datetime = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"About Us. Last edited by {self.last_edited_by} at {self.last_edited_datetime.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')}"
 
 def gen_default_code(k=10):
     return ''.join(random.choices(string.ascii_letters, k=k))

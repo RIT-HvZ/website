@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - About Us {% endblock %}
+{% block extrahead %}
+<script>
+  $(document).ready(function () {
+    $("section h2").each(function(index, elem){
+      new_id = "section_"+(index+1);
+      $(elem).attr("id", new_id);
+      let new_row = "<a class='missionlink' href='#"+new_id+"'>"+$(elem).text()+"</a>";
+      $("#links").append(new_row);
+    });
+  });
+</script>
+{% endblock %}
+{% block body %}
+
+
+<div class="row">
+  <div class="col">
+    <h1 class="center"> About Us </h1>
+  </div>
+</div>
+<div class="row totalcontainer">
+  <div class="col missionscrollercol">
+    <div class="missionscroller" id="links">
+    </div>
+  </div>
+  <div class="col missionscontainer rulescontainer">
+    {{ about.about_text | safe}}
+  </div>
+</div>
+{% endblock %}
