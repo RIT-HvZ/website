@@ -787,3 +787,8 @@ class Announcement(models.Model):
     @property
     def timestamp_display(self):
         return self.post_time.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M:%S')
+
+    @property
+    def relative_time_str(self):
+        delta = (timezone.localtime() - self.post_time)
+        return get_relative_time(delta)

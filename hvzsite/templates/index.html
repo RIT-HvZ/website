@@ -51,17 +51,20 @@ document.getElementById("countdowntext").innerHTML = "Game over!";
 </script>
 {% endblock %}
 {% block body %}
-<div class="row">
-  <div class="col">
-    <h1 class="center"> HvZ @ RIT</h1>
-  </div>
-</div>
 <div class="row center">
   <div class="col countdown">
     <span class="countdownlabel" id="countdownprefix"></span>
     <span class="countdowntext" id="countdowntext"></span>
   </div>
 </div>
+
+<div class="container mainpage-container">
+<div class="row">
+  <div class="col">
+    <h1 class="main-title center"> HvZ @ RIT</h1>
+  </div>
+</div>
+
 <div class="row center">
   <div class="col-md-5 humancount mx-auto">
     <span class="humancountnumber">{{humancount}}</span>
@@ -107,5 +110,23 @@ document.getElementById("countdowntext").innerHTML = "Game over!";
     <a class="statuspage" href="player/{{p.player.player_uuid}}">{{p.player}}</a> with <b>{{p.num_tags}}</b> tags <br />
     {% endfor %}
   </div>
+</div>
+
+<br />
+
+<div class="row center">
+  <div class="col-md-3"></div>
+  <div class="col-md-6 recent-announcements">
+    <h2>Announcements</h2>
+    {% for announcement in announcements %}
+    <div class="col center">
+      <span class="announcement-short"> {{announcement.short_form}} </span>
+      (<span class="timestamp" title="{{announcement.timestamp_display}}">posted {{announcement.relative_time_str}}</span>)
+      <a href="/announcement/{{announcement.id}}/" class="announcementlink">see more</a>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="col-md-3"></div>
+</div>
 </div>
 {% endblock %}

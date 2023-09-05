@@ -52,15 +52,15 @@ a:hover {
 }
 
 .admin-only {
-    background-color: rgb(114, 107, 2);
+    background-color: #aa0;
     border-radius: 0.4em;
     margin-left: .4em;
     margin-right: .4em;
-    color: #ddd;
+    color: white;
 }
 
 .mod-only {
-    background-color: rgb(30, 69, 168);
+    background-color: #0820b8;
     border-radius: 0.4em;
     margin-left: .4em;
     margin-right: .4em;
@@ -74,32 +74,35 @@ a:hover {
 }
 
 .dt_profile {
-    max-width: 100px;
-    max-height: 100px;
+    width: 100px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 .dt_profilepic {
-    max-width: 110px;
+    width: 110px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 .dt_human td{
-    background-color: rgb(146, 85, 6);
+    background-color: #d86611;
 }
 
 .dt_zombie td{
-    background-color: rgb(13, 105, 4);
+    background-color: #0faa01;
 }
 
 .dt_mod td{
-    background-color: rgb(3, 57, 119);
+    background-color: #0820b8;
 }
 
 .dt_admin td{
-    background-color: rgb(161, 150, 4);
+    background-color: #aa0;
 }
 
 .dt_nonplayer td{
-    background-color: rgb(156, 156, 156);
+    background-color: #777;
 }
 
 th, label {
@@ -126,7 +129,7 @@ th, label {
     vertical-align: middle;
 }
 
-.versuslabel {
+.main-title, .versuslabel {
     font-weight: bold;
     color: white;
     font-size: 32pt;
@@ -134,11 +137,11 @@ th, label {
 }
 
 div.humancount {
-    background-color: rgb(201, 119, 13);
+    background-color: #d86611;
 }
 
 div.zombiecount {
-    background-color: rgb(16,185,1);
+    background-color: #0faa01;
 }
 
 div.humancount, div.zombiecount, div.versussection {
@@ -162,13 +165,18 @@ div.humancount, div.zombiecount, div.versussection {
     font-weight: bold;
 }
 
+.dt_name_link:hover, .dt_clan_link:hover, .announcementdiv a:hover {
+    color: #dddddd;
+}
+
 .dt_name, .dt_size {
     vertical-align: middle;
 }
 
 .dt_clanpic {
-    max-width: 60px;
-    max-height: 60px;
+    width: 60px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 #player_name h1 {
@@ -185,8 +193,9 @@ div.humancount, div.zombiecount, div.versussection {
 }
 
 .clan_picture img {
-    max-width: 300px;
-    max-height: 300px;
+    width: 300px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 .clan_name {
@@ -216,7 +225,7 @@ div.humancount, div.zombiecount, div.versussection {
 }
 
 .adminlist tbody tr td.ba-returned-True {
-    background-color: #1f1;
+    background-color: #0faa01;
 }
 
 #qr_url {
@@ -274,16 +283,8 @@ border-radius: 4px;
     width: 100% !important;
 }
 
-.playermainrow, .playeradmintools, .armormainrow {
+.playermainrow, .armormainrow {
     text-align: center;
-}
-
-.playeradmintool {
-    width: fit-content;
-    padding: .5em;
-    background-color: rgba(255, 238, 0, 0.4);
-    border-radius: 1em;
-    margin: 1em;
 }
 
 .clan_link img {
@@ -294,7 +295,7 @@ border-radius: 4px;
     text-align: center;
 }
 
-.player_blaster_img, .player_badge_img {
+.player_blaster_img {
     max-width: 100px;
     max-height: 100px;
     min-width: 50px;
@@ -305,7 +306,17 @@ border-radius: 4px;
 }
 
 .player_badge_img {
+    width: 50px;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.player_badge_img {
     border-radius: 50%;
+}
+
+.badgecaption {
+    font-size: small;
 }
 
 .player_tag_img {
@@ -371,7 +382,7 @@ border-radius: 4px;
 }
 
 .tagnotification, .avnotification {
-    background-color: #1f1;
+    background-color: #0faa01;
     border-radius: 10px;
     color: #111;
     padding: 10px;
@@ -466,8 +477,9 @@ a.missionlink {
 }
 
 #players img {
-    max-width: 50px;
-    max-height: 50px;
+    width: 50px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 a.statuspage {
@@ -491,10 +503,11 @@ a.statuspage:hover {
 div.countdown {
     width: 80%;
     display: block;
-    background-color: rgb(100,100,100);
+    background-color: #777;
     color: black;
     font-size: xx-large;
     border-radius: 10px;
+    margin: 5px;
 }
 
 .qrcontainer {
@@ -555,9 +568,9 @@ div.countdown {
     border-width: 5px;
     border-style: solid;
     display: inline-block;
-    width: 100px ;
-    height: 100px ;
-    aspect-ratio: 1/1 !important;
+    width: 100px;
+    aspect-ratio: 1;
+    object-fit: cover;
     margin-right: 12px;
 }
 
@@ -565,28 +578,27 @@ div.countdown {
     margin-bottom: 50px;
 }
 
-
 .zombiecontainer .player_picture {
-    border-color: rgb(10, 116, 0);
+    border-color: #0faa01;
 }
 
 .admincontainer .player_picture {
-    border-color: rgb(186, 183, 0);
+    border-color: #aa0;
 }
 
 .humancontainer .player_picture {
-    border-color: rgb(207, 117, 0);
+    border-color: #d86611;
 }
 
 .npcontainer .player_picture {
-    border-color: rgb(100,100,100);
+    border-color: #777;
 }
 
 .modcontainer .player_picture {
-    border-color: rgb(30, 69, 168);
+    border-color: #0820b8;
 }
 .bannedcontainer .player_picture {
-    border-color: rgb(255, 0, 0);
+    border-color: #f00;
 }
 .player_name {
     color: white;
@@ -599,22 +611,22 @@ div.countdown {
     display: flex;
 }
 .humancontainer .playernamerow {
-    background-color: rgb(207, 117, 0);
+    background-color: #d86611;
 }
 
 .bannedcontainer .playernamerow {
-    background-color: rgb(255, 0, 0);
+    background-color: #f00;
 }
 
 .npcontainer .playernamerow {
-    background-color: rgb(100,100,100);
+    background-color: #777;
 }
 .modcontainer .playernamerow {
-    background-color: rgb(30, 69, 168);
+    background-color: #0820b8;
 }
 
 .admincontainer .playernamerow {
-    background-color: rgb(186, 183, 0);
+    background-color: #aa0;
 }
 
 .admincontainer .playernamerow .player_name {
@@ -622,7 +634,7 @@ div.countdown {
 }
 
 .zombiecontainer .playernamerow {
-    background-color: rgb(10, 116, 0);
+    background-color: #0faa01;
 }
 
 dl.playerinfo dt {
@@ -725,8 +737,9 @@ div.alert-error ul li {
 }
 
 .clanphotopreview {
-    max-width: 200px;
-    max-height: 200px;
+    width: 200px;
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 div.controls ul {
@@ -748,7 +761,7 @@ div.controls ul {
     border-bottom: thin dotted;
 }
 
-.leaderboard h2, .recent-tags h2 {
+.leaderboard h2, .recent-tags h2, .recent-announcements h2 {
     margin-top: 15px;
     color: white;
     font-size: 32pt;
@@ -769,4 +782,13 @@ div.controls ul {
 }
 .toast:not(.showing):not(.show) {
 display: none !important;
+}
+.recent-announcements .announcement-short {
+    font-weight: bold;
+}
+
+.mainpage-container {
+    background-color: #222;
+    padding: 10px;
+    border-radius-top: 0;
 }
