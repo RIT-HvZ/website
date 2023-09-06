@@ -5,7 +5,7 @@
 <script>
 $(document).ready(function () {
     $("h1,h2").each(function(index, elem){
-        new_id = "section_"+(index+1);
+        new_id = "section_"+(index);
         $(elem).attr("id", new_id);
         let new_row = "<a class='scrolllink' href='#"+new_id+"'>"+$(elem).text()+"</a>";
         $("#links").append(new_row);
