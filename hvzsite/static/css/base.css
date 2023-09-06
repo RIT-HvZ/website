@@ -396,7 +396,7 @@ border-radius: 4px;
     vertical-align:middle;
 }
 
-.missionscroller, .missionscrollercol {
+.scroller, .scrollercol {
     max-width: fit-content;
 }
 
@@ -404,10 +404,10 @@ border-radius: 4px;
     color: rgb(200,200,200);
 }
 
-.missionscrollercol {
+scrollercol {
     margin: 10px;
 }
-a.missionlink {
+a.scrolllink {
     text-decoration: none;
     font-weight: bold;
     color: #888;
@@ -422,7 +422,7 @@ a.missionlink {
 }
 
 @media only screen and (max-width: 800px) {
-    .missionscrollercol {
+    .scrollercol {
         display: none;
     }
 }
@@ -454,8 +454,6 @@ a.missionlink {
 }
 .rulescontainer {
     font-family: "Noto Sans", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    overflow-y: scroll;
-    max-height: 84vh;
 }
 
 .reportee_link {

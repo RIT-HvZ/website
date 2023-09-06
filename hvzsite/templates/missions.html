@@ -19,20 +19,20 @@
     </div>
 </div>
 <div class="row totalcontainer">
-    <div class="col missionscrollercol">
-        <div class="missionscroller">
+    <div class="col scrollercol">
+        <div class="scroller">
             {% for mission in missions %}
             
                 {% for survey in mission.postgamesurvey_set.all %}
                     {% if survey.is_viewable %}
-                        <a class="missionlink" href="#survey_{{survey.id}}">Post-Mission Survey - {{ survey.mission.mission_name }}</a>
+                        <a class="scrolllink" href="#survey_{{survey.id}}">Post-Mission Survey - {{ survey.mission.mission_name }}</a>
                     {% endif %}
                 {% endfor %}
                 {% if mission.non_story_viewable %}
-                    <a class="missionlink" href="#mission_{{mission.id}}_nonstory">{{mission.mission_name}} - Non-Story Form</a>
+                    <a class="scrolllink" href="#mission_{{mission.id}}_nonstory">{{mission.mission_name}} - Non-Story Form</a>
                 {% endif %}
                 {% if mission.story_viewable %}
-                    <a class="missionlink" href="#mission_{{mission.id}}_story">{{mission.mission_name}} - Story Form</a>
+                    <a class="scrolllink" href="#mission_{{mission.id}}_story">{{mission.mission_name}} - Story Form</a>
                 {% endif %}
             {% endfor %}
         </div>

@@ -4,10 +4,10 @@
 {% block extrahead %}
 <script>
 $(document).ready(function () {
-    $("section h2").each(function(index, elem){
+    $("h1,h2").each(function(index, elem){
         new_id = "section_"+(index+1);
         $(elem).attr("id", new_id);
-        let new_row = "<a class='missionlink' href='#"+new_id+"'>"+$(elem).text()+"</a>";
+        let new_row = "<a class='scrolllink' href='#"+new_id+"'>"+$(elem).text()+"</a>";
         $("#links").append(new_row);
     });
 });
@@ -28,8 +28,8 @@ $(document).ready(function () {
     </div>
 </div>-->
 <div class="row">
-  <div class="col missionscrollercol">
-        <div class="missionscroller" id="links">
+  <div class="col scrollercol">
+        <div class="scroller" id="links">
         </div>
   </div>
   <div class="col rulescontainercontainer">
