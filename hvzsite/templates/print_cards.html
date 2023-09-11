@@ -217,13 +217,13 @@ $(document).ready(function () {
                         </td>
                     </tr>
                     <tr class="id_number">
-                        <td colspan="2">Zombie Id: {% if not preview %}{{player.current_status.zombie_uuid}}{% endif %}</td>
+                      <td colspan="2">Zombie Id: {% if not preview %}{{player.current_status.zombie_uuid}}{% endif %}</td>
                     </tr>
                     <tr class="id_number border_sandwich">
-                        <td colspan="2">Human Id #2: {% if not preview %}{{player.current_status.tag2_uuid}}{% endif %}</td>
+                      <td colspan="2">Human Id #1: {% if not preview %}{{player.current_status.tag1_uuid}}{% endif %}</td>
                     </tr>
                     <tr class="id_number">
-                        <td colspan="2">Human Id #1: {% if not preview %}{{player.current_status.tag1_uuid}}{% endif %}</td>
+                        <td colspan="2">Human Id #2: {% if not preview %}{{player.current_status.tag2_uuid}}{% endif %}</td>
                     </tr>
                 </tbody>
             </table>
