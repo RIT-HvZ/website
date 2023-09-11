@@ -1178,7 +1178,7 @@ def print_one(request, player_uuid):
 def print_ids(request, preview=False):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
-    to_print = PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n'))
+    to_print = PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n')).order_by('player__first_name', 'player__last_name')
     context = {
         "players": [status.player for status in to_print],
         "preview": preview,
