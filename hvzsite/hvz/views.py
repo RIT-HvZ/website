@@ -752,11 +752,13 @@ def players_api(request, game=None):
     query = Person.full_name_objects.filter(playerstatus__game=game, playerstatus__status__in=['h','v','e','z','o','x','a','m'])
     if search != "":
         query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
-    if order_column_name != "tags":
-        query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "status": "playerstatus__status", "clan": "clan__name"}[order_column_name]}""")
-    else:
+    if order_column_name == 'tags':
         query = query.annotate(n_tags=Count('taggers', filter=Q(taggers__game=game))).order_by(f"""{'-' if order_direction == 'asc' else ''}n_tags""")
-    
+    elif order_column_name == 'status':
+        query = sorted([person for person in query], key=lambda person: person.current_status.listing_priority, reverse=(order_direction=='desc'))
+    else:
+        query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "clan": "clan__name"}[order_column_name]}""")
+
     result = []
     filtered_length = len(query)
     if start < filtered_length:

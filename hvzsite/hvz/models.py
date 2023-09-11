@@ -342,6 +342,15 @@ class PlayerStatus(models.Model):
     def num_tags(self):
         return Tag.objects.filter(game=self.game, tagger=self.player).count()
 
+    @property
+    def listing_priority(self):
+        if self.is_staff():
+            return 0
+        if self.is_human():
+            return 10
+        if self.is_zombie():
+            return 20
+        return 100
 
 class Rules(SingletonModel):
     rules_text = tinymce_models.HTMLField(verbose_name="Rules Text")
