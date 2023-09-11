@@ -344,8 +344,10 @@ class PlayerStatus(models.Model):
 
     @property
     def listing_priority(self):
-        if self.is_staff():
+        if self.is_admin():
             return 0
+        if self.is_mod():
+            return 5
         if self.is_human():
             return 10
         if self.is_zombie():
