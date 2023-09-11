@@ -220,12 +220,16 @@ class Mission(models.Model):
     def non_story_viewable(self):
         return self.go_live_time < timezone.localtime()
 
-
+class CaseInsensitiveUserManager(UserManager):
+    def get_by_natural_key(self, username):
+        case_insensitive_username_field = '{}__iexact'.format(self.model.USERNAME_FIELD)
+        return self.get(**{case_insensitive_username_field: username})
+    
 class Person(AbstractUser):
     player_uuid = models.UUIDField(verbose_name="Player UUID", default=uuid.uuid4, unique=True)
     clan = models.ForeignKey(Clan, on_delete=models.SET_NULL, blank=True, null=True, related_name="clan_members")
     picture = models.ImageField(upload_to=get_person_upload_path, null=True, blank=True)
-    objects = UserManager()
+    objects = CaseInsensitiveUserManager()
     full_name_objects = PersonFullNameManager()
     discord_id = models.CharField(max_length=100, blank=True, null=True)
     games_played = models.ManyToManyField(Game, blank=True)
