@@ -311,6 +311,7 @@ class PlayerStatus(models.Model):
     activation_timestamp = models.DateTimeField(auto_now_add=False, null=True, blank=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('e', 'Human (Extracted)'),('z','Zombie'),('x','Zombie (used AV)'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='n', null=False)
+    av_banned = models.BooleanField(verbose_name="Is player banned from AV'ing this game", default=False)
 
     class Meta:
         unique_together = (('tag1_uuid', 'game'),
@@ -340,7 +341,7 @@ class PlayerStatus(models.Model):
 
     @property
     def can_av(self):
-        return self.status == "z"
+        return (self.status == "z") and (self.av_banned == False)
 
     @property
     def num_tags(self):
@@ -357,6 +358,10 @@ class PlayerStatus(models.Model):
         if self.is_zombie():
             return 20
         return 100
+    
+    @property
+    def num_failed_av_attempts(self):
+        return FailedAVAttempt.objects.filter(player=self.player, game=self.game).count()
 
 class Rules(SingletonModel):
     rules_text = tinymce_models.HTMLField(verbose_name="Rules Text")
@@ -408,6 +413,24 @@ class AntiVirus(models.Model):
     def relative_time_str(self):
         delta = (timezone.localtime() - self.time_used)
         return get_relative_time(delta)
+    
+class FailedAVAttempt(models.Model):
+    player = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="failed_av_attempts")
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    code_used = models.CharField(max_length=1000)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.timestamp}: {self.player} attempted AV code {self.code_used}"
+    
+    @property 
+    def display_timestamp(self):
+        return f"{self.timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M:%S')}"
+    
+    @property
+    def web_str(self):
+        return f"<span class='avtimestamp'>{self.display_timestamp}:</span> {html.escape(self.code_used)}"
+    
 
 class BadgeType(models.Model):
     badge_name = models.CharField(verbose_name="Badge Name", max_length=30, null=False)

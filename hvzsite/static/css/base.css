@@ -208,7 +208,7 @@ div.humancount, div.zombiecount, div.versussection {
 }
 
 .adminlist tbody tr.odd td {
-    background-color: rgb(200,200,200);
+    background-color: rgb(56, 56, 56);
 }
 
 .adminlist tbody tr.even td {
@@ -787,4 +787,16 @@ display: none !important;
         max-height: 75vh;
         overflow-y: auto;
     }
+}
+
+.avtimestamp {
+    color: #999;
+}
+
+.admintoolsrow {
+    background-color: #e1aa05;
+    margin-top: -50px;
+    padding-top: 1em;
+    padding-left: 100px;
+    margin-bottom: 10px;
 }

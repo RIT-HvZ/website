@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, About, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode, OZEntry
+from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, About, FailedAVAttempt, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode, OZEntry
 from .forms import AnnouncementForm, TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, AboutUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -287,6 +287,9 @@ def av(request):
             form.cleaned_data['av'].save()
             newform = AVForm()
             return render(request, "av.html", {'form':newform, 'avcomplete': True, 'av': form.cleaned_data['av']})
+        else:
+            new_failed_av = FailedAVAttempt.objects.create(player=request.user, game=get_active_game(), code_used=form.cleaned_data['av_code'])
+            new_failed_av.save()
     return render(request, "av.html", {'form':form, 'avcomplete': False})
 
 
@@ -410,6 +413,7 @@ def player_view(request, player_id, is_me=False, game=None, discord_code=None):
         'discord_code': discord_code,
         'reportees': Report.objects.filter(reportees__exact=player),
         'reporters': Report.objects.filter(reporter=player),
+        'failedavs': FailedAVAttempt.objects.filter(player=player, game=game),
         'is_user_clan_leader': Clan.objects.filter(leader=request.user).count() > 0 if request.user.is_authenticated else False,
         'is_player_clan_leader': Clan.objects.filter(leader=player).count() > 0
     }
@@ -429,23 +433,27 @@ def player_admin_tools(request, player_id, command):
         return JsonResponse({"status": "player not found"})
     if command == "print_id":
         return print_one(request, player_id)
-    if command == "make_oz":
+    elif command == "make_oz":
         playerstatus.status = 'o'
-    if command == "make_nonplayer":
+    elif command == "make_nonplayer":
         playerstatus.status = 'n'
-    if command == "make_human":
+    elif command == "make_human":
         playerstatus.status = 'h'
-    if command == "make_human_av":
+    elif command == "make_human_av":
         playerstatus.status = 'v'
-    if command == "make_human_extracted":
+    elif command == "make_human_extracted":
         playerstatus.status = 'e'
-    if command == "make_zombie":
+    elif command == "make_zombie":
         playerstatus.status = 'z'
-    if command == "make_zombie_av":
+    elif command == "make_zombie_av":
         playerstatus.status = 'x'
-    if command == "make_mod":
+    elif command == "make_mod":
         playerstatus.status = 'm'
-    if command == "ban":
+    elif command == "avban":
+        playerstatus.av_banned = True
+    elif command == "avunban":
+        playerstatus.av_banned = False
+    elif command == "ban":
         playerstatus.status = 'n'
         player.is_banned = True
         player.ban_timestamp = timezone.now()
@@ -486,7 +494,8 @@ def player_admin_tools(request, player_id, command):
                     led_clan.save()
                     ClanHistoryItem(clan=led_clan, actor=new_leader, history_item_type="b").save() # "Promoted to leader by system" history item
 
-                    
+    else:
+        return JsonResponse({'status': 'fail', 'error': "unknown command"})          
     playerstatus.save()
 
     return JsonResponse({'status': 'success'})
@@ -1212,6 +1221,15 @@ def mark_printed(request):
         return HttpResponseRedirect("/")
     PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n')).update(printed=True)
     return HttpResponseRedirect("/")
+
+def view_failed_av_list(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    offenders = Person.objects.annotate(failcount=Count("failed_av_attempts")).filter(failcount__gt=0).order_by("-failcount")
+    context = {
+        "offenders": offenders
+    }
+    return render(request, "failed_av_list.html", context)
 
 ## REST API endpoints
 

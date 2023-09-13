@@ -72,6 +72,7 @@ urlpatterns = [
     re_path(r'^admin/badge_grant/(?P<badge_type_id>[^/]+)/?$', views.badge_grant),
     re_path(r'^admin/badge_grant_list/?$', views.badge_grant_list),
     re_path(r'^admin/badge_grant_api/(?P<badge_type_id>[^/]+)/(?P<player_id>[^/]+)/?$', views.badge_grant_api),
+    re_path(r'^admin/view_failed_av_list/?$', views.view_failed_av_list),
 
     # API Routes
     # re_path(r'^api/?', include(router.urls)),

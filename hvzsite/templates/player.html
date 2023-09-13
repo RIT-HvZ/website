@@ -136,59 +136,79 @@ function invite_player(player_uuid) {
                         <h2 class="player_name align-bottom"> {{ player }} </h2>
                     </div>
                 </div>
-                
-                {% if user.is_authenticated and user.current_status.is_admin %}
-                <div class="col align-bottom playernamecol">
-                    <div class="dropdown align-bottom admintoolsdiv">
-                        <button class="btn btn-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Admin Tools</button>
-                        <ul class="dropdown-menu">
-                            <li><h6 class="dropdown-header">ID Card</h6></li>
-                            <li><a class="dropdown-item" href="/admin/print_one/{{player.player_uuid}}/">Reprint Player ID Card</a></li>
-                            <li><h6 class="dropdown-header">Change Player Status</h6></li>
-                            <li><a class="dropdown-item" href="#" onclick="admintools('make_oz')">Make OZ</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="admintools('make_nonplayer')">Make Nonplayer</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="admintools('make_human')">Make Human</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="admintools('make_human_av')">Make Human (Used AV)</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="admintools('make_human_extracted')">Make Human (Extracted)</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="admintools('make_zombie')">Make Zombie</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="admintools('make_zombie_av')">Make Zombie (Used AV)</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="admintools('make_mod')">Make Mod</a></li>
-                            <li><h6 class="dropdown-header">Ban Player</h6></li>
-                            <li><a class="dropdown-item" href="#" onclick="admintools('ban')">Permanently Ban Player</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="col align-bottom playernamecol">
-                    <div class="dropdown align-bottom admintoolsdiv">
-                        <button class="btn btn-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reports Filed: {{reporters|length}}</button>
-                        <ul class="dropdown-menu">
-                            {% for report in reporters %}
-                            <li><a class="dropdown-item" href="/admin/report/{{report.report_uuid}}/">{{report.report_uuid}}</a></li>
-                            {% empty %}
-                            <li>No reports</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="col align-bottom playernamecol">
-                    <div class="dropdown align-bottom admintoolsdiv">
-                        <button class="btn btn-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reports Against: {{reportees|length}}</button>
-                        <ul class="dropdown-menu">
-                            {% for report in reportees %}
-                            <li><a class="dropdown-item" href="/admin/report/{{report.report_uuid}}/">{{report.report_uuid}}</a></li>
-                            {% empty %}
-                            <li>No reports</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                {% endif %}
             </div>
         </div>
     </div>
 
+    {% if user.is_authenticated and user.current_status.is_admin %}
+    <div class="row admintoolsrow">
+        <div class="col align-bottom playernamecol">
+            <div class="dropdown align-bottom admintoolsdiv">
+                <button class="btn btn-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Admin Tools</button>
+                <ul class="dropdown-menu">
+                    <li><h6 class="dropdown-header">ID Card</h6></li>
+                    <li><a class="dropdown-item" href="/admin/print_one/{{player.player_uuid}}/">Reprint Player ID Card</a></li>
+                    <li><h6 class="dropdown-header">AV Blocking</h6></li>
+                    {% if player.current_status.av_banned %}
+                    <li><a class="dropdown-item" href="#" onclick="admintools('avunban')">Unblock Player From AVing</a></li>
+                    {% else %}
+                    <li><a class="dropdown-item" href="#" onclick="admintools('avban')">Block Player From AVing</a></li>
+                    {% endif %}
+                    <li><h6 class="dropdown-header">Change Player Status</h6></li>
+                    <li><a class="dropdown-item" href="#" onclick="admintools('make_oz')">Make OZ</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="admintools('make_nonplayer')">Make Nonplayer</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="admintools('make_human')">Make Human</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="admintools('make_human_av')">Make Human (Used AV)</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="admintools('make_human_extracted')">Make Human (Extracted)</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="admintools('make_zombie')">Make Zombie</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="admintools('make_zombie_av')">Make Zombie (Used AV)</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="admintools('make_mod')">Make Mod</a></li>
+                    <li><h6 class="dropdown-header">Ban Player</h6></li>
+                    <li><a class="dropdown-item" href="#" onclick="admintools('ban')">Permanently Ban Player</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col align-bottom playernamecol">
+            <div class="dropdown align-bottom admintoolsdiv">
+                <button class="btn btn-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reports Filed: {{reporters|length}}</button>
+                <ul class="dropdown-menu">
+                    {% for report in reporters %}
+                    <li><a class="dropdown-item" href="/admin/report/{{report.report_uuid}}/">{{report.report_uuid}}</a></li>
+                    {% empty %}
+                    <li>No reports</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col align-bottom playernamecol">
+            <div class="dropdown align-bottom admintoolsdiv">
+                <button class="btn btn-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reports Against: {{reportees|length}}</button>
+                <ul class="dropdown-menu">
+                    {% for report in reportees %}
+                    <li><a class="dropdown-item" href="/admin/report/{{report.report_uuid}}/">{{report.report_uuid}}</a></li>
+                    {% empty %}
+                    <li>No reports</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col align-bottom playernamecol">
+            <div class="dropdown align-bottom admintoolsdiv">
+                <button class="btn btn-dark align-bottom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Failed AV attempts: {{failedavs|length}}</button>
+                <ul class="dropdown-menu">
+                    {% for failedav in failedavs %}
+                    <li>{{failedav.web_str | safe}}</li>
+                    {% empty %}
+                    <li>No failed AV attempts</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     <div class="row justify-content-md-center playermainrow">
         <div class="col col-12 col-sm-12 col-md-4 center">
             <h3 id="tags_header">Info</h3>

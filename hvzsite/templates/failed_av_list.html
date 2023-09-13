@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Body Armor List {% endblock %}
+
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable = $('#bodyarmors').DataTable({'ordering':true});
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Failed AV Attempts </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="bodyarmors" class="table display adminlist">
+            <thead>
+                <tr>
+                    <th class="foo">Player</th>
+                    <th class="foo">Failed Attempts</th>
+                    <th class="foo">AV Blocked?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for offender in offenders %}
+                <tr onclick="window.location.href='/player/{{offender.player_uuid}}/'">
+                    <td>{{offender.first_name}} {{offender.last_name}}</td>
+                    <td>{{offender.current_status.num_failed_av_attempts}}</td>
+                    <td>{{offender.current_status.av_banned}}
+                </tr>
+                {% empty %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
