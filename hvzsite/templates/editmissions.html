@@ -5,10 +5,9 @@
 {% block extrahead %}
 <script>
     $(document).ready(function () {
-        $("#id_av_id").attr('size',36);
-        $("#id_player_id").attr('size',36);
+        var datatable = $('#missions').DataTable({'ordering':false});
     });
-    </script>
+</script>
 {% endblock %}
 {% block body %}
 
@@ -21,9 +20,26 @@
 <div class="row">
     <div class="col center">
         <button class="btn btn-primary" onclick="window.location.href='/admin/editmission/new/';">Create New Mission</button>
-        {% for mission in missions %}
-            <a href="/admin/editmission/{{mission.id}}/" class="missionlink">{{mission}}</a>
-        {% endfor %}
+        <table class="table display adminlist" id="missions">
+            <thead>
+                <tr>
+                    <th style="text-align:center">Mission Name</th>
+                    <th style="text-align:center">Team</th>
+                    <th style="text-align:center">Story-form Go-Live</th>
+                    <th style="text-align:center">Non-story-form Go-Live</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for mission in missions %}
+                <tr onclick="window.location.href='/admin/editmission/{{mission.id}}/';">
+                    <td>{{mission.mission_name}}</td>
+                    <td>{{mission.get_team_display}}</td>
+                    <td>{{mission.story_form_go_live_time}}</td>
+                    <td>{{mission.go_live_time}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
