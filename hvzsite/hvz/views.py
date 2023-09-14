@@ -837,12 +837,11 @@ def player_activation_api(request, game=None):
         for person in query[start:]:
             if limit == 0:
                 break
-            person_status = PlayerStatus.objects.get_or_create(player=person, game=game)[0]
             result.append({
                 "name": f"""{html.escape(person.first_name)} {html.escape(person.last_name)}""",
                 "pic": f"""<img src='{person.picture_url}' class='dt_profile' />""",
                 "email": f"""{html.escape(person.email)}""",
-                "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
+                "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person.current_status.status],
                 "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{html.escape(person.first_name)} {html.escape(person.last_name)}" data-bs-activationid="{person.player_uuid}">Activate</button>"""
             })
             limit -= 1
