@@ -148,6 +148,10 @@ function invite_player(player_uuid) {
                 <ul class="dropdown-menu">
                     <li><h6 class="dropdown-header">ID Card</h6></li>
                     <li><a class="dropdown-item" href="/admin/print_one/{{player.player_uuid}}/">Reprint Player ID Card</a></li>
+                    {% if player.current_status.waiver_signed == False %}
+                    <li><h6 class="dropdown-header">Waiver</h6></li>
+                    <li><a class="dropdown-item" href="#" onclick="admintools('mark_waiver')">Mark Waiver Signed</a></li>
+                    {% endif %}
                     <li><h6 class="dropdown-header">AV Blocking</h6></li>
                     {% if player.current_status.av_banned %}
                     <li><a class="dropdown-item" href="#" onclick="admintools('avunban')">Unblock Player From AVing</a></li>
@@ -218,6 +222,12 @@ function invite_player(player_uuid) {
                         <td> Status </td>
                         <td>{{player.current_status.get_status_display}}</td>
                     </tr>
+                    {% if user.admin_this_game %}
+                    <tr>
+                        <td>Signed Waiver</td>
+                        <td>{{player.current_status.waiver_signed}}</td>
+                    </tr>
+                    {% endif %}
                     <tr>
                         <td> Clan </td>
                         <td> {% if player.clan %}<a href="/clan/{{player.clan}}/" class="clan_link">

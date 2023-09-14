@@ -312,7 +312,8 @@ class PlayerStatus(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     status = models.CharField(verbose_name="Role", choices=[('h','Human'),('v','Human (used AV)'),('e', 'Human (Extracted)'),('z','Zombie'),('x','Zombie (used AV)'),('m','Mod'),('a','Admin'),("o","Zombie (OZ)"),("n","NonPlayer")], max_length=1, default='n', null=False)
     av_banned = models.BooleanField(verbose_name="Is player banned from AV'ing this game", default=False)
-
+    waiver_signed = models.BooleanField(verbose_name="Has Player returned a signed waiver for this game?", editable=True, default=False)
+    
     class Meta:
         unique_together = (('tag1_uuid', 'game'),
                            ('tag2_uuid', 'game'),

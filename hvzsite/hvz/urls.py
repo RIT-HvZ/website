@@ -64,6 +64,7 @@ urlpatterns = [
     re_path(r'^admin/update_rules/?$', views.rules_update),
     re_path(r'^admin/update_about/?$', views.about_update),
     re_path(r'^admin/print/?$', views.print_ids),
+    re_path(r'^admin/unsigned_waivers/?$', views.view_unsigned_waivers),
     re_path(r'^admin/print_one/(?P<player_uuid>[^/]+)/?$', views.print_one),
     re_path(r'^admin/print_preview/?$', views.print_preview),
     re_path(r'^admin/mark_printed/?$', views.mark_printed),
