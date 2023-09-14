@@ -809,8 +809,9 @@ display: none !important;
     max-width: 90vw;
 }
 
-.notifications .dropdown-item {
+.notifications a {
     text-wrap: balance;
     word-wrap: normal;
     overflow-wrap: normal;
+    white-space: normal;
 }
