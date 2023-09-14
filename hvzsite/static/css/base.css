@@ -800,3 +800,11 @@ display: none !important;
     padding-left: 100px;
     margin-bottom: 10px;
 }
+
+#id_report_text {
+    max-width: 92vw;
+}
+
+.rulescontainer iframe {
+    max-width: 90vw;
+}
