@@ -809,6 +809,6 @@ display: none !important;
     max-width: 90vw;
 }
 
-.notifications .dropdownitem {
+.notifications .dropdown-item {
     text-wrap: inherit;
 }
