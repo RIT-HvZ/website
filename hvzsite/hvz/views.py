@@ -21,6 +21,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from rest_framework.views import APIView
 from rest_framework_api_key.models import APIKey
 from rest_framework_api_key.permissions import HasAPIKey
+import html
 import json
 import discord
 import base64
@@ -825,7 +826,8 @@ def player_activation_api(request, game=None):
         search = r["search[value]"]
     except AssertionError:
         raise
-    query = Person.full_name_objects.filter(is_banned=False, is_active=True)
+    query = Person.full_name_objects.filter(is_banned=False, is_active=True).exclude(playerstatus__game=game, playerstatus__status__in=['h','v','e','z','x','m','a','o'])
+    records_total = query.count()
     if search != "":
         query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
     query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name"}[order_column_name]}""")
@@ -835,23 +837,18 @@ def player_activation_api(request, game=None):
         for person in query[start:]:
             if limit == 0:
                 break
-            try:
-                person_status = PlayerStatus.objects.get_or_create(player=person, game=game)[0]
-            except:
-                continue
-            if person.active_this_game:
-                continue
+            person_status = PlayerStatus.objects.get_or_create(player=person, game=game)[0]
             result.append({
-                "name": f"""{person.first_name} {person.last_name}""",
+                "name": f"""{html.escape(person.first_name)} {html.escape(person.last_name)}""",
                 "pic": f"""<img src='{person.picture_url}' class='dt_profile' />""",
-                "email": f"""{person.email}""",
+                "email": f"""{html.escape(person.email)}""",
                 "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person_status.status],
-                "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{person.first_name} {person.last_name}" data-bs-activationid="{person.player_uuid}">Activate</button>"""
+                "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{html.escape(person.first_name)} {html.escape(person.last_name)}" data-bs-activationid="{person.player_uuid}">Activate</button>"""
             })
             limit -= 1
     data = {
         "draw": int(r['draw']),
-        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status='n').count(),
+        "recordsTotal": records_total,
         "recordsFiltered": filtered_length,
         "data": result
     }
