@@ -810,5 +810,7 @@ display: none !important;
 }
 
 .notifications .dropdown-item {
-    text-wrap: inherit;
+    text-wrap: balance;
+    word-wrap: normal;
+    overflow-wrap: normal;
 }
