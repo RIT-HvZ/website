@@ -808,3 +808,7 @@ display: none !important;
 .rulescontainer iframe {
     max-width: 90vw;
 }
+
+.notifications .dropdownitem {
+    text-wrap: inherit;
+}
