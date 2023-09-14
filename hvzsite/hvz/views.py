@@ -297,7 +297,7 @@ def av(request):
 def view_unsigned_waivers(request):
     if (not request.user.is_authenticated) or (not request.user.admin_this_game):
         return HttpResponseRedirect("/")
-    unsigned = PlayerStatus.objects.filter(game=get_active_game(), waiver_signed=False)
+    unsigned = PlayerStatus.objects.filter(game=get_active_game(), waiver_signed=False).filter(~Q(status='n'))
     return render(request, "unsigned_waivers.html", {'unsigned':unsigned})
     
 
