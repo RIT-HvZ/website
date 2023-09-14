@@ -294,6 +294,13 @@ def av(request):
     return render(request, "av.html", {'form':form, 'avcomplete': False})
 
 
+def view_unsigned_waivers(request):
+    if (not request.user.is_authenticated) or (not request.user.admin_this_game):
+        return HttpResponseRedirect("/")
+    unsigned = PlayerStatus.objects.filter(game=get_active_game(), waiver_signed=False)
+    return render(request, "unsigned_waivers.html", {'unsigned':unsigned})
+    
+
 def blasterapproval(request):
     if (not request.user.is_authenticated) or (not request.user.admin_this_game):
         return HttpResponseRedirect("/")
@@ -452,6 +459,8 @@ def player_admin_tools(request, player_id, command):
         playerstatus.status = 'm'
     elif command == "avban":
         playerstatus.av_banned = True
+    elif command == "mark_waiver":
+        playerstatus.waiver_signed = True
     elif command == "avunban":
         playerstatus.av_banned = False
     elif command == "ban":
@@ -867,7 +876,7 @@ def player_activation_rest(request):
         im_bytes = base64.b64decode(image_base64)   # im_bytes is a binary image
         im_file = BytesIO(im_bytes)  # convert image to file-like object
         img = Image.open(im_file)   # img is now PIL Image object
-
+        print(request.POST["waiver_signed"])
         output = BytesIO()
         im = img.convert('RGB')
         im.thumbnail( (400, 400) , Image.ANTIALIAS )
@@ -877,6 +886,7 @@ def player_activation_rest(request):
         person_status = PlayerStatus.objects.get(player=requested_player, game=game)
         person_status.activation_timestamp = timezone.now()
         person_status.status = 'h'
+        person_status.waiver_signed = (request.POST["waiver_signed"] == "true")
         requested_player.save()
         person_status.save()
         return JsonResponse({"status":"success"})

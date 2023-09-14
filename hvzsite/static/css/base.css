@@ -212,7 +212,7 @@ div.humancount, div.zombiecount, div.versussection {
 }
 
 .adminlist tbody tr.even td {
-    background-color: rgb(160,160,160);
+    background-color: rgb(67, 67, 67);
 }
 
 .adminlist tbody tr td.ba-returned-False {

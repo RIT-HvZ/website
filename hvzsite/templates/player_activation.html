@@ -18,6 +18,9 @@ function clearphoto() {
     photo.setAttribute("src", data);
   }
 
+let photo_taken = false;
+let waiver_signed = false;
+
 (() => {
   // The width and height of the captured photo. We will set the
   // width to the value defined here, but the height will be
@@ -135,9 +138,14 @@ function clearphoto() {
 
       const data = canvas.toDataURL("image/jpeg");
       photo.setAttribute("src", data);
-      $('#confirmactivation').removeAttr('disabled');
+      photo_taken = true;
+      if (photo_taken && document.getElementById("confirmwaiver").checked) {
+        $('#confirmactivation').removeAttr('disabled');
+      }
     } else {
       clearphoto();
+      photo_taken = false;
+      $('#confirmactivation').attr('disabled','disabled');
     }
   }
 
@@ -147,6 +155,17 @@ function clearphoto() {
 })();
 
     $(document).ready(function () {
+      document.getElementById('confirmwaiver').checked = false;
+      $('#confirmwaiver').change(function() {
+        if (this.checked && photo_taken)
+        {
+          $('#confirmactivation').removeAttr('disabled');
+        }
+        else
+        { 
+          $('#confirmactivation').attr('disabled','disabled');
+        }
+      }); 
         var datatable = $('#players').DataTable( {
             "serverSide": true,
             "ajax": {
@@ -177,18 +196,34 @@ function clearphoto() {
           $("#modal_status").html("");
           // If necessary, you could initiate an AJAX request here
           var modal_button = exampleModal.querySelector("#confirmactivation")
+          var modal_checkbox = exampleModal.querySelector("#confirmwaiver")
           var new_button = modal_button.cloneNode(true);
+          var new_checkbox = modal_checkbox.cloneNode(true);
           new_button.disabled = true;
+          new_checkbox.checked = false;
           modal_button.parentNode.replaceChild(new_button, modal_button);
+          modal_checkbox.parentNode.replaceChild(new_checkbox, modal_checkbox);
+          new_checkbox.addEventListener("change", function(event) {
+            if (this.checked && photo_taken)
+            {
+              $('#confirmactivation').removeAttr('disabled');
+            }
+            else
+            { 
+              $('#confirmactivation').attr('disabled','disabled');
+            }
+          });
           new_button.addEventListener("click", function(event){
             event.preventDefault()
             new_button.disabled = true;
+            photo_taken = false;
             $("#modal_status").html("Activating...");
             $.ajax('/api/player_activation_rest',{
               method: "POST",
               data: {
                 activated_player: activationid,
                 player_photo: $("#photo").attr('src'),
+                waiver_signed: document.getElementById("confirmwaiver").checked,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
               }
             }).done( function (data) {
@@ -196,6 +231,7 @@ function clearphoto() {
               if (data.status == "success") {
                 clearphoto();
                 $('#confirmactivation').attr('disabled','disabled');
+                $('#confirmwaiver').attr('value','faslse');
                 $('#activationmodal').modal('hide');
               }
               else {
@@ -239,10 +275,13 @@ function clearphoto() {
           <div class="output">
             <img id="photo" alt="The screen capture will appear in this box." />
           </div>
+          <h2 class="cameralabel">Player Waiver</h2>
+          <label for="confirmwaiver"> Has Player returned a signed Waiver?</label><input type="checkbox" value="false" id="confirmwaiver">
         </div>
         <div class="modal-footer">
+          <span id="modal_info">Ensure Player has a signed waiver before activating!</span>
           <span id="modal_status"></span>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Cancel</button>
           <button id="confirmactivation" type="button" disabled="true" class="btn btn-primary">Activate</button>
         </div>
       </div>
