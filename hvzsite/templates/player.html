@@ -289,7 +289,7 @@ function invite_player(player_uuid) {
                         </td>
                         <td>{{tag.display_timestamp}}</td>
                     </tr>
-                {% endfor %}
+                    {% endfor %}
                 </tbody>
             </table>
             {% else %}
@@ -297,6 +297,7 @@ function invite_player(player_uuid) {
             {% endif %}
         </div>
 
+        {% if is_me or user.admin_this_game%}
         <div class="col col-12 col-sm-12 col-md-4 center">
             <h3 class="blasters">Blasters</h3>
             {% for blaster in blasters %}
@@ -313,6 +314,7 @@ function invite_player(player_uuid) {
                 <span class="noblasters">No blasters to show</span>
             {% endfor %}
         </div>
+        {% endif %}
 
         <div class="col col-12 col-sm-12 col-md-12" id="player_badges">
             <h3 class="badges"> Badges</h3>
