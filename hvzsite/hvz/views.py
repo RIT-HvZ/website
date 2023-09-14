@@ -825,7 +825,7 @@ def player_activation_api(request, game=None):
         search = r["search[value]"]
     except AssertionError:
         raise
-    query = Person.full_name_objects.filter(is_banned=False)
+    query = Person.full_name_objects.filter(is_banned=False, is_active=True)
     if search != "":
         query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
     query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name"}[order_column_name]}""")
