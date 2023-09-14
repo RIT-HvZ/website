@@ -52,7 +52,7 @@ a:hover {
 }
 
 .admin-only {
-    background-color: #aa0;
+    background-color: #e1aa05;
     border-radius: 0.4em;
     margin-left: .4em;
     margin-right: .4em;
@@ -98,7 +98,7 @@ a:hover {
 }
 
 .dt_admin td{
-    background-color: #aa0;
+    background-color: #e1aa05;
 }
 
 .dt_nonplayer td{
@@ -572,7 +572,7 @@ div.countdown {
 }
 
 .admincontainer .player_picture {
-    border-color: #aa0;
+    border-color: #e1aa05;
 }
 
 .humancontainer .player_picture {
@@ -615,7 +615,7 @@ div.countdown {
 }
 
 .admincontainer .playernamerow {
-    background-color: #aa0;
+    background-color: #e1aa05;
 }
 
 .admincontainer .playernamerow .player_name {
@@ -799,4 +799,12 @@ display: none !important;
     padding-top: 1em;
     padding-left: 100px;
     margin-bottom: 10px;
+}
+
+#id_report_text {
+    max-width: 92vw;
+}
+
+.rulescontainer iframe {
+    max-width: 90vw;
 }
