@@ -33,3 +33,8 @@ table#clans .dt_size {
     border-radius: 5px;
     word-break:normal;
 }
+
+a.clan_link {
+    color: inherit;
+    text-decoration: underline;
+}
