@@ -851,7 +851,7 @@ def player_activation_api(request, game=None):
                 "pic": f"""<img src='{person.picture_url}' class='dt_profile' />""",
                 "email": f"""{html.escape(person.email)}""",
                 "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person.current_status.status],
-                "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{html.escape(person.first_name)} {html.escape(person.last_name)}" data-bs-activationid="{person.player_uuid}">Activate</button>"""
+                "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{html.escape(person.first_name)} {html.escape(person.last_name)}" data-bs-activationid="{person.player_uuid}">Register</button>"""
             })
             limit -= 1
     data = {

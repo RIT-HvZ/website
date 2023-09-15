@@ -217,7 +217,7 @@ let waiver_signed = false;
             event.preventDefault()
             new_button.disabled = true;
             photo_taken = false;
-            $("#modal_status").html("Activating...");
+            $("#modal_status").html("Registering...");
             $.ajax('/api/player_activation_rest',{
               method: "POST",
               data: {
@@ -235,7 +235,7 @@ let waiver_signed = false;
                 $('#activationmodal').modal('hide');
               }
               else {
-                $("#modal_status").html("Error activating: "+ data.error);
+                $("#modal_status").html("Error registering: "+ data.error);
               }
               datatable.ajax.reload(null, false);
             })
@@ -257,13 +257,13 @@ let waiver_signed = false;
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h3 class="modal-title">User Activation Confirmation</h3>
+          <h3 class="modal-title">User Registration Confirmation</h3>
           <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body center">
-          Activate user <span id="activation_name"></span>?
+          Register user <span id="activation_name"></span>?
           <br />
           <h2 class="cameralabel">Live Camera Feed</h2>
           <div class="camera">
@@ -276,13 +276,13 @@ let waiver_signed = false;
             <img id="photo" alt="The screen capture will appear in this box." />
           </div>
           <h2 class="cameralabel">Player Waiver</h2>
-          <label for="confirmwaiver"> Has Player returned a signed Waiver?</label><input type="checkbox" value="false" id="confirmwaiver">
+          <label for="confirmwaiver"> Has this player signed a waiver?</label><input type="checkbox" value="false" id="confirmwaiver">
         </div>
         <div class="modal-footer">
-          <span id="modal_info">Ensure Player has a signed waiver before activating!</span>
+          <span id="modal_info">Ensure Player has a signed waiver before registering!</span>
           <span id="modal_status"></span>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Cancel</button>
-          <button id="confirmactivation" type="button" disabled="true" class="btn btn-primary">Activate</button>
+          <button id="confirmactivation" type="button" disabled="true" class="btn btn-primary">Register</button>
         </div>
       </div>
     </div>
@@ -294,7 +294,7 @@ let waiver_signed = false;
 
 <div class="row">
     <div class="col">
-        <h1 class="center"> Player Activation </h1>
+        <h1 class="center"> Player Registration </h1>
     </div>
 </div>
 <div class="row">
@@ -305,7 +305,7 @@ let waiver_signed = false;
                     <th class="foo">Picture</th>
                     <th class="foo">Name</th>
                     <th class="email">Email</th>
-                    <th class="activate">Activate?</th>
+                    <th class="activate">Register?</th>
             </thead>
         </table>
     </div>
