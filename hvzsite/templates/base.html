@@ -253,10 +253,19 @@ $(document).ready(function () {
           </nav>
         <div class="container-fluid">
         {% if is_banned %}
-        <div class="row center announcementrow"><div class="col center banneddiv">
-        You have been banned from HvZ at RIT. You may no longer interact with this site.
-        </div></div>
+          <div class="row center announcementrow">
+            <div class="col center banneddiv">
+              You have been banned from HvZ at RIT. You may no longer interact with this site.
+            </div>
+          </div>
+        {% elif user.is_authenticated and not user.active_this_game %}
+          <div class="row center announcementrow">
+            <div class="col center banneddiv">
+              You are not currently registered to play in this weeklong. Make sure to attend a <u><i>full</i> registration session</u> to get your player ID.
+            </div>
+          </div>
         {% endif %}
+
         {% for announcement in announcements %}
         <div class="row center announcementrow" id="dismissannouncement_{{announcement.id}}"><div class="col center announcementdiv">
           {{announcement.short_form}} <a href="/announcement/{{announcement.id}}/" class="announcementlink">see more</a> <a class="announcementdismiss" onclick="dismiss_announcement('{{announcement.id}}')">×</a>

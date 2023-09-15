@@ -3,7 +3,7 @@
 
 {% block body %}
 
-{% load crispy_forms_tags %}       
+{% load crispy_forms_tags %}
 
 {% if user.is_authenticated %}
   <div class="login_alreadylogged">You are already logged in. <a href="/">Return home</a></div>
@@ -15,7 +15,11 @@
   </div>
   <div class="row">
     <div class="col login-button  center">
-      <p class="registration_info">Initial registration complete. Check your inbox momentarily for your activation email.</p>
+      <p class="registration_info">
+        Your account has been created but is not yet active. <br />
+        An activation email will be sent to your inbox momentarily. <br />
+        Make sure to <b>click the activation link</b> sent to your email to finish activating your account.
+      </p>
     </div>
   </div>
 

@@ -19,7 +19,7 @@ class HVZRegistrationForm(UserCreationForm):
             User.USERNAME_FIELD,
             User.get_email_field_name(),
             "first_name", "last_name", "password1", "password2")
-        
+
     error_css_class = "error"
     required_css_class = "required"
 

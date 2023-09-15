@@ -3,7 +3,7 @@
 
 {% block body %}
 
-{% load crispy_forms_tags %}       
+{% load crispy_forms_tags %}
 
 {% if user.is_authenticated %}
   <div class="login_alreadylogged">You are already logged in. <a href="/">Return home</a></div>
@@ -17,17 +17,19 @@
     <div class="col login-button  center">
       <form method="post">
         {% csrf_token %}
-	{{ form | crispy }}
+
+        Your username is the email address you used to sign up. <br />
+        If you are unable to log in make sure that you clicked the <b>activation link</b> after registering.
+
+        {{ form | crispy }}
         <button class="btn btn-primary" type="submit">{% trans "Continue" %}</button>
       </form>
 
-      NOTE: Your username is the email you used to sign up.
-
       <br />
-      
-      If you don't already have an account, you can <a href="/accounts/register/">Register Here</a>
+
+      If you don't already have an account, you can <a href="/accounts/register/">register for an account</a>
       {# Assumes you set up the password_reset view in your URLconf #}
-      <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+      <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
 
     </div>
   </div>

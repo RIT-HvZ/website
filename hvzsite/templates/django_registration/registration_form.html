@@ -3,7 +3,7 @@
 
 {% block body %}
 
-{% load crispy_forms_tags %}       
+{% load crispy_forms_tags %}
 
 {% if user.is_authenticated %}
   <div class="login_alreadylogged">You are already logged in. <a href="/">Return home</a></div>
@@ -17,7 +17,9 @@
     <div class="col login-button  center">
       <form method="post">
         {% csrf_token %}
-		{{ form | crispy }}    
+        Please ensure your email address is correct! <br />
+        You will have to confirm your email address via an <b>activation link</b> that will be sent to you.
+		    {{ form | crispy }}
         <button class="btn btn-primary" type="submit">{% trans "Continue" %}</button>
       </form>
     </div>

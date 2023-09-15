@@ -1,4 +1,8 @@
-Welcome to RIT HvZ!
+Welcome to HvZ at RIT!
+
 To complete your registration, activate your account by following the link:
 {{scheme}}://{{site}}/accounts/activate/{{activation_key}}
-Note: the window to active your account will expire in {{expiration_days}} days.
+
+This will activate your web account, but note that you still need to attend a *FULL registration session* to be able to play. The registration session contains important safety information and is required to set up your profile and receive your player ID card.
+
+Note: the window to activate your account will expire in {{expiration_days}} days.
