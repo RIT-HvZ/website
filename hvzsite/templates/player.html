@@ -148,9 +148,11 @@ function invite_player(player_uuid) {
                 <ul class="dropdown-menu">
                     <li><h6 class="dropdown-header">ID Card</h6></li>
                     <li><a class="dropdown-item" href="/admin/print_one/{{player.player_uuid}}/">Reprint Player ID Card</a></li>
-                    {% if player.current_status.waiver_signed == False %}
                     <li><h6 class="dropdown-header">Waiver</h6></li>
+                    {% if player.current_status.waiver_signed == False %}
                     <li><a class="dropdown-item" href="#" onclick="admintools('mark_waiver')">Mark Waiver Signed</a></li>
+                    {% else %}
+                    <li><a class="dropdown-item" href="#" onclick="admintools('unmark_waiver')">Mark Waiver NOT Signed</a></li>
                     {% endif %}
                     <li><h6 class="dropdown-header">AV Blocking</h6></li>
                     {% if player.current_status.av_banned %}

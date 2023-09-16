@@ -461,6 +461,8 @@ def player_admin_tools(request, player_id, command):
         playerstatus.av_banned = True
     elif command == "mark_waiver":
         playerstatus.waiver_signed = True
+    elif command == "unmark_waiver":
+        playerstatus.waiver_signed = False
     elif command == "avunban":
         playerstatus.av_banned = False
     elif command == "ban":
