@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 from django.conf import settings
 from django.core import exceptions
 from rest_framework.response import Response
-from django.db.models import Count
 from django.utils import timezone
 from django.db.utils import IntegrityError
+from django.db.models.functions import Lower
 from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -778,7 +778,10 @@ def players_api(request, game=None):
     elif order_column_name == 'status':
         query = sorted([person for person in query], key=lambda person: person.current_status.listing_priority, reverse=(order_direction=='desc'))
     else:
-        query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name", "clan": "clan__name"}[order_column_name]}""")
+        if order_direction == 'desc':
+            query = query.order_by(Lower(f"""{ {"name":"full_name", "clan": "clan__name"}[order_column_name]}""").desc())
+        else:
+            query = query.order_by(Lower(f"""{ {"name":"full_name", "clan": "clan__name"}[order_column_name]}""").asc())
 
     result = []
     filtered_length = len(query)
@@ -803,7 +806,7 @@ def players_api(request, game=None):
             limit -= 1
     data = {
         "draw": int(r['draw']),
-        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game).filter(playerstatus__status__in=['h','v','e','z','o','x','a','m']).count(),
+        "recordsTotal": Person.full_name_objects.filter(playerstatus__game=game, playerstatus__status__in=['h','v','e','z','o','x','a','m']).count(),
         "recordsFiltered": filtered_length,
         "data": result
     }
@@ -1162,7 +1165,7 @@ def print_one(request, player_uuid):
 def print_ids(request, preview=False):
     if not request.user.is_authenticated or not request.user.admin_this_game:
         return HttpResponseRedirect("/")
-    to_print = PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n')).order_by('player__first_name', 'player__last_name')
+    to_print = PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n')).order_by(Lower('player__first_name'), Lower('player__last_name'))
     context = {
         "players": [status.player for status in to_print],
         "preview": preview,
