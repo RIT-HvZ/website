@@ -372,7 +372,7 @@ class PlayerStatus(models.Model):
     def logical_timestamp(self):
         if self.activation_timestamp is None:
             return '---'
-        return self.activation_timestamp.strftime('%Y-%m-%d %H:%M')
+        return self.activation_timestamp.astimezone(timezone.get_current_timezone()).strftime('%Y-%m-%d %H:%M')
 
 
 class Rules(SingletonModel):
