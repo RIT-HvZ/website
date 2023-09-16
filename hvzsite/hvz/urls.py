@@ -101,6 +101,5 @@ urlpatterns = [
 
     # API Data-Table Routes
     re_path(r'^api/datatables/bodyarmor_get_loan_targets/?$', views.bodyarmor_get_loan_targets),
-    re_path(r'^api/datatables/players/?$', views.players_api),
-    re_path(r'^api/datatables/clans/?$', views.clans_api),
+    re_path(r'^api/datatables/players/?$', views.players_api)
 ]

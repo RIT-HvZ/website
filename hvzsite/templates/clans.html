@@ -7,11 +7,7 @@
 <script>
   $(document).ready(function () {
     var datatable = $('#clans').DataTable( {
-      "serverSide": true,
-      "ajax": {
-        "url": '/api/datatables/clans',
-        "type": 'GET'
-      },
+      "serverSide": false,
       "order": [[1, 'asc']],
       "columns": [
         {"className": "dt_profilepic", "name": "picture", "data": "pic", "orderable": false},
@@ -38,6 +34,16 @@
             <th class="foo">Picture</th>
             <th class="foo">Name</th>
             <th class="foo"># Members</th>
+        </t>
     </thead>
+    <tbody>
+      {% for clan in clans%}
+      <tr style="background-color:{{clan.color}}; color:{{clan.get_text_color}}">
+        <td><a  class="dt_profile_link" style="color:{{clan.get_text_color}}" href="/clan/{{clan.name}}/"><img src="{{clan.picture.url}}" class='dt_profile' /></a></td>
+        <td><a class="dt_name_link" style="color:{{clan.get_text_color}}" href="/clan/{{clan.name}}/">{{clan.name}}</a></td>
+        <td><span style="color:{{clan.get_text_color}}"> {{clan.get_member_count}} </span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
 </table>
 {% endblock %}

@@ -979,43 +979,8 @@ def player_oz_enable(request):
         return JsonResponse({"status":"error", "error": str(e)})
 
 def clans(request):
-    context = {}
+    context = {"clans" : Clan.objects.all()}
     return render(request, "clans.html", context)
-
-@api_view(["GET"])
-def clans_api(request):
-    r = request.query_params
-    try:
-        order_column = int(r.get("order[0][column]"))
-        assert order_column in [1,2]
-        order_column_name = r.get(f"columns[{order_column}][name]")
-        assert order_column_name in ("name","size")
-        order_direction = r.get("order[0][dir]")
-        assert order_direction in ("asc","desc")
-        limit = int(request.query_params["length"])
-        start = int(request.query_params["start"])
-        search = r["search[value]"]
-    except AssertionError:
-        raise
-    query = Clan.objects.all().annotate(clan_member_count=Count('clan_members'))
-    if search != "":
-        query = query.filter(name__icontains=search)
-    query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"name", "size": "clan_member_count", }[order_column_name]}""")
-    result = []
-    for clan in query[start:limit]:
-        result.append({
-            "name": f"""<a class="dt_name_link" style="color:{clan.get_text_color}" href="/clan/{clan.name}/">{clan.name}</a>""",
-            "pic": f"""<a  class="dt_profile_link" style="color:{clan.get_text_color}" href="/clan/{clan.name}/"><img src='{clan.picture.url}' class='dt_profile' /></a>""",
-            "DT_RowAttr": {"style": f'background-color:{clan.color}; color:{clan.get_text_color}' },
-            "size": f"""<span style="color:{clan.get_text_color}"> {clan.clan_members.count()} </span>"""
-        })
-    data = {
-        "draw": int(r['draw']),
-        "recordsTotal": Clan.objects.all().count(),
-        "recordsFiltered": len(result),
-        "data": result
-    }
-    return JsonResponse(data)
 
 
 def rules(request):

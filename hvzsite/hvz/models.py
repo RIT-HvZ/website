@@ -131,6 +131,10 @@ class Clan(models.Model):
             return "true"
         else:
             return "false"
+        
+    @property
+    def get_member_count(self):
+        return Person.objects.filter(clan=self).count()
 
 def get_person_upload_path(instance, filename):
     return os.path.join("profile_pictures",str(instance.player_uuid), filename)
