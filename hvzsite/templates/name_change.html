@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body %}
+
+{% load crispy_forms_tags %}
+
+  <div class="row">
+    <div class="col center">
+        <h1>Name Change</h1>
+    </div>
+  </div>
+  {% if createcomplete %}
+  <div class="row">
+    <div class="col">
+        <h2 class="tagnotification">Successfully submitted request!</h2>
+    </div>
+  </div>
+  {% endif %}
+  <div class="row">
+    <div class="col col-12 center">
+        <span class="namechangetext">
+          At HvZ@RIT, we respect the preferred names of all of our players.
+          <br/><br/>
+          If for any reason, you feel that the name this site uses for you does not
+          accurately reflect your preferred name, or if you've made a typo during registration,
+          please submit this form to let us know your preferred name and we'll get it updated ASAP.
+        </span>
+        <br />
+        <br />
+        <span class="namechangewarning">
+        Note: misuse of this form will be met with disciplinary action.
+        </span>
+        <br />
+        <br />
+    </div>
+  </div>
+  {% if existing_request %}
+  <div class="row">
+    <div class="col col-12 center">
+      <span class="namechangeexistinginfo">
+        You presently have a request to change your name to {{existing_request.requested_first_name}} {{existing_request.requested_last_name}}<br/>
+        If this is in error, you can correct it by submitting the form below, or you can <a href="/cancel_name_change">cancel the request</a>
+      </span> 
+    </div>
+  </div>
+  {% endif %}
+  <div class="row">
+    <div class="col login-button center">
+      <form method="post">
+        {% csrf_token %}
+		    {{ form | crispy }}
+        <button style="margin-top:10px" class="btn btn-primary" type="submit">{% trans "Submit" %}</button>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

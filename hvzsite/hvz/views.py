@@ -12,8 +12,8 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, About, FailedAVAttempt, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode, OZEntry
-from .forms import AnnouncementForm, TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, AboutUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
+from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, NameChangeRequest, Report, ReportUpdate, Game, Rules, About, FailedAVAttempt, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode, OZEntry
+from .forms import AnnouncementForm, TagForm, AVForm, AVCreateForm, BlasterApprovalForm, NameChangeForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, AboutUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -431,6 +431,75 @@ def player_view(request, player_id, is_me=False, game=None, discord_code=None):
     return render(request, "player.html", context)
 
 
+def name_change(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+    existing_requests = NameChangeRequest.objects.filter(player=request.user, request_status='n')
+    if existing_requests.count() > 0:
+        existing_request = existing_requests[0]
+    else:
+        existing_request = None
+
+    if request.method == "GET":
+        form = NameChangeForm()
+    else:
+        form = NameChangeForm(request.POST)
+
+        if form.is_valid():
+            if existing_request:
+                existing_request.requested_first_name = form.cleaned_data['first_name']
+                existing_request.requested_last_name = form.cleaned_data['last_name']
+                existing_request.save()
+            else:
+                new_request = NameChangeRequest.objects.create(previous_first_name=request.user.first_name, previous_last_name=request.user.last_name, requested_first_name=form.cleaned_data['first_name'], requested_last_name=form.cleaned_data['last_name'], player=request.user)
+                new_request.save()
+                existing_request = new_request
+            newform = NameChangeForm()
+            return render(request, "name_change.html", {'form':newform, 'requestcomplete': True, 'existing_request': existing_request})
+    return render(request, "name_change.html", {'form':form, 'requestcomplete': False, 'existing_request': existing_request})
+
+
+def cancel_name_change(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect("/")
+    existing_requests = NameChangeRequest.objects.filter(player=request.user, request_status='n')
+    if existing_requests.count() > 0:
+        existing_request = existing_requests[0]
+        existing_request.request_status = 'c'
+        existing_request.request_close_timestamp = timezone.now()
+        existing_request.save()
+    return name_change(request)
+
+
+def view_name_change_requests(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    current_requests = NameChangeRequest.objects.filter(request_status='n').order_by("request_open_timestamp")
+    previous_requests = NameChangeRequest.objects.filter(request_status__in=['c','r','a']).order_by("request_open_timestamp")
+    return render(request, "name_change_list.html", {'current_requests': current_requests, 'previous_requests': previous_requests})
+
+
+@api_view(["POST"])
+def name_change_response(request, request_id, command):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return JsonResponse({"status": "not authorized"})
+    name_change_req = NameChangeRequest.objects.get(id=request_id)
+    name_change_req.request_close_timestamp = timezone.now()
+    if command == "approve":
+        name_change_req.request_status = 'a'
+        player = name_change_req.player
+        player.first_name = name_change_req.requested_first_name
+        player.last_name = name_change_req.requested_last_name
+        player.save()
+        name_change_req.save()
+        return JsonResponse({"status": "success"})
+    elif command == "deny":
+        name_change_req.request_status = 'r'
+        name_change_req.save()
+        return JsonResponse({"status": "success"})
+    else:
+        return JsonResponse({"status": "unknown command"})
+    
 @api_view(["POST"])
 def player_admin_tools(request, player_id, command):
     if not request.user.is_authenticated or not request.user.admin_this_game:
@@ -538,8 +607,6 @@ def bodyarmor_admin_tools(request, armor_id, command):
         armor.save()
         return JsonResponse({'status': 'success', "playername": f"{player.first_name} {player.last_name}", "time": str(armor.loaned_at)})
 
-        
-
 
 @api_view(["GET"])
 def bodyarmor_get_loan_targets(request):
@@ -604,6 +671,7 @@ def clan_view(request, clan_name):
         'show_history': is_leader or (request.user.is_authenticated and request.user.admin_this_game)
     }
     return render(request, "clan.html", context)
+
 
 @api_view(["POST"])
 def clan_api(request, clan_name, command, person_id):
@@ -691,7 +759,6 @@ def clan_api(request, clan_name, command, person_id):
         return JsonResponse({"status":"success"})
 
     
-
 @api_view(["POST"])
 def clan_api_userresponse(request, invite_id, command):
     invite = ClanInvitation.objects.get(id=invite_id)

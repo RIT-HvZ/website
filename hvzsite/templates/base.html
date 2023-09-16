@@ -182,6 +182,7 @@ $(document).ready(function () {
                       <li><a class="dropdown-item" href="/player_oz_activation/">Assign OZs</a></li>
                       <li><a class="dropdown-item" href="/admin/print/">ID Card Print</a></li>
                       <li><a class="dropdown-item" href="/admin/print_preview/">ID Card Print Preview</a></li>
+                      <li><a class="dropdown-item" href="/admin/name_change_requests/">View Name Change Requests</a></li>
                       <li><a class="dropdown-item" href="/admin/unsigned_waivers/">View Unsigned Waiver list</a></li>
 
                       <li><h6 class="dropdown-header">Game Items</h6></li>
@@ -218,6 +219,13 @@ $(document).ready(function () {
                   <ul class="notifications navbar-nav ms-auto">
                     <a class="nav-link  dropdown-toggle notificationsnav" href="#" id="notificationsDropDown" data-bs-toggle="dropdown" aria-expanded="false">Notifications: <span class="notificationnumber">{{notification_count}}</span></a>
                     <ul class="dropdown-menu  dropdown-menu-end" aria-labelledby="navbarDropdown">
+                      {% if name_changes_waiting %}
+                        <li>
+                          <a class="dropdown-item" href="/admin/name_change_requests/">
+                            You have pending name change requests.
+                          </a>
+                        </li>
+                      {% endif %}
                       {% for invitation in unanswered_invitations %}
                         <li>
                           <a class="dropdown-item">

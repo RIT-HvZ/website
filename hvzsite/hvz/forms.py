@@ -329,3 +329,8 @@ class AnnouncementForm(forms.ModelForm):
     class Meta:
         model = Announcement
         fields = ["short_form", "long_form", "active"]
+
+
+class NameChangeForm(forms.Form):
+    first_name = forms.CharField(label='First Name', max_length=50)
+    last_name = forms.CharField(label='Last Name', max_length=50)

@@ -815,3 +815,12 @@ display: none !important;
     overflow-wrap: normal;
     white-space: normal;
 }
+
+.namechangetext, .namechangewarning, .namechangeexistinginfo {
+    max-width: 800px;
+    display: inline-block;
+}
+
+.namechangeexistinginfo {
+    font-weight: bold;
+}
