@@ -97,6 +97,8 @@ def discord_link(request):
 def missions_view(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")
+    if not request.user.admin_this_game and not request.user.current_status.waiver_signed:
+        return render(request, "sign_waiver.html")
     this_game = get_active_game()
     if request.method == "POST":
         survey_option = request.POST.get("survey_option")
