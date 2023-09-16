@@ -368,6 +368,13 @@ class PlayerStatus(models.Model):
     def num_failed_av_attempts(self):
         return FailedAVAttempt.objects.filter(player=self.player, game=self.game).count()
 
+    @property
+    def logical_timestamp(self):
+        if self.activation_timestamp is None:
+            return '---'
+        return self.activation_timestamp.strftime('%Y-%m-%d %H:%M')
+
+
 class Rules(SingletonModel):
     rules_text = tinymce_models.HTMLField(verbose_name="Rules Text")
     last_edited_by = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)

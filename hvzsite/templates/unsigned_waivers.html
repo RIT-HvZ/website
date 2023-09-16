@@ -5,7 +5,7 @@
 {% block extrahead %}
 <script>
     $(document).ready(function () {
-        var datatable = $('#bodyarmors').DataTable({'ordering':true});
+        var datatable = $('#unsigned-waivers').DataTable({'ordering':true});
     });
 function mark_waiver(player_id) {
     $.ajax("/admin/player_admin/tools/"+player_id+"/mark_waiver",{
@@ -31,18 +31,20 @@ function mark_waiver(player_id) {
 </div>
 <div class="row">
     <div class="col">
-        <table id="bodyarmors" class="table adminlist">
+        <table id="unsigned-waivers" class="table adminlist">
             <thead>
                 <tr>
-                    <th class="foo">Player</th>
-                    <th class="foo">Mark Signed</th>
+                  <th>Player</th>
+                  <th>Date Activated</th>
+                  <th>Mark Signed</th>
                 </tr>
             </thead>
             <tbody>
                 {% for playerstatus in unsigned %}
                 <tr>
-                    <td><a href='/player/{{playerstatus.player.player_uuid}}/'>{{playerstatus.player.first_name}} {{playerstatus.player.last_name}}</a></td>
-                    <td><input type="button" class="btn btn-primary" value="Mark Waiver Signed" onclick="mark_waiver('{{playerstatus.player.player_uuid}}')" /></td>
+                  <td><a href='/player/{{playerstatus.player.player_uuid}}/'>{{playerstatus.player.first_name}} {{playerstatus.player.last_name}}</a></td>
+                  <td>{{playerstatus.logical_timestamp}}</td>
+                  <td><input type="button" class="btn btn-primary" value="Mark Waiver Signed" onclick="mark_waiver('{{playerstatus.player.player_uuid}}')" /></td>
                 </tr>
                 {% empty %}
                 {% endfor %}
