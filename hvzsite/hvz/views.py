@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework import permissions
 from .serializers import UserSerializer, GroupSerializer
-from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, About, FailedAVAttempt, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode, OZEntry
+from .models import Announcement, AntiVirus, Mission, Person, BadgeInstance, BadgeType, PlayerStatus, Tag, Blaster, Clan, ClanHistoryItem, ClanInvitation, ClanJoinRequest, Report, ReportUpdate, Game, Rules, About, FailedAVAttempt, get_active_game, reset_active_game, PostGameSurvey, PostGameSurveyResponse, PostGameSurveyOption, BodyArmor, DiscordLinkCode, OZEntry, generate_tag_id
 from .forms import AnnouncementForm, TagForm, AVForm, AVCreateForm, BlasterApprovalForm, ReportUpdateForm, ReportForm, ClanCreateForm, RulesUpdateForm, AboutUpdateForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm
 from rest_framework.decorators import api_view
 from django.contrib import messages
@@ -454,6 +454,12 @@ def player_admin_tools(request, player_id, command):
         playerstatus.waiver_signed = False
     elif command == "avunban":
         playerstatus.av_banned = False
+    elif command == "regenerate_tag1":
+        playerstatus.tag1_uuid = generate_tag_id()
+    elif command == "regenerate_tag2":
+        playerstatus.tag2_uuid = generate_tag_id()
+    elif command == "regenerate_zombie":
+        playerstatus.zombie_uuid = generate_tag_id()
     elif command == "ban":
         playerstatus.status = 'n'
         player.is_banned = True
