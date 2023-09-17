@@ -293,7 +293,7 @@ class Person(AbstractUser):
         return f"{s.tag1_uuid}|{s.tag2_uuid}|{s.zombie_uuid}"
     
     def save(self, *args, **kwargs):
-        self.first_name = html.escape(self.first_name)
+        self.first_name = html.escape(self.first_name).capitalize()
         self.last_name = html.escape(self.last_name)
         if self.picture and (self.picture != self.__original_picture):
             self.picture = resize_image(self.picture, 400, 400, 'PNG')
