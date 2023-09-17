@@ -30,6 +30,7 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import sys
 import random
+from .decorators import authentication_required, authentication_required_api, admin_required_api, admin_required, active_player_required, staff_required, staff_required_api
 
 report_webhook = None
 if settings.DISCORD_REPORT_WEBHOOK_URL:
@@ -56,10 +57,8 @@ def index(request):
 
     return render(request, "index.html", {'game': game, 'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_events': merged_recents})
 
-
+@authentication_required
 def me(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
     return player_view(request, request.user.player_uuid, is_me=True)
 
 
@@ -70,10 +69,8 @@ def infection(request):
     return render(request, "infection.html", {'ozs':ozs, 'tags':tags})
 
 
+@authentication_required
 def discord_link(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
-
     user = request.user
     link_codes = DiscordLinkCode.objects.filter(account=user)
     code = None
@@ -94,9 +91,8 @@ def discord_link(request):
     return player_view(request, request.user.player_uuid, is_me=True, discord_code=code.code)
 
 
+@authentication_required
 def missions_view(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
     if not request.user.admin_this_game and not request.user.current_status.waiver_signed:
         return render(request, "sign_waiver.html")
     this_game = get_active_game()
@@ -139,18 +135,15 @@ def missions_view(request):
     return render(request, "missions.html", {'missions':missions.order_by("-go_live_time")})
 
 
+@admin_required
 def editmissions(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     this_game = get_active_game()
     missions = Mission.objects.filter(game=this_game)
     return render(request, "editmissions.html", {'missions':missions.order_by("-go_live_time")})
 
 
-def editmission(request, mission_id):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
-    
+@admin_required
+def editmission(request, mission_id):    
     if request.method == "GET":
         if mission_id == "new":
             form = MissionForm()
@@ -171,9 +164,8 @@ def editmission(request, mission_id):
     return render(request, "editmission.html", {'form': form, 'mission': mission_id})
 
 
+@admin_required
 def editpostgamesurvey(request, postgamesurvey_id):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     if request.method == "GET":
         if postgamesurvey_id == "new":
             form = PostGameSurveyForm()
@@ -193,17 +185,15 @@ def editpostgamesurvey(request, postgamesurvey_id):
     return render(request, "editpostgamesurvey.html", {'form': form, 'postgamesurvey': postgamesurvey_id})
 
 
+@admin_required
 def editpostgamesurveys(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     this_game = get_active_game()
     surveys = PostGameSurvey.objects.filter(game=this_game)
     return render(request, "editpostgamesurveys.html", {'surveys':surveys.order_by("-go_live_time")})
 
 
+@active_player_required
 def tag(request):
-    if not request.user.is_authenticated or request.user.current_status.is_nonplayer():
-        return HttpResponseRedirect("/")
     player = request.user
     if player.current_status.is_zombie() or player.current_status.is_staff():
         qr = player.current_status.zombie_uuid
@@ -269,12 +259,9 @@ def tag(request):
     return render(request, "tag.html", {'form':form, 'tagcomplete': False, 'qr': qr})
 
 
+@authentication_required
 def av(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
-
     user_status = request.user.current_status
-
     if not user_status.can_av:
         return HttpResponseRedirect("/")
     
@@ -296,16 +283,14 @@ def av(request):
     return render(request, "av.html", {'form':form, 'avcomplete': False})
 
 
+@admin_required
 def view_unsigned_waivers(request):
-    if (not request.user.is_authenticated) or (not request.user.admin_this_game):
-        return HttpResponseRedirect("/")
     unsigned = PlayerStatus.objects.filter(game=get_active_game(), waiver_signed=False).filter(~Q(status='n'))
     return render(request, "unsigned_waivers.html", {'unsigned':unsigned})
     
 
+@admin_required
 def blasterapproval(request):
-    if (not request.user.is_authenticated) or (not request.user.admin_this_game):
-        return HttpResponseRedirect("/")
     if request.method == "GET":     
         form = BlasterApprovalForm()
         form.fields['owner'].queryset = Person.objects.filter(playerstatus__game=get_active_game()) \
@@ -329,13 +314,8 @@ def blasterapproval(request):
     return render(request, "blasterapproval.html", {'form':form, 'approvalcomplete': False})
 
 
-def admin_create_av(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
-
-    if not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
-    
+@admin_required
+def admin_create_av(request):    
     if request.method == "GET":     
         form = AVCreateForm()
     else:
@@ -348,25 +328,22 @@ def admin_create_av(request):
     return render(request, "create_av.html", {'form':form, 'createcomplete': False})
 
 
+@admin_required
 def admin_view_avs(request):
     game = get_active_game()
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     anti_viruses = AntiVirus.objects.filter(game=game)
     context = {"avs": anti_viruses.order_by("-expiration_time")}
     return render(request, "view_avs.html", context)
 
 
+@admin_required
 def admin_view_tags(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     tags = Tag.objects.filter(game=get_active_game()).order_by("-timestamp")
     return render(request, "view_tags.html", {'tags':tags})
 
 
+@admin_required_api
 def admin_tag_api(request, tag_id, command):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return JsonResponse({"status": "not authorized"})
     requested_tag = Tag.objects.get(id=tag_id)
     if command == "invalidate":
         if requested_tag.taggee.current_status.status == "z":
@@ -379,24 +356,14 @@ def admin_tag_api(request, tag_id, command):
     return JsonResponse({"status": "unknown command"})
 
 
+@admin_required
 def admin_reset_game(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
-
-    if not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
-
     reset_active_game()
     return HttpResponseRedirect("/")
 
 
-def admin_create_body_armor(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
-
-    if not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
-    
+@admin_required
+def admin_create_body_armor(request):    
     if request.method == "GET":     
         form = BodyArmorCreateForm()
     else:
@@ -454,10 +421,8 @@ def player_view(request, player_id, is_me=False, game=None, discord_code=None):
 
 
 @api_view(["POST"])
+@admin_required_api
 def player_admin_tools(request, player_id, command):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return JsonResponse({"status": "not authorized"})
-
     try:
         player = Person.objects.get(player_uuid = player_id)
         playerstatus = PlayerStatus.objects.get(player = player, game = get_active_game())
@@ -538,9 +503,8 @@ def player_admin_tools(request, player_id, command):
 
 
 @api_view(["POST"])
+@admin_required_api
 def bodyarmor_admin_tools(request, armor_id, command):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return JsonResponse({"status": "not authorized"})
     try:
         armor = BodyArmor.objects.get(armor_uuid = armor_id)
     except:
@@ -559,15 +523,11 @@ def bodyarmor_admin_tools(request, armor_id, command):
         armor.loaned_at = timezone.localtime()
         armor.save()
         return JsonResponse({'status': 'success', "playername": f"{player.first_name} {player.last_name}", "time": str(armor.loaned_at)})
-
         
 
-
 @api_view(["GET"])
+@admin_required_api
 def bodyarmor_get_loan_targets(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return JsonResponse({"status": "not authorized"})
-
     game = get_active_game()
     r = request.query_params
     try:
@@ -627,10 +587,10 @@ def clan_view(request, clan_name):
     }
     return render(request, "clan.html", context)
 
+
 @api_view(["POST"])
+@authentication_required_api
 def clan_api(request, clan_name, command, person_id):
-    if not request.user.is_authenticated:
-        return JsonResponse({"status":"you must be logged in to use this"})
     clan = Clan.objects.get(name=clan_name)
     if command=="leave":
         if request.user.clan == clan and clan.leader != request.user:
@@ -712,9 +672,9 @@ def clan_api(request, clan_name, command, person_id):
         new_history_item.save()
         return JsonResponse({"status":"success"})
 
-    
 
 @api_view(["POST"])
+@authentication_required_api
 def clan_api_userresponse(request, invite_id, command):
     invite = ClanInvitation.objects.get(id=invite_id)
     if not invite.invitee == request.user:
@@ -743,6 +703,7 @@ def clan_api_userresponse(request, invite_id, command):
     
 
 @api_view(["POST"])
+@authentication_required_api
 def clan_api_leaderresponse(request, request_id, command):
     joinrequest = ClanJoinRequest.objects.get(id=request_id)
     if not joinrequest.clan.leader == request.user:
@@ -837,18 +798,15 @@ def players_api(request, game=None):
     return JsonResponse(data)
 
 
+@admin_required
 def player_activation(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect('/')
     context = {}
     return render(request, "player_activation.html", context)
 
 #TODO: Returning raw HTML to embed in the page is a bad idea, find a better solution
 @api_view(["GET"])
+@admin_required_api
 def player_activation_api(request, game=None):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponse(status=403, content='Only admins can use this API')
-
     if game is None:
         game = get_active_game()
     r = request.query_params
@@ -893,11 +851,9 @@ def player_activation_api(request, game=None):
 
 
 @api_view(["POST"])
+@admin_required_api
 def player_activation_rest(request):
     game = get_active_game()
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponse(status=403, content='Only admins can use this API')
-
     try:
         requested_player = Person.objects.get(player_uuid=request.POST["activated_player"])
         image_base64 = request.POST['player_photo'].replace('data:image/jpeg;base64,', '').replace(" ","+")
@@ -923,18 +879,15 @@ def player_activation_rest(request):
         return JsonResponse({"status":"error", "error": str(e)})
 
 
+@admin_required
 def player_oz_activation(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect('/')
     context = {}
     return render(request, "player_oz_activation.html", context)
 
 
 @api_view(["GET"])
+@admin_required_api
 def player_oz_activation_api(request, game=None):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponse(status=403, content='Only admins can use this API')
-
     if game is None:
         game = get_active_game()
     r = request.query_params
@@ -974,10 +927,8 @@ def player_oz_activation_api(request, game=None):
 
 
 @api_view(["POST"])
+@admin_required_api
 def player_oz_activation_rest(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponse(status=403, content='Only admins can use this API')
-
     try:
         requested_player = Person.objects.get(player_uuid=request.POST["activated_player"])
         game = get_active_game()
@@ -992,10 +943,8 @@ def player_oz_activation_rest(request):
 
 
 @api_view(["POST"])
+@admin_required_api
 def player_oz_enable(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponse(status=403, content='Only admins can use this API')
-
     try:
         game = get_active_game()
         for entry in OZEntry.objects.filter(game=game):
@@ -1006,6 +955,7 @@ def player_oz_enable(request):
         return JsonResponse({"status":"success"})
     except Exception as e:
         return JsonResponse({"status":"error", "error": str(e)})
+
 
 def clans(request):
     context = {"clans" : Clan.objects.all()}
@@ -1020,18 +970,16 @@ def about(request):
     return render(request, "about.html", {'about': About.load()})
 
 
+@admin_required
 def bodyarmors(request):
     game = get_active_game()
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     body_armors = BodyArmor.objects.filter(game=game)
     context = {"bodyarmors": body_armors.order_by("-expiration_time")}
     return render(request, "bodyarmors.html", context)
 
 
+@admin_required
 def bodyarmor_view(request, armor_id):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     armor = BodyArmor.objects.get(armor_uuid=armor_id)
     context = {
         'armor': armor,
@@ -1039,9 +987,8 @@ def bodyarmor_view(request, armor_id):
     return render(request, "bodyarmor.html", context)
 
 
+@admin_required
 def av_view(request, av_id):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     av = AntiVirus.objects.get(av_uuid=av_id)
     context = {
         'av': av,
@@ -1080,17 +1027,16 @@ def create_report(request):
     return render(request=request, template_name="create_report.html", context={"form":form, "reportcomplete":report_complete, "report_id": report_id})
 
 
+@admin_required
 def reports(request):
     game = get_active_game()
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     reports = Report.objects.filter(game=game)
     context = {"reports": reports.order_by("-timestamp")}
     return render(request, "reports.html", context)
 
+
+@admin_required
 def report(request, report_id):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     report = Report.objects.get(report_uuid=report_id)
     if request.method == "POST":
         form = ReportUpdateForm(request.POST, report=report)
@@ -1132,9 +1078,8 @@ def report(request, report_id):
     return render(request, "report.html", context)
 
 
+@admin_required
 def rules_update(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     if request.method == "POST":
         form = RulesUpdateForm(request.POST)
         if form.is_valid():
@@ -1153,9 +1098,8 @@ def rules_update(request):
     return render(request, "rules_update.html", context)
 
 
+@admin_required
 def about_update(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     if request.method == "POST":
         form = AboutUpdateForm(request.POST)
         if form.is_valid():
@@ -1174,9 +1118,8 @@ def about_update(request):
     return render(request, "about_update.html", context)
 
 
+@admin_required
 def print_one(request, player_uuid):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     context = {
         "players": Person.objects.filter(player_uuid=player_uuid),
         "preview": False,
@@ -1186,9 +1129,8 @@ def print_one(request, player_uuid):
     return render(request, "print_cards.html", context)
 
 
+@admin_required
 def print_ids(request, preview=False):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     to_print = PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n')).order_by(Lower('player__first_name'), Lower('player__last_name'))
     context = {
         "players": [status.player for status in to_print],
@@ -1216,15 +1158,14 @@ def print_preview(request):
     return print_ids(request, True)
 
 
+@admin_required
 def mark_printed(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n')).update(printed=True)
     return HttpResponseRedirect("/")
 
+
+@admin_required
 def view_failed_av_list(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     offenders = Person.objects.annotate(failcount=Count("failed_av_attempts")).filter(failcount__gt=0).order_by("-failcount")
     context = {
         "offenders": offenders
@@ -1479,10 +1420,9 @@ class ApiCreateBodyArmor(APIView):
         return HttpResponse('Successfully created Body Armor: "{}"'.format(armor.armor_code))
 
 
+@active_player_required
 def create_clan_view(request):
-    if  not request.user.is_authenticated or \
-        not request.user.active_this_game or \
-        request.user.is_a_clan_leader:
+    if request.user.is_a_clan_leader:
         return HttpResponseRedirect("/")
     
     if request.method == "GET":     
@@ -1501,15 +1441,15 @@ def create_clan_view(request):
             return HttpResponseRedirect(f"/clan/{newclan.name}/")
     return render(request, "create_clan.html", {'form':form,'newclan':True})
 
+
+@admin_required
 def manage_announcements(request):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     announcements = Announcement.objects.all().order_by('-post_time')
     return render(request, "manage_announcements.html", {'announcements':announcements})
 
+
+@admin_required
 def edit_announcement(request, announcement_id):
-    if not request.user.is_authenticated or not request.user.admin_this_game:
-        return HttpResponseRedirect("/")
     if request.method == "GET":
         if announcement_id == "new":
             form = AnnouncementForm()
@@ -1535,9 +1475,8 @@ def view_announcement(request, announcement_id):
         return HttpResponseRedirect("/")
 
 
+@authentication_required
 def modify_clan_view(request, clan_name):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
     try:
         clan = Clan.objects.get(name=clan_name)
     except:
@@ -1567,9 +1506,8 @@ def modify_clan_view(request, clan_name):
     return render(request, "create_clan.html", {'form':form,'newclan':False})
 
 
+@staff_required
 def badge_grant_list(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
     if request.user.mod_this_game:
         grantable_badges = BadgeType.objects.filter(mod_grantable=True, active=True)
     elif request.user.admin_this_game:
@@ -1579,9 +1517,8 @@ def badge_grant_list(request):
     return render(request, "badge_grant_list.html", {'badge_choices': grantable_badges})
     
 
+@staff_required
 def badge_grant(request, badge_type_id):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect("/")
     try:
         badge_type = BadgeType.objects.get(id=badge_type_id, active=True)
     except:
@@ -1594,9 +1531,8 @@ def badge_grant(request, badge_type_id):
 
 
 @api_view(["POST"])
+@staff_required_api
 def badge_grant_api(request, badge_type_id, player_id):
-    if not request.user.is_authenticated:
-        return JsonResponse({"status":"not authorized"})
     try:
         badge_type = BadgeType.objects.get(id=badge_type_id, active=True)
     except:
