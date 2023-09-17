@@ -49,6 +49,8 @@ urlpatterns = [
     re_path(r'^admin/reset-game/?$', views.admin_reset_game),
     re_path(r'^admin/create-av/?$', views.admin_create_av),
     re_path(r'^admin/view-avs/?$', views.admin_view_avs),
+    re_path(r'^admin/view-tags/?$', views.admin_view_tags),
+    re_path(r'^admin/tag_api/(?P<tag_id>[^/]+)/(?P<command>[^/]+)?$', views.admin_tag_api),
     re_path(r'^admin/av/(?P<av_id>[^/]+)/?$', views.av_view),
     re_path(r'^admin/create-body-armor/?$', views.admin_create_body_armor),
     re_path(r'^admin/player_admin/tools/(?P<player_id>[^/]+)/(?P<command>[^/]+)/?$', views.player_admin_tools),

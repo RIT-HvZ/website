@@ -357,6 +357,28 @@ def admin_view_avs(request):
     return render(request, "view_avs.html", context)
 
 
+def admin_view_tags(request):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return HttpResponseRedirect("/")
+    tags = Tag.objects.filter(game=get_active_game()).order_by("-timestamp")
+    return render(request, "view_tags.html", {'tags':tags})
+
+
+def admin_tag_api(request, tag_id, command):
+    if not request.user.is_authenticated or not request.user.admin_this_game:
+        return JsonResponse({"status": "not authorized"})
+    requested_tag = Tag.objects.get(id=tag_id)
+    if command == "invalidate":
+        if requested_tag.taggee.current_status.status == "z":
+            requested_tag.taggee.current_status.status = "h"
+        else:
+            requested_tag.taggee.current_status.status = "v"
+        requested_tag.taggee.current_status.save()
+        requested_tag.delete()
+        return JsonResponse({"status":"success"})
+    return JsonResponse({"status": "unknown command"})
+
+
 def admin_reset_game(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect("/")

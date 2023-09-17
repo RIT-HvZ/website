@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load hvztags %}
+{% block title %} HvZ @ RIT - Tags {% endblock %}
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable1 = $('#tags').DataTable({"order": [[2, 'asc']]});
+    });
+
+function invalidate_tag(tag_id) {
+    if (confirm("Invalidate tag?")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/admin/tag_api/'+tag_id+"/invalidate",{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY INVALIDATED TAG");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO INVALIDATE TAG");
+        }
+    })
+}
+
+</script>
+{% endblock %}
+{% block body %}
+
+<div class="row">
+    <div class="col center">
+        <h1>Tags</h1>
+        <table class="table display adminlist" id="tags">
+            <thead>
+                <tr>
+                    <th style="text-align:center">Tagger</th>
+                    <th style="text-align:center">Taggee</th>
+                    <th style="text-align:center">Timestamp</th>
+                    <th style="text-align:center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for tag in tags %}
+                <tr>
+                    <td><a href="/player/{{tag.tagger.player_uuid}}/">{{tag.tagger}}</a></td>
+                    <td><a href="/player/{{tag.taggee.player_uuid}}/">{{tag.taggee}}</a></td>
+                    <td>{{tag.timestamp}}</td>
+                    <td>
+                        <input type="button"  class="btn btn-danger" value="Invalidate" onclick="invalidate_tag('{{tag.id}}')"/>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
