@@ -21,6 +21,8 @@ urlpatterns = [
     # Primary Game View Routes
     re_path(r'^player/(?P<player_id>[^/]+)/?$', views.player_view),
     re_path(r'^me/?$', UserHTMLViews.me),
+    re_path(r'^name-change/?$', UserHTMLViews.name_change),
+    re_path(r'^cancel_name_change/?$', UserHTMLViews.cancel_name_change),
     re_path(r'^clan/(?P<clan_name>[^/]+)/?$', views.clan_view),
     re_path(r'^players/?$', views.players),
     re_path(r'^report/?$', views.create_report),
@@ -83,6 +85,8 @@ urlpatterns = [
     re_path(r'^admin/badge_grant_list/?$', StaffHTMLViews.badge_grant_list),
     re_path(r'^admin/badge_grant_api/(?P<badge_type_id>[^/]+)/(?P<player_id>[^/]+)/?$', StaffAPIViews.badge_grant_api),
     re_path(r'^admin/view_failed_av_list/?$', AdminHTMLViews.view_failed_av_list),
+    re_path(r'^admin/name_change_requests/?$', AdminHTMLViews.view_name_change_requests),
+    re_path(r'^admin/name_change_response/(?P<request_id>[^/]+)/(?P<command>[^/]+)?$', AdminAPIViews.name_change_response),
 
     # API Routes
     # re_path(r'^api/?', include(router.urls)),

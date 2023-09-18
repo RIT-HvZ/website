@@ -8,7 +8,7 @@ from django.utils import timezone
 from .decorators import admin_required
 from .forms import AboutUpdateForm, AnnouncementForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm
 from .models import get_active_game, reset_active_game
-from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Mission, Person, PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Tag
+from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Mission, NameChangeRequest, Person, PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Tag
 from .views import for_all_methods
 
 
@@ -327,3 +327,9 @@ class AdminHTMLViews(object):
             return render(request, "announcement.html", {'announcement':announcement})
         except:
             return HttpResponseRedirect("/")
+            
+    def view_name_change_requests(request):
+        current_requests = NameChangeRequest.objects.filter(request_status='n').order_by("request_open_timestamp")
+        previous_requests = NameChangeRequest.objects.filter(request_status__in=['c','r','a']).order_by("request_open_timestamp")
+        return render(request, "name_change_list.html", {'current_requests': current_requests, 'previous_requests': previous_requests})
+

@@ -136,6 +136,11 @@ function invite_player(player_uuid) {
                         <h2 class="player_name align-bottom"> {{ player }} </h2>
                     </div>
                 </div>
+                {% if user.is_authenticated and user == player %}
+                <div class="col">
+                    <button style="margin-bottom:10px" class="btn btn-dark" type="button" aria-expanded="false" onclick="window.location.href='/name-change/'">Change Name</button>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

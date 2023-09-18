@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load hvztags %}
+{% block title %} HvZ @ RIT - Name Change Requests {% endblock %}
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable1 = $('#newnamechanges').DataTable({"order": [[2, 'asc']]});
+        var datatable2 = $('#oldnamechanges').DataTable({'order': [[3, 'desc']]});
+    });
+
+function approve_request(request_id) {
+    if (confirm("Approve request to change name?")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/admin/name_change_response/'+request_id+"/approve",{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY APPROVED REQUEST");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO APPROVE REQUEST");
+        }
+    })
+}
+
+function deny_request(request_id) {
+    if (confirm("Deny request to change name?")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/admin/name_change_response/'+request_id+"/deny",{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY DENIED REQUEST");
+            location.reload();
+        }
+        else {
+            console.log("FAILED TO DENY REQUEST");
+        }
+    })
+}
+</script>
+{% endblock %}
+{% block body %}
+
+<div class="row">
+    <div class="col center">
+        <h1>Active Name Change Requests</h1>
+        <table class="table display adminlist" id="newnamechanges">
+            <thead>
+                <tr>
+                    <th style="text-align:center">Current Name</th>
+                    <th style="text-align:center">Requested Name</th>
+                    <th style="text-align:center">Request Timestamp</th>
+                    <th style="text-align:center">Approve/Deny</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for req in current_requests %}
+                <tr>
+                    <td><a href="/player/{{req.player.player_uuid}}/">{{req.player}}</a></td>
+                    <td>{{req.requested_first_name}} {{req.requested_last_name}}</td>
+                    <td>{{req.request_open_timestamp}}</td>
+                    <td>
+                        <input type="button" style="margin-right:5px" class="btn btn-success" value="Approve" onclick="approve_request('{{req.id}}')"/>
+                        <input type="button" style="margin-left:5px" class="btn btn-danger" value="Deny" onclick="deny_request('{{req.id}}')">
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <h1>Closed Name Change Requests</h1>
+        <table class="table display adminlist" id="oldnamechanges">
+            <thead>
+                <tr>
+                    <th style="text-align:center">Previous Name</th>
+                    <th style="text-align:center">New Name</th>
+                    <th style="text-align:center">Request Timestamp</th>
+                    <th style="text-align:center">Close Timesamp</th>
+                    <th style="text-align:center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for req in previous_requests %}
+                <tr>
+                    <td>{{req.previous_first_name}} {{req.previous_last_name}}</td>
+                    <td>{{req.requested_first_name}} {{req.requested_last_name}}</td>
+                    <td>{{req.request_open_timestamp}}</td>
+                    <td>{{req.request_close_timestamp}}</td>
+                    <td>{{req.get_request_status_display}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

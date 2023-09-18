@@ -859,3 +859,14 @@ class Announcement(models.Model):
     def relative_time_str(self):
         delta = (timezone.localtime() - self.post_time)
         return get_relative_time(delta)
+
+
+class NameChangeRequest(models.Model):
+    player = models.ForeignKey(Person, on_delete=models.CASCADE, null=False)
+    requested_first_name = models.CharField(verbose_name="Requested First Name", max_length=50)
+    requested_last_name = models.CharField(verbose_name="Requested Last Name", max_length=50)
+    previous_first_name = models.CharField(verbose_name="Previous First Name", max_length=50)
+    previous_last_name = models.CharField(verbose_name="Previous Last Name", max_length=50)
+    request_status = models.CharField(max_length=1, choices=(('n',"New"),('a',"Accepted"),('r',"Rejected"),('c',"Canceled")), default='n')
+    request_open_timestamp = models.DateTimeField(auto_now_add=True)
+    request_close_timestamp = models.DateTimeField(null=True, blank=True)

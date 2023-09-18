@@ -820,3 +820,12 @@ display: none !important;
 .tag_header {
     text-align: center;
 }
+
+.namechangetext, .namechangewarning, .namechangeexistinginfo {
+    max-width: 800px;
+    display: inline-block;
+}
+
+.namechangeexistinginfo {
+    font-weight: bold;
+}

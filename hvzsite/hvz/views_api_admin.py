@@ -9,7 +9,7 @@ from PIL import Image
 from rest_framework.decorators import api_view
 
 from .decorators import admin_required_api
-from .models import BodyArmor, Clan, ClanHistoryItem, OZEntry, Person, PlayerStatus, Tag
+from .models import BodyArmor, Clan, ClanHistoryItem, NameChangeRequest, OZEntry, Person, PlayerStatus, Tag
 from .models import get_active_game, generate_tag_id
 
 from .views import for_all_methods
@@ -322,3 +322,23 @@ class AdminAPIViews(object):
             return JsonResponse({"status":"success"})
         except Exception as e:
             return JsonResponse({"status":"error", "error": str(e)})
+
+
+    @api_view(["POST"])
+    def name_change_response(request, request_id, command):
+        name_change_req = NameChangeRequest.objects.get(id=request_id)
+        name_change_req.request_close_timestamp = timezone.now()
+        if command == "approve":
+            name_change_req.request_status = 'a'
+            player = name_change_req.player
+            player.first_name = name_change_req.requested_first_name
+            player.last_name = name_change_req.requested_last_name
+            player.save()
+            name_change_req.save()
+            return JsonResponse({"status": "success"})
+        elif command == "deny":
+            name_change_req.request_status = 'r'
+            name_change_req.save()
+            return JsonResponse({"status": "success"})
+        else:
+            return JsonResponse({"status": "unknown command"})
