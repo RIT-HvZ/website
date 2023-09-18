@@ -226,6 +226,9 @@ class Mission(models.Model):
 
 class CaseInsensitiveUserManager(UserManager):
     def get_by_natural_key(self, username):
+        username = username.lower()
+        if username.endswith("g.rit.edu"):
+            username = username.replace("g.rit.edu","rit.edu")
         case_insensitive_username_field = '{}__iexact'.format(self.model.USERNAME_FIELD)
         return self.get(**{case_insensitive_username_field: username})
     

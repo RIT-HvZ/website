@@ -49,9 +49,11 @@ class HVZRegistrationForm(UserCreationForm):
 
     def clean(self):
         cd = self.cleaned_data
+        cd['email'] = cd['email'].lower()
+        if cd['email'].endswith("g.rit.edu"):
+            cd['email'] = cd['email'].replace('g.rit.edu','rit.edu')
         cd['username'] = cd['email']
-
-        existing_players = Person.objects.filter(email=cd['email'])
+        existing_players = Person.objects.filter(email__iexact=cd['email'])
         if existing_players.count() > 0:
             raise ValidationError("An account with that email address already exists.")
 
