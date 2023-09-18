@@ -12,6 +12,13 @@ from django.utils.translation import gettext_lazy as _
 from django_registration import validators
 from captcha.fields import CaptchaField
 
+def validate_no_special_chars_in_name(value):
+    if not isinstance(value, str):
+        return
+    for special in ["@","|","\\","/","?","_","(",")","*","+","=","^","%","$","#","!","`","~","\"","\'",";",":"]:
+        if special in value:
+            raise ValidationError(_("Your name cannot contain special characters besides -,. " "Please give the correct name."), code="invalid")
+
 class HVZRegistrationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = Person
@@ -45,7 +52,9 @@ class HVZRegistrationForm(UserCreationForm):
         self.fields[email_field].validators.extend(username_validators)
         self.fields[email_field].required = True
         self.fields['first_name'].required = True
+        self.fields['first_name'].validators.append(validate_no_special_chars_in_name)
         self.fields['last_name'].required = True
+        self.fields['last_name'].validators.append(validate_no_special_chars_in_name)
 
     def clean(self):
         cd = self.cleaned_data
