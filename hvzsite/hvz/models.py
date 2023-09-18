@@ -411,6 +411,7 @@ class AntiVirus(models.Model):
     used_by = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)
     time_used = models.DateTimeField(null=True, blank=True)
     expiration_time = models.DateTimeField()
+    note = models.CharField(verbose_name="Note (optional)", null=True, blank=True, max_length=100)
 
     @property
     def get_status(self):

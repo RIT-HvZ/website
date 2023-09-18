@@ -50,6 +50,10 @@ HvZ @ RIT - Create AV (Admin)
             {{ form.expiration_time }}
 
             <br />
+            {{ form.note.errors }}
+            <label for="{{ form.note.id_for_label }}" class="form-label">Note (optional)</label>
+            {{ form.note }}
+            <br />
             {{ form.game.errors }}
         </div>
 
