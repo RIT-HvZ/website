@@ -815,3 +815,8 @@ display: none !important;
     overflow-wrap: normal;
     white-space: normal;
 }
+
+
+.tag_header {
+    text-align: center;
+}
