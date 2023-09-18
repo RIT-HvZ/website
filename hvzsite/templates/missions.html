@@ -26,7 +26,7 @@
     <div class="col scrollercol">
         <div class="scroller">
             {% for mission in missions %}
-            
+                
                 {% for survey in mission.postgamesurvey_set.all %}
                     {% if survey.is_viewable %}
                         <a class="scrolllink" href="#survey_{{survey.id}}">Post-Mission Survey - {{ survey.mission.mission_name }}</a>
@@ -69,7 +69,10 @@
                                             <span class="surveyoptiontext">{{option.option_text}}</span>
                                         </div>
                                     {% endfor %}
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    {% can_respond_to_survey request.user survey as can_submit %}
+                                    {% if can_submit %}
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    {% endif %}
                                 </form>
                             {% else %}
                                 {% if player_response is not None %}
