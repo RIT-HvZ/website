@@ -203,7 +203,7 @@ def editpostgamesurveys(request):
 
 def tag(request):
     if not request.user.is_authenticated or request.user.current_status.is_nonplayer():
-        return HttpResponseRedirect("/")
+        return HttpResponseRedirect(f"/accounts/login/?next={request.get_full_path()}")
     player = request.user
     if player.current_status.is_zombie() or player.current_status.is_staff():
         qr = player.current_status.zombie_uuid
