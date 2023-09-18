@@ -221,7 +221,7 @@ function invite_player(player_uuid) {
     {% endif %}
     <div class="row justify-content-md-center playermainrow">
         <div class="col col-12 col-sm-12 col-md-4 center">
-            <h3 id="tags_header">Info</h3>
+            <h3 class="tags_header">Info</h3>
             <table class="playerinfo">
                 <tbody>
                     <tr>
@@ -265,7 +265,7 @@ function invite_player(player_uuid) {
                          <tr>
                          <td> Discord </td>
                          <td>
-                         {% if is_me %}
+                         {% if player == user %}
                          {% if discord_code %}
                          Use the following code: {{ discord_code }}
                          {% elif player.discord_id %}
@@ -280,7 +280,7 @@ function invite_player(player_uuid) {
                          </td>
                          </tr> -->
 
-                    {% if is_me or user.admin_this_game%} {% if player.active_this_game %}
+                    {% if player == user or user.admin_this_game%} {% if player.active_this_game %}
                     <tr><td style="white-space: nowrap;">Tag 1 ID</td><td id="id_tag1">  <a href="#" class="clan_link" onclick="document.getElementById('id_tag1').innerHTML='{{ player.current_status.tag1_uuid}}'">Show</a></td></tr>
                     <tr><td style="white-space: nowrap;">Tag 2 ID</td><td id="id_tag2">  <a href="#" class="clan_link" onclick="document.getElementById('id_tag2').innerHTML='{{ player.current_status.tag2_uuid}}'">Show</a></td></tr>
                     <tr><td style="white-space: nowrap;">Zombie ID</td><td id="id_zombie"><a href="#" class="clan_link" onclick="document.getElementById('id_zombie').innerHTML='{{ player.current_status.zombie_uuid}}'">Show</a></td></tr>
@@ -290,7 +290,7 @@ function invite_player(player_uuid) {
         </div>
 
         <div class="col col-12 col-sm-12 col-md-4 center">
-            <h3 id="tags_header">Tags</h3>
+            <h3 class="tags_header">Tags</h3>
             {% if tags %}
             <table class="playerinfo taglist" id="player_tags">
                 <tbody>
@@ -313,7 +313,7 @@ function invite_player(player_uuid) {
             {% endif %}
         </div>
 
-        {% if is_me or user.admin_this_game%}
+        {% if user == player or user.admin_this_game%}
         <div class="col col-12 col-sm-12 col-md-4 center">
             <h3 class="blasters">Blasters</h3>
             {% for blaster in blasters %}

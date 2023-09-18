@@ -80,7 +80,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-def player_view(request, player_id, is_me=False, game=None, discord_code=None):
+def player_view(request, player_id, game=None, discord_code=None):
     player = Person.objects.get(player_uuid=player_id)
     if game is None:
         game = get_active_game()
@@ -88,7 +88,6 @@ def player_view(request, player_id, is_me=False, game=None, discord_code=None):
     context = {
         'user': request.user,
         'player': player,
-        'is_me': is_me,
         'badges': BadgeInstance.objects.filter(player=player), 
         'tags': Tag.objects.filter(tagger=player, game=game),
         'status': PlayerStatus.objects.get_or_create(player=player, game=game)[0],

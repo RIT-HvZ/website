@@ -14,7 +14,7 @@ from .views import for_all_methods, player_view
 @for_all_methods(authentication_required)
 class UserHTMLViews(object):
     def me(request):
-        return player_view(request, request.user.player_uuid, is_me=True)
+        return player_view(request, request.user.player_uuid)
 
     def discord_link(request):
         user = request.user
@@ -34,7 +34,7 @@ class UserHTMLViews(object):
             code.expiration_time = timezone.localtime() + timedelta(days=1)
             code.save()
         
-        return player_view(request, request.user.player_uuid, is_me=True, discord_code=code.code)
+        return player_view(request, request.user.player_uuid, discord_code=code.code)
 
 
     def modify_clan_view(request, clan_name):
