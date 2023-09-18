@@ -35,6 +35,7 @@ function mark_waiver(player_id) {
             <thead>
                 <tr>
                   <th>Player</th>
+                  <th>Email Address</th>
                   <th>Date Activated</th>
                   <th>Mark Signed</th>
                 </tr>
@@ -43,6 +44,7 @@ function mark_waiver(player_id) {
                 {% for playerstatus in unsigned %}
                 <tr>
                   <td><a href='/player/{{playerstatus.player.player_uuid}}/'>{{playerstatus.player.first_name}} {{playerstatus.player.last_name}}</a></td>
+                  <td>{{playerstatus.player.email}}</td>
                   <td>{{playerstatus.logical_timestamp}}</td>
                   <td><input type="button" class="btn btn-primary" value="Mark Waiver Signed" onclick="mark_waiver('{{playerstatus.player.player_uuid}}')" /></td>
                 </tr>
