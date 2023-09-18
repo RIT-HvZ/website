@@ -511,9 +511,6 @@ class PostGameSurvey(models.Model):
 
     @property
     def is_viewable(self):
-        print(f"---{self.mission}---")
-        print(self.go_live_time)
-        print(timezone.localtime())
         return self.go_live_time < timezone.localtime()
 
     def __str__(self) -> str:

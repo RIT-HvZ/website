@@ -144,8 +144,6 @@ def players_api(request, game=None):
         limit = int(request.query_params["length"])
         start = int(request.query_params["start"])
         search = r["search[value]"] 
-        #print(start)
-        #print(limit)
     except AssertionError:
         raise
     query = Person.full_name_objects.filter(playerstatus__game=game, playerstatus__status__in=['h','v','e','z','o','x','a','m'])

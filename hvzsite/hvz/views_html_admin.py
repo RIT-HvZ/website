@@ -30,7 +30,6 @@ class AdminHTMLViews(object):
             if mission_id == "new":
                 form = MissionForm(request.POST)
                 if form.is_valid():
-                    print(form.cleaned_data)
                     mission = form.save()
             else:
                 form = MissionForm(request.POST, instance=Mission.objects.get(id=mission_id))
@@ -192,9 +191,6 @@ class AdminHTMLViews(object):
                 existing_reportees = set(new_update.report.reportees.get_queryset())
                 new_reportees = form_reportees - existing_reportees
                 deleted_reportees = existing_reportees - form_reportees
-                print(new_reportees)
-                print(deleted_reportees)
-                print(existing_reportees.intersection(form_reportees))
                 new_update.report.reportees.set(form_reportees)
                 new_update.report.save()
                 if len(new_reportees) > 0 or len(deleted_reportees) > 0:

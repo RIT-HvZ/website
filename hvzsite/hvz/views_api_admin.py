@@ -233,11 +233,9 @@ class AdminAPIViews(object):
         try:
             requested_player = Person.objects.get(player_uuid=request.POST["activated_player"])
             image_base64 = request.POST['player_photo'].replace('data:image/jpeg;base64,', '').replace(" ","+")
-            print(image_base64)
             im_bytes = base64.b64decode(image_base64)   # im_bytes is a binary image
             im_file = BytesIO(im_bytes)  # convert image to file-like object
             img = Image.open(im_file)   # img is now PIL Image object
-            print(request.POST["waiver_signed"])
             output = BytesIO()
             im = img.convert('RGB')
             im.thumbnail( (400, 400) , Image.ANTIALIAS )

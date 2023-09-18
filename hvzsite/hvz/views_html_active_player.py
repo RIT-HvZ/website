@@ -133,7 +133,6 @@ class ActivePlayerHTMLViews(object):
             if not survey_option or not str(survey_option).isnumeric():
                 return HttpResponseRedirect('/')
             response = PostGameSurveyOption.objects.get(id=survey_option)
-            print(f"Chosen response: {response}")
             survey = response.survey
             if not survey.is_open:
                 return HttpResponseRedirect("/")
@@ -142,20 +141,15 @@ class ActivePlayerHTMLViews(object):
             existing_responses = PostGameSurveyResponse.objects.filter(survey=survey, player=request.user)
             if (survey.mission.team == 'h' and status.is_human()) or (survey.mission.team == "z" and status.is_zombie()) or status.is_admin() or survey.mission.team == "a":
                 # All authorization steps complete
-                print("Authorized")
                 if existing_responses.count() > 0:
                     # A response for this survey for this user already exists. Update it.
                     existing_response = existing_responses[0]
-                    print(f"Existing response: {existing_response}")
                     existing_response.response = response
                     existing_response.save()
-                    print(f"Updated response: {existing_response}")
                 else:
                     # No response for this survey for this user exists. Create one.
-                    print("No response.")
                     new_response = PostGameSurveyResponse.objects.create(player=request.user, survey=survey, response=response)
                     new_response.save()
-                    print(f"New response: {new_response}")
             else:
                 return HttpResponseRedirect("/")
         if request.user.current_status.is_zombie():

@@ -225,7 +225,6 @@ class PostGameSurveyForm(forms.ModelForm):
 
     def clean(self):
         options = []
-        #print(self.cleaned_data.keys())
         option_text_field_names = [key for key in self.cleaned_data.keys() if "option_text" in key]
         for option_text_field_name in option_text_field_names:
             option_name_field_name = option_text_field_name.replace('option_text','option_name')
@@ -256,14 +255,11 @@ class PostGameSurveyForm(forms.ModelForm):
                 existing_option = PostGameSurveyOption.objects.get(id=option.get('id'))
                 existing_option.option_name = option.get('name')
                 existing_option.option_text = option.get('text')
-                print(f"Update: Option {option.get('id')}")
                 existing_option.save()
             else:
                 new_option = PostGameSurveyOption.objects.create(option_name=option.get('name'), option_text=option.get('text'), survey=survey)
-                print(f"New: Option {new_option.id}")
                 new_option.save()
         for option_to_delete in existing_options:
-            print(f"Delete: Option {option_to_delete}")
             PostGameSurveyOption.objects.get(id=option_to_delete).delete()
 
     def get_options(self):
