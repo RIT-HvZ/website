@@ -65,7 +65,10 @@
                                             <span class="surveyoptiontext">{{option.option_text}}</span>
                                         </div>
                                     {% endfor %}
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    {% can_respond_to_survey request.user survey as can_submit %}
+                                    {% if can_submit %}
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    {% endif %}
                                 </form>
                             {% else %}
                                 {% if player_response is not None %}

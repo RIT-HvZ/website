@@ -14,6 +14,13 @@ def get_player_response(player, survey):
         return responses[0]
     return None
 
+@register.simple_tag
+def can_respond_to_survey(player, survey):
+    status = player.current_status
+    return (survey.mission.team == 'h' and status.is_human()) or \
+           (survey.mission.team == "z" and status.is_zombie()) or \
+           status.is_admin()
+
 @register.filter
 def strftime(date, fmt="%H:%M (%m/%d)"):
     return date.strftime(fmt)
