@@ -4,12 +4,12 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 
 
-def authentication_required(view_func, redirect_url="/accounts/login/"):
+def authentication_required(view_func):
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
             return view_func(request,*args, **kwargs)
-        return redirect(redirect_url)
+        return redirect(f"/accounts/login/?next={request.get_full_path()}")
     return wrapper
 
 
@@ -24,12 +24,12 @@ def authentication_required_api(view_func):
     return wrapper
 
 
-def admin_required(view_func, redirect_url="/"):
+def admin_required(view_func):
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated and request.user.admin_this_game:
             return view_func(request,*args, **kwargs)
-        return redirect(redirect_url)
+        return redirect(f"/accounts/login/?next={request.get_full_path()}")
     return wrapper
 
 
@@ -44,21 +44,21 @@ def admin_required_api(view_func):
     return wrapper
 
 
-def active_player_required(view_func, redirect_url="/"):
+def active_player_required(view_func):
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated and request.user.active_this_game:
             return view_func(request,*args, **kwargs)
-        return redirect(redirect_url)
+        return redirect(f"/accounts/login/?next={request.get_full_path()}")
     return wrapper
 
 
-def staff_required(view_func, redirect_url="/"):
+def staff_required(view_func):
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated and request.user.admin_this_game or request.user.mod_this_game:
             return view_func(request,*args, **kwargs)
-        return redirect(redirect_url)
+        return redirect(f"/accounts/login/?next={request.get_full_path()}")
     return wrapper
 
 
