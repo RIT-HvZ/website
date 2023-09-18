@@ -36,7 +36,7 @@
                     <td>{{report.timestamp}}</td>
                     <td>{{report.status_text}}</td>
                     <td>{% if report.last_updated %}{{report.last_updated}}{% endif %}</td>
-                    <td>{%for reportee in report.reportees_set.all %}<a class="reportee_link" href="/player/{{reportee.player_uuid}}/">{{reportee}}</a>{% empty %}N/A{% endfor %}</td>
+                    <td>{% for reportee in report.reportees.all %}<a class="reportee_link" href="/player/{{reportee.player_uuid}}/">{{reportee}}</a><br />{% empty %}N/A{% endfor %}</td>
                 </tr>
                 {% empty %}
                 {% endfor %}
