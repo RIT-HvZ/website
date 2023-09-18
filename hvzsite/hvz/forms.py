@@ -179,8 +179,9 @@ class MissionForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['go_live_time'].label = "When can players read the Non-Story form of the mission?"
+        self.fields['go_live_time'].label = "When can players read the Non-Story form of the mission? Note: leave this blank if you want to add non-Missions to the Missions listing (e.g. post-mission updates, prologue/epilogue, etc)"
         self.fields['story_form_go_live_time'].label =  "When can players read the Story form of the mission?"
+        self.fields['mission_text'].label = "Non-Story Form. Note: leave this blank if you want to add non-Missions to the Missions listing (e.g. post-mission updates, prologue/epilogue, etc)"
         self.fields['game'] = forms.CharField(widget = forms.HiddenInput(), required = False)
 
     def clean(self):

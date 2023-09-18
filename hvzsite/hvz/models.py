@@ -208,8 +208,8 @@ class Mission(models.Model):
     mission_name = models.CharField(max_length=100)
     story_form = tinymce_models.HTMLField(verbose_name="Story Form")
     story_form_go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Story form of the mission")
-    mission_text = tinymce_models.HTMLField(verbose_name="Non-Story Form")
-    go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Non-Story form of the mission")
+    mission_text = tinymce_models.HTMLField(verbose_name="Non-Story Form", null=True, blank=True)
+    go_live_time = models.DateTimeField(verbose_name="Date/Time that players can read the Non-Story form of the mission", null=True, blank=True)
     team = models.CharField(max_length=1,choices=[('h','Human'),('z','Zombie'),('s',"Staff"),('a',"All")])
     game = models.ForeignKey(Game, on_delete=models.SET_NULL, null=True)
 
@@ -217,11 +217,18 @@ class Mission(models.Model):
         return f"{self.mission_name} - { {'h':'Human','z':'Zombie','s':'Staff','a':'All'}[self.team]} - {str(self.game)}"
 
     @property
+    def story_only(self):
+        if self.mission_text is None or self.go_live_time is None:
+            return True
+        
+    @property
     def story_viewable(self):
         return self.story_form_go_live_time < timezone.localtime()
 
     @property
     def non_story_viewable(self):
+        if self.story_only:
+            return False
         return self.go_live_time < timezone.localtime()
 
 class CaseInsensitiveUserManager(UserManager):

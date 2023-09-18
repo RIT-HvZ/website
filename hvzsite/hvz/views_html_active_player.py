@@ -164,5 +164,5 @@ class ActivePlayerHTMLViews(object):
             missions = Mission.objects.filter(game=this_game, team__in=['a','h'], story_form_go_live_time__lt=timezone.now())
         elif request.user.current_status.is_staff():
             missions = Mission.objects.filter(game=this_game, story_form_go_live_time__lt=timezone.now())
-        return render(request, "missions.html", {'missions':missions.order_by("-go_live_time")})
+        return render(request, "missions.html", {'missions':missions.order_by("-story_form_go_live_time")})
 

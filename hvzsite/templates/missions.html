@@ -36,7 +36,11 @@
                     <a class="scrolllink" href="#mission_{{mission.id}}_nonstory">{{mission.mission_name}} - Non-Story Form</a>
                 {% endif %}
                 {% if mission.story_viewable %}
+                    {% if mission.story_only %}
+                    <a class="scrolllink" href="#mission_{{mission.id}}_story">{{mission.mission_name}}</a>
+                    {% else %}
                     <a class="scrolllink" href="#mission_{{mission.id}}_story">{{mission.mission_name}} - Story Form</a>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
         </div>
@@ -95,7 +99,11 @@
         {% if mission.story_viewable %}
         <div class="row missionrow" id="mission_{{mission.id}}_story">
             <div class="col missioncol">
+                {% if mission.story_only %}
+                <h1 class="missiontitle">{{ mission.mission_name }}</h1>
+                {% else %}
                 <h1 class="missiontitle">{{ mission.mission_name }} - Story Form</h1>
+                {% endif %}
                 <div class="missiontext">{{ mission.story_form|safe }}</div>
             </div>
         </div>
