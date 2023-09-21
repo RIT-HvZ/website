@@ -425,6 +425,11 @@ class AntiVirus(models.Model):
     def relative_time_str(self):
         delta = (timezone.localtime() - self.time_used)
         return get_relative_time(delta)
+
+    def __str__(self):
+        if self.used_by is not None:
+            return f"AV code \"{self.av_code}\" (used by {self.used_by} at {self.time_used})"
+        return f"AV code \"{self.av_code}\" (expires {self.expiration_time})"
     
 class FailedAVAttempt(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="failed_av_attempts")
