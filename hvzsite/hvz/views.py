@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.shortcuts import render, redirect
 from django.db.models import Q, Count
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseNotFound
@@ -284,7 +284,7 @@ def av(request):
             user_status.status = 'v'
             user_status.save()
             form.cleaned_data['av'].used_by = request.user
-            form.cleaned_data['av'].time_used = datetime.now()
+            form.cleaned_data['av'].time_used = timezone.now()
             form.cleaned_data['av'].save()
             newform = AVForm()
             return render(request, "av.html", {'form':newform, 'avcomplete': True, 'av': form.cleaned_data['av']})
