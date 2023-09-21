@@ -46,13 +46,11 @@ def index(request):
     while len(merged_recents) < 10:
         if len(recent_tags) == 0 and len(recent_avs) == 0:
             break
-        if len(recent_avs) <= 0 or (len(recent_tags) > 0 and recent_tags[0].timestamp < recent_avs[0].time_used):
+        if len(recent_avs) == 0 or \
+           recent_tags[0].timestamp.astimezone(timezone.get_current_timezone()) > recent_avs[0].time_used.astimezone(timezone.get_current_timezone()):
             merged_recents.append(recent_tags.pop(0))
-        elif len(recent_tags) <= 0 or (len(recent_avs) > 0 and recent_tags[0].timestamp > recent_avs[0].time_used):
-            merged_recents.append(recent_avs.pop(0))
         else:
-            break
-
+            merged_recents.append(recent_avs.pop(0))
 
     return render(request, "index.html", {'game': game, 'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_events': merged_recents})
 
