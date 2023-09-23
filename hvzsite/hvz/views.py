@@ -39,7 +39,7 @@ def index(request):
     game = get_active_game()
     humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v') | Q(status='e')).count()
     zombiecount = PlayerStatus.objects.filter(game=game).filter(Q(status='z') | Q(status='x') | Q(status='o')).count()
-    most_tags = PlayerStatus.objects.filter(game=game).annotate(tag_count=Count("player__taggers", filter=Q(player__taggers__game=game))).filter(tag_count__gt=0).order_by("-tag_count")
+    most_tags = PlayerStatus.objects.filter(Q(game=game) & ~Q(status='n')).annotate(tag_count=Count("player__taggers", filter=Q(player__taggers__game=game))).filter(tag_count__gt=0).order_by("-tag_count")
     recent_tags = [ t for t in Tag.objects.filter(game=get_active_game()).order_by('-timestamp') ]
     recent_avs = [ a for a in AntiVirus.objects.filter(game=get_active_game(), used_by__isnull=False).order_by('-time_used') ]
     merged_recents = []
