@@ -128,7 +128,12 @@ def missions_view(request):
                 print(f"New response: {new_response}")
         else:
             return HttpResponseRedirect("/")
-    if request.user.current_status.is_zombie():
+    if timezone.now() > this_game.end_date:
+        if request.user.current_status.is_staff:
+            missions = Mission.objects.filter(game=this_game)
+        else:
+            missions = Mission.objects.filter(game=this_game, team__in=['a','z','h'])
+    elif request.user.current_status.is_zombie():
         missions = Mission.objects.filter(game=this_game, team__in=['a','z'], story_form_go_live_time__lt=timezone.now())
     elif request.user.current_status.is_human():
         missions = Mission.objects.filter(game=this_game, team__in=['a','h'], story_form_go_live_time__lt=timezone.now())
