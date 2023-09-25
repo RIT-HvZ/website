@@ -149,19 +149,20 @@ $(document).ready(function () {
                     <a class="nav-link" href="/players/">Players</a>
                   </li>
                   <li class="nav-item">
+                    <a class="nav-link" href="/tags/">Tags</a>
+                  </li>
+                  <li class="nav-item">
                     <a class="nav-link" href="/clans/">Clans</a>
                   </li>
                   <!-- <li class="nav-item"> -->
                   <!--   <a class="nav-link" href="#">Infections</a> -->
                   <!-- </li> -->
-                  {% if user.is_authenticated and user.active_this_game %}
                   <li class="nav-item">
                     <a class="nav-link" href="/missions/">Missions</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="/tag/">Register Tag</a>
                   </li>
-                  {% endif %}
                   {% if user.is_authenticated and user.current_status.can_av %}
                   <li class="nav-item">
                     <a class="nav-link" href="/av/">Register AV</a>

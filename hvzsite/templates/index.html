@@ -2,8 +2,71 @@
 {% load static %}
 {% load hvztags %}
 {% block extrahead %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.30.1/date_fns.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script>
+$(document).ready(function () {
+// Sample data (replace with your actual data)
+const timestamps = [{% for timestamp in timestamps %}"{{timestamp}}",{% endfor %}];
+const zombieCounts = [{% for zombiecount in zombiecounts %}{{zombiecount}},{% endfor %}]; // Corresponding number of zombies
+const humanCounts = [{% for humancount in humancounts %}{{humancount}},{% endfor %}]; // Corresponding number of humans
 
+// Convert timestamps to JavaScript Date objects
+const formattedTimestamps = timestamps.map((timestamp) => new Date(timestamp));
+const ctx = document.getElementById("zombieChart").getContext("2d");
+
+const zombieChart = new Chart(ctx, {
+  type: "line",
+  data: {
+    labels: formattedTimestamps,
+    datasets: [
+      {
+        label: "Zombies",
+        data: zombieCounts,
+        fill: true,
+        backgroundColor: 'rgba(15, 170, 1, 0.4)', // Green color for area below the line
+        borderColor: "green",
+        tension: .3,
+      }
+      ,
+      {
+        label: "Humans",
+        data: humanCounts,
+        fill: true,
+        backgroundColor: 'rgba(216, 102, 17, 0.4)', // Orange color for the area above the line
+        border: false,
+        tension: .3,
+      }
+    ],
+  },
+  options: {
+    scales: {
+      x: {
+        type: "time",
+
+        time: {
+          unit: "hour", // Customize based on your data
+        },
+        title: {
+          display: true,
+          text: "Timestamp",
+        },
+      },
+      y: {
+        stacked: true,
+        title: {
+          display: true,
+          text: "Number",
+          ticks: {
+            stepSize: 1.0
+          }
+        },
+      }
+    },
+  },
+});
+});
 {% if game.is_after_end %}
 console.log("after_end");
 document.getElementById("countdowntext").innerHTML = "Game over!";
@@ -81,6 +144,11 @@ document.getElementById("countdowntext").innerHTML = "Game over!";
   </div>
 </div>
 
+<div class="row center">
+  <div class="col center">
+    <canvas id="zombieChart" width="400" height="200"></canvas>
+  </div>
+</div>
 <br />
 
 <div class="row center">

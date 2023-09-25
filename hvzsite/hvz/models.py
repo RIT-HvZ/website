@@ -168,6 +168,14 @@ class Game(models.Model):
     @property
     def end_date_javascript(self):
         return self.end_date.strftime("%b %d, %Y %H:%M:%S %Z")
+    
+    @property
+    def start_date_chart_js(self):
+        return self.start_date.astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%dT%H:%M:%S")
+    
+    @property
+    def end_date_chart_js(self):
+        return self.end_date.astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%dT%H:%M:%S")
 
 
 class SingletonModel(models.Model):
@@ -409,7 +417,7 @@ class AntiVirus(models.Model):
     av_code = models.CharField(verbose_name="AV Code", editable=True, default=gen_default_code, max_length=30)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)#, default=get_latest_game)
     used_by = models.ForeignKey(Person, null=True, blank=True, on_delete=models.SET_NULL)
-    time_used = models.DateTimeField(null=True, blank=True)
+    time_used = models.DateTimeField(null=True, blank=True, editable=True)
     expiration_time = models.DateTimeField()
     note = models.CharField(verbose_name="Note (optional)", null=True, blank=True, max_length=100)
 
@@ -436,6 +444,18 @@ class AntiVirus(models.Model):
     def relative_time_str(self):
         delta = (timezone.localtime() - self.time_used)
         return get_relative_time(delta)
+    
+    @property
+    def timestamp_javascript(self):
+        return self.time_used.strftime("%b %d, %Y %H:%M:%S")
+    
+    @property
+    def timestamp_chart_js(self):
+        return self.time_used.astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%dT%H:%M:%S")
+    
+    @property
+    def get_timestamp(self):
+        return self.time_used
     
 class FailedAVAttempt(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="failed_av_attempts")
@@ -572,7 +592,7 @@ class Tag(models.Model):
     tagger = models.ForeignKey(Person, null=False, on_delete=models.CASCADE, related_name="taggers")
     taggee = models.ForeignKey(Person, null=True, blank=True, on_delete=models.CASCADE, related_name="taggees")
     armor_taggee = models.ForeignKey(BodyArmor, null=True, blank=True, on_delete=models.CASCADE, related_name="armor_taggees")
-    timestamp = models.DateTimeField(verbose_name="Tag Timestamp", auto_now_add=True)
+    timestamp = models.DateTimeField(verbose_name="Tag Timestamp", auto_now_add=True, editable=True)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     def __str__(self) -> str:
         if self.taggee:
@@ -582,6 +602,18 @@ class Tag(models.Model):
         else:
             return f"{self.tagger} tagged nothing at {self.timestamp}"
 
+    @property
+    def timestamp_javascript(self):
+        return self.timestamp.strftime("%b %d, %Y %H:%M:%S")
+    
+    @property
+    def timestamp_chart_js(self):
+        return self.timestamp.astimezone(timezone.get_current_timezone()).strftime("%Y-%m-%dT%H:%M:%S")
+    
+    @property
+    def get_timestamp(self):
+        return self.timestamp
+    
     @property
     def datatype(self):
         return "Tag"

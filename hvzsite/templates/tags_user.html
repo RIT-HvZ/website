@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load hvztags %}
+{% block title %} HvZ @ RIT - Tags {% endblock %}
+{% block extrahead %}
+<script>
+    $(document).ready(function () {
+        var datatable1 = $('#tags').DataTable({"ordering": false});
+    });
+
+</script>
+{% endblock %}
+{% block body %}
+
+<div class="row">
+    <div class="col center">
+        <h1>All Tags</h1>
+        <table class="table display" id="tags">
+            <thead>
+                <tr>
+                    <th style="text-align:center">Tagger</th>
+                    <th style="text-align:center">Taggee</th>
+                    <th style="text-align:center">Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for tag in tags %}
+                <tr>
+                    <td><a href="/player/{{tag.tagger.player_uuid}}/">{{tag.tagger}}</a></td>
+                    <td>{% if tag.taggee %}<a href="/player/{{tag.taggee.player_uuid}}/">{{tag.taggee}}{% else %}</a>Body Armor{% endif %}</td>
+                    <td>{{tag.timestamp}}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

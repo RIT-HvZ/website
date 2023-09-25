@@ -1,3 +1,6 @@
+import copy
+from itertools import chain
+from functools import lru_cache
 import json
 import discord
 
@@ -35,24 +38,47 @@ def for_all_methods(decorator):
     return decorate
 
 
-def index(request):
+@lru_cache(maxsize=1)
+def get_recent_events(most_recent_tag, most_recent_av):
     game = get_active_game()
     humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v') | Q(status='e')).count()
     zombiecount = PlayerStatus.objects.filter(game=game).filter(Q(status='z') | Q(status='x') | Q(status='o')).count()
     most_tags = PlayerStatus.objects.filter(game=game).annotate(tag_count=Count("player__taggers", filter=Q(player__taggers__game=game))).filter(tag_count__gt=0).order_by("-tag_count")
-    recent_tags = [ t for t in Tag.objects.filter(game=get_active_game()).order_by('-timestamp') ]
-    recent_avs = [ a for a in AntiVirus.objects.filter(game=get_active_game(), used_by__isnull=False).order_by('-time_used') ]
-    merged_recents = []
-    while len(merged_recents) < 10:
-        if len(recent_tags) == 0 and len(recent_avs) == 0:
-            break
-        if len(recent_avs) <= 0 or (len(recent_tags) > 0 and recent_tags[0].timestamp < recent_avs[0].time_used):
-            merged_recents.append(recent_tags.pop(0))
-        elif len(recent_tags) <= 0 or (len(recent_avs) > 0 and recent_tags[0].timestamp > recent_avs[0].time_used):
-            merged_recents.append(recent_avs.pop(0))
-        else:
-            break
-    return render(request, "index.html", {'game': game, 'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_events': merged_recents})
+    recent_tags = Tag.objects.filter(game=get_active_game()).order_by('-timestamp')
+    recent_avs = AntiVirus.objects.filter(game=get_active_game(), used_by__isnull=False).order_by('-time_used')
+    merged_recents = list(chain(recent_avs, recent_tags))
+    merged_recents.sort(key=lambda x:x.get_timestamp, reverse=True)   
+    starting_zombie_count = PlayerStatus.objects.filter(game=game, status='o').count()
+    starting_human_count = PlayerStatus.objects.filter(game=game, status__in=['h','v','e','z','x']).count()
+    running_zombie_count = starting_zombie_count
+    running_human_count = starting_human_count
+    timestamps = [game.start_date_chart_js]
+    zombiecounts = [starting_zombie_count]
+    humancounts = [starting_human_count]
+    for index in range(len(merged_recents)-1,-1,-1):
+        item = merged_recents[index]
+        if isinstance(item, Tag):
+            if isinstance(item.taggee,  Person):
+                running_zombie_count += 1
+                running_human_count -= 1
+                timestamps.append(item.timestamp_chart_js)
+                zombiecounts.append(running_zombie_count)
+                humancounts.append(running_human_count)
+        elif isinstance(item, AntiVirus):
+            running_zombie_count -= 1
+            running_human_count += 1
+            timestamps.append(item.timestamp_chart_js)
+            zombiecounts.append(running_zombie_count)
+            humancounts.append(running_human_count)
+    return (humancount, zombiecount, most_tags, merged_recents, timestamps, zombiecounts, humancounts)
+
+
+def index(request):
+    game = get_active_game()
+    most_recent_tag = Tag.objects.filter(game=get_active_game()).order_by('-timestamp')[0]
+    most_recent_av = AntiVirus.objects.filter(game=get_active_game(), used_by__isnull=False).order_by('-time_used')[0]
+    (humancount, zombiecount, most_tags, merged_recents, timestamps, zombiecounts, humancounts) = get_recent_events(most_recent_tag, most_recent_av)
+    return render(request, "index.html", {'game': game, 'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_events': merged_recents[0:10], 'timestamps': timestamps, 'zombiecounts': zombiecounts, 'humancounts': humancounts, 'game':game})
 
 
 def infection(request):
@@ -479,3 +505,8 @@ class ApiCreateBodyArmor(APIView):
         armor.save()
 
         return HttpResponse('Successfully created Body Armor: "{}"'.format(armor.armor_code))
+    
+
+def view_tags(request):
+    tags = Tag.objects.filter(game=get_active_game()).order_by("-timestamp")
+    return render(request, "tags_user.html", {'tags':tags})
