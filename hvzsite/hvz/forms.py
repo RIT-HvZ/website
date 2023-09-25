@@ -5,8 +5,7 @@ from .models import Announcement, Person, Blaster, BodyArmor, AntiVirus, Rules, 
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from datetime import datetime
-from pytz import timezone
+from django.utils import timezone
 from django_registration.forms import RegistrationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
@@ -107,7 +106,7 @@ class TagForm(forms.Form):
             if len(armors) > 1:
                 raise ValidationError("Oh dear, that tag matches more than one armor")
             armor = armors[0]
-            if datetime.now(tz=timezone('EST')) > armor.expiration_time:
+            if timezone.now() > armor.expiration_time:
                 raise ValidationError("Armor is expired!")
             previous_tags = Tag.objects.filter(armor_taggee = armor, game=this_game)
             if len(previous_tags) > 0:
@@ -156,7 +155,7 @@ class AVForm(forms.Form):
         if av.used_by is not None:
             raise ValidationError("AntiVirus already used!")
 
-        if datetime.now(tz=timezone('EST')) > av.expiration_time:
+        if timezone.now() > av.expiration_time:
             raise ValidationError("Sorry, this AV has expired")
         
         cd["av"] = av

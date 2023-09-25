@@ -457,6 +457,12 @@ class AntiVirus(models.Model):
     def get_timestamp(self):
         return self.time_used
     
+    def __str__(self):
+        if self.used_by is not None:
+            return f"AV code \"{self.av_code}\" (used by {self.used_by} at {self.time_used})"
+        return f"AV code \"{self.av_code}\" (expires {self.expiration_time})"
+
+
 class FailedAVAttempt(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="failed_av_attempts")
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
