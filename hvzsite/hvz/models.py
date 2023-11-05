@@ -284,7 +284,8 @@ class Person(AbstractUser):
 
     @property
     def admin_this_game(self):
-        return self.current_status.is_admin()
+        # NOTE: A superuser is ALWAYS considered an admin
+        return self.is_superuser or self.current_status.is_admin()
 
     @property
     def mod_this_game(self):
