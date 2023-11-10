@@ -75,8 +75,14 @@ def get_recent_events(most_recent_tag, most_recent_av):
 
 def index(request):
     game = get_active_game()
-    most_recent_tag = Tag.objects.filter(game=get_active_game()).order_by('-timestamp')[0]
-    most_recent_av = AntiVirus.objects.filter(game=get_active_game(), used_by__isnull=False).order_by('-time_used')[0]
+    if len(most_recent_tags := Tag.objects.filter(game=get_active_game()).order_by('-timestamp')) > 0:
+        most_recent_tag = most_recent_tags[0]
+    else:
+        most_recent_tag = None
+    if len(most_recent_avs := AntiVirus.objects.filter(game=get_active_game(), used_by__isnull=False).order_by('-time_used')) > 0:
+        most_recent_av = most_recent_avs[0]
+    else:
+        most_recent_av = None
     (humancount, zombiecount, most_tags, merged_recents, timestamps, zombiecounts, humancounts) = get_recent_events(most_recent_tag, most_recent_av)
     return render(request, "index.html", {'game': game, 'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_events': merged_recents[0:10], 'timestamps': timestamps, 'zombiecounts': zombiecounts, 'humancounts': humancounts, 'game':game})
 
