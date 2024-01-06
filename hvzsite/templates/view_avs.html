@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block title %} HvZ @ RIT - AV List {% endblock %}
 
 {% block extrahead %}
@@ -35,7 +36,7 @@
                     <td>{% if av.note %}{{av.note}}{% endif %}</td>
                     <td>{{av.expiration_time}}</td>
                     <td>{{av.get_status}}</td>
-                    <td>{% if av.used_by %}{{av.used_by}}{% endif %}</td>
+                    <td>{% if av.used_by %}{% get_player_name av.used_by user %}{% endif %}</td>
                     <td>{% if av.time_used %}{{ av.time_used }}{% endif %}</td>
                 </tr>
                 {% empty %}

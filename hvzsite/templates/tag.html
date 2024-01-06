@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block title %} HvZ @ RIT - Register Tag {% endblock %}
 {% block extrahead %}
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -73,7 +74,13 @@ window.addEventListener('load', function () {
 <div class="row">
     <div class="col">
         {% if tagcomplete %}
-            <h2 class="tagnotification">Successfully registered Tag of {% if tag.taggee %}{{tag.taggee}}{% else %}Body Armor{% endif %} by {{tag.tagger}}!</h2>
+            <h2 class="tagnotification">Successfully registered Tag of
+                {% if tag.taggee %}
+                  {% get_player_name tag.taggee user %}
+                {% else %}
+                  Body Armor
+                {% endif %}
+                by {% get_player_name tag.tagger user %}</h2>
         {% endif %}
         
         <form method="post" id="tagform" class="center">{% csrf_token %}

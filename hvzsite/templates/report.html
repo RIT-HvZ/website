@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block title %} HvZ @ RIT - Report {% endblock %}
 {% block extrahead %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/multi.js/0.4.1/multi.css">
@@ -24,7 +25,7 @@
         Reporter: {{report.get_reporter}}
     </div>
     <div class="col col-md-3">
-        Reportee(s): <ul class="reporteelist">{%for reportee in report.reportees.all %}<li><a class="reportee_link" href="/player/{{reportee.player_uuid}}/">{{reportee}}</a></li>{% empty %}N/A{% endfor %}</ul>
+        Reportee(s): <ul class="reporteelist">{%for reportee in report.reportees.all %}<li><a class="reportee_link" href="/player/{{reportee.player_uuid}}/">{% get_player_name reportee user %}</a></li>{% empty %}N/A{% endfor %}</ul>
     </div> 
     <div class="col col-md-3">
         Timestamp: {{report.timestamp}}
@@ -55,7 +56,7 @@
 <div class="row justify-content-md-center">
     <div class="col center">
         <div class="reportupdatediv">
-            <h3 class="reportupdatetitle">Update by {{update.note_creator}} on {{update.get_timestamp}}</h3>
+            <h3 class="reportupdatetitle">Update by {% get_player_name update.note_creator user %} on {{update.get_timestamp}}</h3>
             {{update.note}}
         </div>
     </div>

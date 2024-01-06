@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block title %} HvZ @ RIT - Reports {% endblock %}
 
 {% block extrahead %}
@@ -32,11 +33,11 @@
                 {% for report in reports %}
                 <tr onclick="window.location.href='/admin/report/{{report.report_uuid}}/'">
                     <td>{{report.report_uuid}}</td>
-                    <td>{{report.get_reporter}}</td>
+                    <td>{% get_player_name report.get_reporter user %}</td>
                     <td>{{report.timestamp}}</td>
                     <td>{{report.status_text}}</td>
                     <td>{% if report.last_updated %}{{report.last_updated}}{% endif %}</td>
-                    <td>{% for reportee in report.reportees.all %}<a class="reportee_link" href="/player/{{reportee.player_uuid}}/">{{reportee}}</a><br />{% empty %}N/A{% endfor %}</td>
+                    <td>{% for reportee in report.reportees.all %}<a class="reportee_link" href="/player/{{reportee.player_uuid}}/">{% get_player_name reportee user %}</a><br />{% empty %}N/A{% endfor %}</td>
                 </tr>
                 {% empty %}
                 {% endfor %}

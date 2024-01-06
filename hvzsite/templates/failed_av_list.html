@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block title %} HvZ @ RIT - Failed AV Attempts {% endblock %}
 
 {% block extrahead %}
@@ -29,7 +30,7 @@
             <tbody>
                 {% for offender in offenders %}
                 <tr onclick="window.location.href='/player/{{offender.player_uuid}}/'">
-                    <td>{{offender.first_name}} {{offender.last_name}}</td>
+                    <td>{% get_player_name offender user %}</td>
                     <td>{{offender.current_status.num_failed_av_attempts}}</td>
                     <td>{{offender.current_status.av_banned}}
                 </tr>

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block title %} HvZ @ RIT - AV {% endblock %}
 {% block extrahead %}
 <script>
@@ -17,6 +18,9 @@ $(document).ready(function () {
 </div>
 <div class="row justify-content-md-center armormainrow">
     <div class="col col-md-2">
+        AV Code: {{av.av_code}}
+    </div>
+    <div class="col col-md-2">
         AV UUID: {{av.av_uuid}}
     </div>
     <div class="col col-md-2">
@@ -24,7 +28,7 @@ $(document).ready(function () {
     </div>
     <div class="col col-md-4">
         {% if av.used_by %}
-        Used By: {{av.used_by}} at {{av.time_used}}
+        Used By: <a href="/player/{{av.used_by.player_uuid}}">{% get_player_name av.used_by user %}</a> at {{av.time_used}}
         {% else %}
         Status: {{av.get_status}}
         {% endif %}

@@ -301,7 +301,8 @@ class ReportUpdateForm(forms.ModelForm):
             self.fields['reportees'] = forms.ModelMultipleChoiceField(queryset=Person.objects.filter(playerstatus__game=get_active_game()) \
                                                         .filter(playerstatus__status__in=['h','v','e','z','o','x']) \
                                                         .annotate(num_status=Count('playerstatus')) \
-                                                        .filter(num_status=1)   )
+                                                        .filter(num_status=1),
+                                                        to_field_name='first_name')
             self.fields['reportees'].initial = report.reportees.all()
             self.fields['reportees'].required = False
 

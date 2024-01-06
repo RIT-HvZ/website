@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block title %} HvZ @ RIT - {{ player }} {% endblock %}
 {% block extrahead %}
 <meta name="robots" content="noindex, nofollow" />
@@ -134,7 +135,9 @@ function invite_player(player_uuid) {
             <div class="row">
                 <div class="col">
                     <div class="align-bottom playername playernamecol">
-                        <h2 class="player_name align-bottom"> {{ player }} </h2>
+                        <h2 class="player_name align-bottom">
+                            {% get_player_name player user %}
+                        </h2>
                     </div>
                 </div>
                 {% if user.is_authenticated and user == player %}
@@ -304,7 +307,7 @@ function invite_player(player_uuid) {
                     <tr>
                         <td>
                             {% if tag.taggee %}
-                                <a href="/player/{{tag.taggee.player_uuid}}/"><img src="{{ tag.taggee.picture_url }}" class="player_tag_img" />{{tag.taggee}}</a>
+                                <a href="/player/{{tag.taggee.player_uuid}}/"><img src="{{ tag.taggee.picture_url }}" class="player_tag_img" />{% get_player_name tag.taggee user %}</a>
                             {% else %}
                                 <img src="/media/bodyarmor.png" class="player_tag_img" />Body Armor
                             {% endif %}

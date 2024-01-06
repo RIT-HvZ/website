@@ -157,14 +157,14 @@ document.getElementById("countdowntext").innerHTML = "Game over!";
     {% for t in recent_events %}
       {% if t.datatype == "Tag" %}
         {% if t.taggee %}
-          <a class="statuspage" href="/player/{{t.taggee.player_uuid}}">{{t.taggee}}</a>
+          <a class="statuspage" href="/player/{{t.taggee.player_uuid}}">{% get_player_name t.taggee user %}</a>
         {% else %}
           Body Armor
         {% endif %}
-        was tagged by <a class="statuspage" href="player/{{t.tagger.player_uuid}}">{{t.tagger}}</a>
+        was tagged by <a class="statuspage" href="player/{{t.tagger.player_uuid}}">{% get_player_name t.tagger user %}</a>
         <span class="timestamp" title="{{t.display_timestamp}}">{{t.relative_time_str}}</span> <br />
       {% else %}
-        <a class="statuspage" href="/player/{{t.used_by.player_uuid}}">{{ t.used_by }}</a>
+        <a class="statuspage" href="/player/{{t.used_by.player_uuid}}">{% get_player_name t.used_by user %}</a>
         used an antivirus
         <span class="timestamp" title="{{t.display_timestamp}}">{{t.relative_time_str}}</span> <br />
       {% endif %}
@@ -175,7 +175,7 @@ document.getElementById("countdowntext").innerHTML = "Game over!";
     <h2>Most Tags</h2>
     {% for p in most_tags %}
 
-    <a class="statuspage" href="player/{{p.player.player_uuid}}">{{p.player}}</a> with <b>{{p.num_tags}}</b> tags <br />
+    <a class="statuspage" href="player/{{p.player.player_uuid}}">{% get_player_name p.player user %}</a> with <b>{{p.num_tags}}</b> tags <br />
     {% endfor %}
   </div>
 </div>

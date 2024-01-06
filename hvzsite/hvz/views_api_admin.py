@@ -136,7 +136,7 @@ class AdminAPIViews(object):
             armor.loaned_to = player
             armor.loaned_at = timezone.localtime()
             armor.save()
-            return JsonResponse({'status': 'success', "playername": f"{player.first_name} {player.last_name}", "time": str(armor.loaned_at)})
+            return JsonResponse({'status': 'success', "playername": player.readable_name(True), "time": str(armor.loaned_at)})
             
 
     @api_view(["GET"])
@@ -166,7 +166,7 @@ class AdminAPIViews(object):
                     break
 
                 result.append({
-                    "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
+                    "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.readable_name(True)}</a>""",
                     "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture_url}' class='dt_profile' /></a>""",
                     "loan": f"""<input type="button" value="Loan" class="dt_loan_button" id="{person.player_uuid}" onclick="loan_to(this)" />""",
                     "DT_RowData": {"person_url": f"/player/{person.player_uuid}/", "clan_url": f"/clan/{person.clan.name}/" if person.clan is not None else ""}
@@ -211,7 +211,7 @@ class AdminAPIViews(object):
                 if limit == 0:
                     break
                 result.append({
-                    "name": f"""{html.escape(person.first_name)} {html.escape(person.last_name)}""",
+                    "name": f"""{html.escape(person.readable_name(True))}""",
                     "pic": f"""<img src='{person.picture_url}' class='dt_profile' />""",
                     "email": f"""{html.escape(person.email)}""",
                     "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person.current_status.status],
@@ -275,7 +275,7 @@ class AdminAPIViews(object):
         filtered_length = len(query)
         result = [
             {
-                "name": f"{player_status.player.first_name} {player_status.player.last_name}",
+                "name": f"{player_status.player.readable_name(True)}",
                 "pic": f"<img src='{player_status.player.picture_url}' class='dt_profile' />",
                 "email": f"{player_status.player.email}",
                 "uuid": f"{player_status.player.player_uuid}",

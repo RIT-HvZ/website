@@ -202,7 +202,7 @@ def players_api(request, game=None):
             except:
                 continue
             result.append({
-                "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.first_name} {person.last_name}</a>""",
+                "name": f"""<a class="dt_name_link" href="/player/{person.player_uuid}/">{person.readable_name(request.user.is_authenticated and request.user.active_this_game)}</a>""",
                 "pic": f"""<a class="dt_profile_link" href="/player/{person.player_uuid}/"><img src='{person.picture_url}' class='dt_profile' /></a>""",
                 "status": {"h": "Human", "a": "Admin", "z": "Zombie", "m": "Mod", "v": "Human", "o": "Zombie", "n": "NonPlayer", "x": "Zombie", "e": "Human (Extracted)"}[person_status.status],
                 "clan": None if person.clan is None else (f"""<a href="/clan/{person.clan.name}/" class="dt_clan_link">person.clan.name</a>""" if (person.clan is None or person.clan.picture is None) else f"""<a href="/clan/{person.clan.name}/" class="dt_clan_link"><img src='{person.clan.picture.url}' class='dt_clanpic' alt='{person.clan}' /><span class="dt_clanname">{person.clan}</span></a>"""),
@@ -395,7 +395,7 @@ class ApiPlayers(APIView):
     def get(self, request):
         players = [
             {
-                'name': str(p),
+                'name': p.readable_name(request.user.is_authenticated and request.user.active_this_game),
                 'id': p.player_uuid,
                 'status': p.current_status.get_status_display(),
                 'tags': p.current_status.num_tags,
@@ -457,7 +457,7 @@ class ApiReports(APIView):
                 {
                     "report-text": report.report_text,
                     "reporter-email": report.reporter_email,
-                    "reporter": str(report.reporter) if report.reporter else None, 
+                    "reporter": report.reporter.readable_name(True) if report.reporter else None,
                     "timestamp": report.timestamp,
                     "status": report.status,
                 }

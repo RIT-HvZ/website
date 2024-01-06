@@ -272,7 +272,23 @@ class Person(AbstractUser):
         self.__original_picture = self.picture
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"!!! DEPRECATED: {self.first_name} {self.last_name[0]}. !!!"
+
+    def readable_name(self, authed = False):
+        '''
+        Gets the human-readable name for this player.
+        This will obscure the user's last name if not logged in for privacy.
+        Admins will always have their full name displayed.
+
+        Params:
+          authed: True if the requesting user should be able to see this person's full name
+
+        Returns:
+          str: The name of this user
+        '''
+        if authed or self.admin_this_game:
+            return f"{self.first_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name[0]}."
 
     @property
     def current_status(self):

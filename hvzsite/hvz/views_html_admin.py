@@ -196,15 +196,15 @@ class AdminHTMLViews(object):
                 if len(new_reportees) > 0 or len(deleted_reportees) > 0:
                     new_note = ""
                     if len(new_reportees) > 0:
-                        new_note += f"-{request.user} added {', '.join([str(reportee) for reportee in new_reportees])} as Reportees-\n"
+                        new_note += f"-{request.user.readable_name(True)} added {', '.join([reportee.readable_name(True) for reportee in new_reportees])} as Reportees-\n"
                     if len(deleted_reportees) > 0:
-                        new_note += f"-{request.user} removed {', '.join([str(reportee) for reportee in deleted_reportees])} as Reportees-"
+                        new_note += f"-{request.user.readable_name(True)} removed {', '.join([reportee.readable_name(True) for reportee in deleted_reportees])} as Reportees-"
                     reportee_change_update = ReportUpdate.objects.create(note=new_note, note_creator=request.user, report=new_update.report)
                     reportee_change_update.save()
                 if form.cleaned_data['update_status'] != 'x':
                     new_update.report.status = form.cleaned_data['update_status']
                     new_update.report.save()
-                    status_change_update = ReportUpdate.objects.create(note=f"-{request.user} changed the status of this report to {new_update.report.status_text}-", note_creator=request.user, report=new_update.report)
+                    status_change_update = ReportUpdate.objects.create(note=f"-{request.user.readable_name(True)} changed the status of this report to {new_update.report.status_text}-", note_creator=request.user, report=new_update.report)
                     status_change_update.save()
                 new_update.save()
                 form = ReportUpdateForm(report=report)
