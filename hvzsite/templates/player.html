@@ -2,6 +2,7 @@
 {% load static %}
 {% block title %} HvZ @ RIT - {{ player }} {% endblock %}
 {% block extrahead %}
+<meta name="robots" content="noindex, nofollow" />
 <script>
 $(document).ready(function () {
     if ("{{player.is_banned}}" == "True"){
