@@ -272,7 +272,7 @@ class Person(AbstractUser):
         self.__original_picture = self.picture
 
     def __str__(self):
-        return f"!!! DEPRECATED: {self.first_name} {self.last_name[0]}. !!!"
+        return f"{self.player_uuid}: ({self.first_name} {self.last_name[0]}.)"
 
     def readable_name(self, authed = False):
         '''

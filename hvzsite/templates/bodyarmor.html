@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block title %} HvZ @ RIT - Body Armor {% endblock %}
 {% block extrahead %}
 <script>
@@ -118,11 +119,11 @@ function loan_to(button) {
         Expiration Time:<br/>{{armor.expiration_time}}
     </div>
     <div class="col col-md-2">
-        Tagged By:<br/>{{armor.tagged_by}}
+        Tagged By:<br/>{% get_player_name armor.tagged_by user %}
     </div>
     <div class="col col-md-2" id="loaned_to_div">
         {% if loaned_at %}
-        Loaned To:<br/>{{armor.loaned_to}} at {{armor.loaned_at}}
+        Loaned To:<br/>{% get_player_name armor.loaned_to user %} at {{armor.loaned_at}}
         {% else %}
             {% if not armor.returned %}
                 <input type='button' value='Loan' id='loanbutton' data-bs-toggle="modal" data-bs-target="#loanmodal"/>

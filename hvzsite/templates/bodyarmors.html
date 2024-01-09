@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block title %} HvZ @ RIT - Body Armor List {% endblock %}
 
 {% block extrahead %}
@@ -35,8 +36,8 @@
                     <td>{{ba.armor_code}}</td>
                     <td>{{ba.expiration_time}}</td>
                     <td>{{ba.get_status}}</td>
-                    <td>{% if ba.used %}{{ba.get_tag.tagger}}{% endif %}</td>
-                    <td>{% if ba.loaned_to %}{{ ba.loaned_to }}{% endif %}</td>
+                    <td>{% if ba.used %}{% get_player_name ba.get_tag.tagger user %}{% endif %}</td>
+                    <td>{% if ba.loaned_to %}{% get_player_name ba.loaned_to user %}{% endif %}</td>
                     <td>{% if ba.loaned_at %}{{ ba.loaned_at }}{% endif %}</td>
                     <td class="ba-returned-{{ba.returned}}">{% if ba.returned %}Yes{% else %}No{% endif %}</td>
                 </tr>

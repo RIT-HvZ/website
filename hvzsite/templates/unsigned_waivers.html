@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load hvztags %}
 {% block title %} HvZ @ RIT - Unsigned Waivers {% endblock %}
 
 {% block extrahead %}
@@ -43,7 +44,7 @@ function mark_waiver(player_id) {
             <tbody>
                 {% for playerstatus in unsigned %}
                 <tr>
-                  <td><a href='/player/{{playerstatus.player.player_uuid}}/'>{{playerstatus.player.first_name}} {{playerstatus.player.last_name}}</a></td>
+                  <td><a href='/player/{{playerstatus.player.player_uuid}}/'>{% get_player_name playerstatus.player user %}</a></td>
                   <td>{{playerstatus.player.email}}</td>
                   <td>{{playerstatus.logical_timestamp}}</td>
                   <td><input type="button" class="btn btn-primary" value="Mark Waiver Signed" onclick="mark_waiver('{{playerstatus.player.player_uuid}}')" /></td>

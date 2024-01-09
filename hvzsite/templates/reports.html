@@ -33,7 +33,15 @@
                 {% for report in reports %}
                 <tr onclick="window.location.href='/admin/report/{{report.report_uuid}}/'">
                     <td>{{report.report_uuid}}</td>
-                    <td>{% get_player_name report.get_reporter user %}</td>
+                    <td>
+                        {% if report.reporter %}
+                          <a href="/player/{{report.reporter.player_uuid}}">
+                            {% get_player_name report.get_reporter user %}
+                          </a>
+                        {% else %}
+                          {% get_player_name report.get_reporter user %}
+                        {% endif %}
+                    </td>
                     <td>{{report.timestamp}}</td>
                     <td>{{report.status_text}}</td>
                     <td>{% if report.last_updated %}{{report.last_updated}}{% endif %}</td>

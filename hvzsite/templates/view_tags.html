@@ -51,8 +51,12 @@ function invalidate_tag(tag_id) {
             <tbody>
             {% for tag in tags %}
                 <tr>
-                    <td><a href="/player/{{tag.tagger.player_uuid}}/">{{tag.tagger}}</a></td>
-                    <td><a href="/player/{{tag.taggee.player_uuid}}/">{{tag.taggee}}</a></td>
+                    <td><a href="/player/{{tag.tagger.player_uuid}}/">{% get_player_name tag.tagger user %}</a></td>
+                    {% if tag.taggee %}
+                      <td><a href="/player/{{tag.taggee.player_uuid}}/">{% get_player_name tag.taggee user %}</a></td>
+                    {% else %}
+                      <td><a href="/admin/bodyarmor/{{tag.armor_taggee.armor_uuid}}/">Body Armor "{{tag.armor_taggee.armor_code}}"</a></td>
+                    {% endif %}
                     <td>{{tag.timestamp}}</td>
                     <td>
                         <input type="button"  class="btn btn-danger" value="Invalidate" onclick="invalidate_tag('{{tag.id}}')"/>

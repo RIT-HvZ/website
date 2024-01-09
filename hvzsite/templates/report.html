@@ -22,7 +22,7 @@
 </div>
 <div class="row justify-content-md-center armormainrow">
     <div class="col col-md-3">
-        Reporter: {{report.get_reporter}}
+        Reporter: {% get_player_name report.get_reporter user %}
     </div>
     <div class="col col-md-3">
         Reportee(s): <ul class="reporteelist">{%for reportee in report.reportees.all %}<li><a class="reportee_link" href="/player/{{reportee.player_uuid}}/">{% get_player_name reportee user %}</a></li>{% empty %}N/A{% endfor %}</ul>

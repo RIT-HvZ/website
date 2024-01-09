@@ -34,6 +34,9 @@ def get_player_name(player, requesting_user):
     Returns:
       str: The name of `player`, with the last name possibly obscured
     '''
+    if player is None:
+        return None
+
     if isinstance(player, str):
         return player
 

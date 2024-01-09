@@ -26,8 +26,16 @@
             <tbody>
             {% for tag in tags %}
                 <tr>
-                    <td><a href="/player/{{tag.tagger.player_uuid}}/">{{tag.tagger}}</a></td>
-                    <td>{% if tag.taggee %}<a href="/player/{{tag.taggee.player_uuid}}/">{{tag.taggee}}{% else %}</a>Body Armor{% endif %}</td>
+                    <td><a href="/player/{{tag.tagger.player_uuid}}/">{% get_player_name tag.tagger user %}</a></td>
+                    <td>
+                        {% if tag.taggee %}
+                          <a href="/player/{{tag.taggee.player_uuid}}/">
+                              {% get_player_name tag.taggee user %}
+                          </a>
+                        {% else %}
+                          Body Armor
+                        {% endif %}
+                    </td>
                     <td>{{tag.timestamp}}</td>
                 </tr>
             {% endfor %}

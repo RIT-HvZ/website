@@ -18,6 +18,21 @@ def validate_no_special_chars_in_name(value):
         if special in value:
             raise ValidationError(_("Your name cannot contain special characters besides -,. " "Please give the correct name."), code="invalid")
 
+class PersonModelChoiceField(forms.ModelChoiceField):
+    '''
+    Helpful wrapper for converting a Person object's name into the correct readable form
+    '''
+    def label_from_instance(self, person):
+        return person.readable_name(True)
+
+class PersonModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    '''
+    Helpful wrapper for converting a Person object's name into the correct readable form (multi choice)
+    '''
+    def label_from_instance(self, person):
+        return person.readable_name(True)
+
+
 class HVZRegistrationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = Person
@@ -136,7 +151,16 @@ class AVCreateForm(forms.ModelForm):
 class BlasterApprovalForm(forms.ModelForm):
     class Meta:
         model = Blaster
-        fields=['name','owner','picture','avg_chrono']
+        fields=['name','picture','avg_chrono']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['owner'] = PersonModelChoiceField(queryset=Person.objects.filter(playerstatus__game=get_active_game()) \
+                                                      .filter(playerstatus__status__in=['h','v','e','z','o','x']) \
+                                                      .annotate(num_status=Count('playerstatus')) \
+                                                      .filter(num_status=1))
+        self.fields['owner'].required = True
+
     
 
 class AVForm(forms.Form):
@@ -285,7 +309,6 @@ class ReportForm(forms.ModelForm):
             self.fields['captcha'] = CaptchaField()
             self.fields['captcha'].label = "Captcha (enter the answer to the math problem, not the text of it)"
 
-
 class ReportUpdateForm(forms.ModelForm):
     update_status = forms.ChoiceField(choices=(('x','No change'),('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
     
@@ -298,11 +321,10 @@ class ReportUpdateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['note'].widget.attrs['cols'] = 80
         if report:
-            self.fields['reportees'] = forms.ModelMultipleChoiceField(queryset=Person.objects.filter(playerstatus__game=get_active_game()) \
+            self.fields['reportees'] = PersonModelMultipleChoiceField(queryset=Person.objects.filter(playerstatus__game=get_active_game()) \
                                                         .filter(playerstatus__status__in=['h','v','e','z','o','x']) \
                                                         .annotate(num_status=Count('playerstatus')) \
-                                                        .filter(num_status=1),
-                                                        to_field_name='first_name')
+                                                        .filter(num_status=1))
             self.fields['reportees'].initial = report.reportees.all()
             self.fields['reportees'].required = False
 

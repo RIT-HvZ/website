@@ -75,7 +75,7 @@ function deny_request(request_id) {
             <tbody>
             {% for req in current_requests %}
                 <tr>
-                    <td><a href="/player/{{req.player.player_uuid}}/">{{req.player}}</a></td>
+                    <td><a href="/player/{{req.player.player_uuid}}/">{% get_player_name req.player user %}</a></td>
                     <td>{{req.requested_first_name}} {{req.requested_last_name}}</td>
                     <td>{{req.request_open_timestamp}}</td>
                     <td>
