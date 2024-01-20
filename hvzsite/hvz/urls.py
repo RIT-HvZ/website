@@ -89,6 +89,9 @@ urlpatterns = [
     re_path(r'^admin/name_change_requests/?$', AdminHTMLViews.view_name_change_requests),
     re_path(r'^admin/name_change_response/(?P<request_id>[^/]+)/(?P<command>[^/]+)?$', AdminAPIViews.name_change_response),
 
+    # PII Media
+    re_path(r'^media/profile_pictures/(?P<player_uuid>[^/]+)/(?P<fname>[^/]+)/?$', views.profile_picture_view),
+
     # API Routes
     # re_path(r'^api/?', include(router.urls)),
     re_path(r'^api/discord-id/?$', views.ApiDiscordId.as_view()),
@@ -115,5 +118,5 @@ urlpatterns = [
 
     # API Data-Table Routes
     re_path(r'^api/datatables/bodyarmor_get_loan_targets/?$', AdminAPIViews.bodyarmor_get_loan_targets),
-    re_path(r'^api/datatables/players/?$', views.players_api)
+    re_path(r'^api/datatables/players/?$', views.players_api),
 ]

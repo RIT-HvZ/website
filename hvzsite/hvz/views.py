@@ -2,6 +2,7 @@ import copy
 from itertools import chain
 from functools import lru_cache
 import json
+import os
 import discord
 
 from django.conf import settings
@@ -24,6 +25,7 @@ from .models import About, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, C
 from .models import get_active_game
 from .serializers import GroupSerializer, UserSerializer
 
+from hvzsite.settings import MEDIA_ROOT, STATIC_ROOT
 
 if settings.DISCORD_REPORT_WEBHOOK_URL:
     report_webhook = discord.SyncWebhook.from_url(settings.DISCORD_REPORT_WEBHOOK_URL)
@@ -516,3 +518,10 @@ class ApiCreateBodyArmor(APIView):
 def view_tags(request):
     tags = Tag.objects.filter(game=get_active_game()).order_by("-timestamp")
     return render(request, "tags_user.html", {'tags':tags})
+
+def profile_picture_view(request, player_uuid, fname):
+    if request.user.is_authenticated or Person.objects.get(player_uuid=player_uuid).admin_this_game:
+        new_url = f'{os.path.split(MEDIA_ROOT)[0]}{request.path}'
+    else:
+        new_url = f'{STATIC_ROOT}/images/noprofile.png'
+    return HttpResponse(open(new_url, "rb"))
