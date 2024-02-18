@@ -361,20 +361,27 @@ class ApiPlayerId(APIView):
     def get(self, request):
         r = request.query_params
 
-        if 'uuid' not in r:
-            return HttpResponse(status=400, content='Missing field: "uuid"')
-        player_id = r.get('uuid')
+        if 'uuid' in r:
+            player_id = r.get('uuid')
+            try:
+                player = Person.objects.get(player_uuid=player_id)
+            except Person.DoesNotExist:
+                return HttpResponse(status=404, content='No player with the given user id')
 
-        try:
-            player = Person.objects.get(player_uuid=player_id)
-        except Person.DoesNotExist:
-            return HttpResponse(status=404, content='No player with the given user id')
+        elif 'zid' in r:
+            try:
+                pstatus = PlayerStatus.objects.get(zombie_uuid=r.get('zid'), game=get_active_game())
+            except PlayerStatus.DoesNotExist:
+                return HttpResponse(status=404, content='No player with the given zombie id')
+            player = pstatus.player
+        else:
+            return HttpResponse(status=400, content='Missing required field: Either "uuid" or "zid" necessary to fulfill this request')
 
         data = {
             'uuid': player.player_uuid,
-            'clan': player.clan,
+            'clan': player.clan.clan_uuid,
             'email': player.email,
-            'name': str(player),
+            'name': player.readable_name(True),
             'status': player.current_status.status,
             'tags': player.current_status.num_tags,
         }
