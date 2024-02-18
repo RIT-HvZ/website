@@ -923,3 +923,10 @@ class NameChangeRequest(models.Model):
     request_status = models.CharField(max_length=1, choices=(('n',"New"),('a',"Accepted"),('r',"Rejected"),('c',"Canceled")), default='n')
     request_open_timestamp = models.DateTimeField(auto_now_add=True)
     request_close_timestamp = models.DateTimeField(null=True, blank=True)
+
+class CustomRedirect(models.Model):
+    redirect_name = models.CharField(primary_key=True, unique=True,     verbose_name="Redirect Route Name", max_length=32)
+    target = models.CharField(verbose_name="Target Redirect URL", max_length=256)
+
+    def __str__(self) -> str:
+        return f"Custom redirect: {self.redirect_name} => {self.target}"

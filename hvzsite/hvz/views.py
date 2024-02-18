@@ -13,7 +13,7 @@ from django.db.models import Q, Count
 from django.db.models.functions import Lower
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import api_view
@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from .forms import ReportForm
-from .models import About, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, ClanHistoryItem, DiscordLinkCode, FailedAVAttempt, Mission, PlayerStatus, Person, Report, Rules, Tag
+from .models import About, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, ClanHistoryItem, CustomRedirect, DiscordLinkCode, FailedAVAttempt, Mission, PlayerStatus, Person, Report, Rules, Tag
 from .models import get_active_game
 from .serializers import GroupSerializer, UserSerializer
 
@@ -136,6 +136,15 @@ def player_view(request, player_id, game=None, discord_code=None):
     }
     
     return render(request, "player.html", context)
+
+
+def redirect_view(request, redir_name):
+    try:
+        redir_target = CustomRedirect.objects.get(redirect_name=redir_name)
+    except:
+        return HttpResponse(status=400, content=f'Given redirect string "{redir_name}" does not exist')
+
+    return redirect(redir_target.target)
 
 
 def clan_view(request, clan_name):
