@@ -329,3 +329,6 @@ class AdminHTMLViews(object):
         previous_requests = NameChangeRequest.objects.filter(request_status__in=['c','r','a']).order_by("request_open_timestamp")
         return render(request, "name_change_list.html", {'current_requests': current_requests, 'previous_requests': previous_requests})
 
+    def cull_accounts(request):
+        context = {}
+        return render(request, "account_culling.html", context)

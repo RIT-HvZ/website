@@ -58,6 +58,10 @@ urlpatterns = [
 
     # Admin Routes
     re_path(r'^admin/reset-game/?$', AdminHTMLViews.admin_reset_game),
+    re_path(r'^admin/cullaccounts/?$', AdminHTMLViews.cull_accounts),
+    re_path(r'^api/account_culling_api/?$', AdminAPIViews.get_cullable_accounts),
+    re_path(r'^api/account_culling_rest/?$', AdminAPIViews.account_culling_rest),
+    
     re_path(r'^admin/create-av/?$', AdminHTMLViews.admin_create_av),
     re_path(r'^admin/view-avs/?$', AdminHTMLViews.admin_view_avs),
     re_path(r'^admin/view-tags/?$', AdminHTMLViews.admin_view_tags),

@@ -340,3 +340,54 @@ class AdminAPIViews(object):
             return JsonResponse({"status": "success"})
         else:
             return JsonResponse({"status": "unknown command"})
+
+    @api_view(["GET"])
+    def get_cullable_accounts(request):
+        r = request.query_params
+        try:
+            order_column = int(r.get("order[0][column]"))
+            order_column_name = r.get(f"columns[{order_column}][name]")
+            print(f"Order column name: {order_column_name}")
+            order_direction = r.get("order[0][dir]")
+            assert order_direction in ("asc","desc")
+            limit = int(request.query_params["length"])
+            start = int(request.query_params["start"])
+            search = r["search[value]"]
+        except AssertionError:
+            raise
+        query = Person.full_name_objects.exclude(playerstatus__status__in=['h','v','e','z','o','m','a'])
+        records_total = query.count()
+        if search != "":
+            query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
+        query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name","creationdate":"date_joined"}[order_column_name]}""")
+        result = []
+        filtered_length = len(query)
+        if start < filtered_length:
+            for person in query[start:]:
+                if limit == 0:
+                    break
+                result.append({
+                    "name": f"""{html.escape(person.readable_name(True))}""",
+                    "creationdate": f"""{person.date_joined}""",
+                    "gamesplayed": f"""{PlayerStatus.objects.filter(player=person, status__in=['h','v','e','z','o','m','a']).count()}""",
+                    "email": f"""{html.escape(person.email)}""",
+                    "DT_RowClass": "dt_nonplayer",
+                    "activation_link": f"""<button type="button" class="btn btn-danger" data-account-uuid="{person.player_uuid}" onclick="handle_delete(this)">Delete Account</button>"""
+                })
+                limit -= 1
+        data = {
+            "draw": int(r['draw']),
+            "recordsTotal": records_total,
+            "recordsFiltered": filtered_length,
+            "data": result
+        }
+        return JsonResponse(data)
+    
+    @api_view(["POST"])
+    def account_culling_rest(request):
+        try:
+            requested_player = Person.objects.get(player_uuid=request.POST["deleted_player"])
+            requested_player.delete()
+            return JsonResponse({"status":"success"})
+        except Exception as e:
+            return JsonResponse({"status":"error", "error": str(e)})
