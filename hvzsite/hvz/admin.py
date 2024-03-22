@@ -2,12 +2,14 @@ from django.contrib import admin
 
 # Register your models here.
 
-from django.contrib.auth.admin import UserAdmin
 from .models import *
+
+class PersonAdmin(admin.ModelAdmin):
+    search_fields = ["first_name","last_name","email","player_uuid"]
 
 admin.site.register(Game)
 admin.site.register(Mission)
-admin.site.register(Person)
+admin.site.register(Person, PersonAdmin)
 admin.site.register(PlayerStatus)
 admin.site.register(BadgeType)
 admin.site.register(BadgeInstance)
