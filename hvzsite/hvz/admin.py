@@ -7,10 +7,13 @@ from .models import *
 class PersonAdmin(admin.ModelAdmin):
     search_fields = ["first_name","last_name","email","player_uuid"]
 
+class PlayerStatusAdmin(admin.ModelAdmin):
+    search_fields = ["player__first_name","player__last_name","player__player_uuid"]
+
 admin.site.register(Game)
 admin.site.register(Mission)
 admin.site.register(Person, PersonAdmin)
-admin.site.register(PlayerStatus)
+admin.site.register(PlayerStatus, PlayerStatusAdmin)
 admin.site.register(BadgeType)
 admin.site.register(BadgeInstance)
 admin.site.register(Tag)
