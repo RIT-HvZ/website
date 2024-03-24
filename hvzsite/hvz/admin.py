@@ -8,7 +8,7 @@ class PersonAdmin(admin.ModelAdmin):
     search_fields = ["first_name","last_name","email","player_uuid"]
 
 class PlayerStatusAdmin(admin.ModelAdmin):
-    search_fields = ["player__first_name","player__last_name","player__player_uuid"]
+    search_fields = ["player__first_name","player__last_name","player__email","player__player_uuid"]
 
 admin.site.register(Game)
 admin.site.register(Mission)
