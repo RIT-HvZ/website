@@ -356,7 +356,8 @@ class PlayerStatus(models.Model):
     class Meta:
         unique_together = (('tag1_uuid', 'game'),
                            ('tag2_uuid', 'game'),
-                           ('zombie_uuid', 'game'))
+                           ('zombie_uuid', 'game'),
+                           ('player', 'game'))
 
     def __str__(self) -> str:
         return f"Status of {self.player} during game \"{self.game}\" ({self.get_status_display()})"
