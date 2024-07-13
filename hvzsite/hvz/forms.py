@@ -221,6 +221,8 @@ class PostGameSurveyForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['game'] = forms.CharField(widget = forms.HiddenInput(), required = False)
+        self.fields['mission'] = forms.ModelChoiceField(queryset=Mission.objects.filter(game=get_active_game()))
+
         if len(args) > 0:
             for key in args[0].keys():
                 if key.startswith("option_text_") and not key.startswith("option_text_id") or \
