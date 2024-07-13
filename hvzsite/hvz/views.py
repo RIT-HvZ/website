@@ -12,7 +12,7 @@ from django.core import exceptions
 from django.db.models import Q, Count
 from django.db.models.functions import Lower
 from django.db.utils import IntegrityError
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 
 from rest_framework import permissions, viewsets
@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from .forms import ReportForm
-from .models import About, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, ClanHistoryItem, CustomRedirect, DiscordLinkCode, FailedAVAttempt, Mission, PlayerStatus, Person, Report, Rules, Tag
+from .models import About, Announcement, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, ClanHistoryItem, CustomRedirect, DiscordLinkCode, FailedAVAttempt, Mission, PlayerStatus, Person, Report, Rules, Tag
 from .models import get_active_game
 from .serializers import GroupSerializer, UserSerializer
 
@@ -41,7 +41,7 @@ def for_all_methods(decorator):
 
 
 @lru_cache(maxsize=1)
-def get_recent_events(most_recent_tag, most_recent_av):
+def get_recent_events(most_recent_tag, most_recent_av, most_recent_registration):
     game = get_active_game()
     humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v') | Q(status='e')).count()
     zombiecount = PlayerStatus.objects.filter(game=game).filter(Q(status='z') | Q(status='x') | Q(status='o')).count()
@@ -77,15 +77,19 @@ def get_recent_events(most_recent_tag, most_recent_av):
 
 def index(request):
     game = get_active_game()
-    if len(most_recent_tags := Tag.objects.filter(game=get_active_game()).order_by('-timestamp')) > 0:
+    if len(most_recent_tags := Tag.objects.filter(game=game).order_by('-timestamp')) > 0:
         most_recent_tag = most_recent_tags[0]
     else:
         most_recent_tag = None
-    if len(most_recent_avs := AntiVirus.objects.filter(game=get_active_game(), used_by__isnull=False).order_by('-time_used')) > 0:
+    if len(most_recent_avs := AntiVirus.objects.filter(game=game, used_by__isnull=False).order_by('-time_used')) > 0:
         most_recent_av = most_recent_avs[0]
     else:
         most_recent_av = None
-    (humancount, zombiecount, most_tags, merged_recents, timestamps, zombiecounts, humancounts) = get_recent_events(most_recent_tag, most_recent_av)
+    if len(most_recent_registrations := PlayerStatus.objects.filter(game=game).order_by("-activation_timestamp")) > 0:
+        most_recent_registration = most_recent_registrations[0]
+    else:
+        most_recent_registration = None
+    (humancount, zombiecount, most_tags, merged_recents, timestamps, zombiecounts, humancounts) = get_recent_events(most_recent_tag, most_recent_av, most_recent_registration)
     return render(request, "index.html", {'game': game, 'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_events': merged_recents[0:10], 'timestamps': timestamps, 'zombiecounts': zombiecounts, 'humancounts': humancounts, 'game':game})
 
 
@@ -541,3 +545,11 @@ def profile_picture_view(request, player_uuid, fname):
     else:
         new_url = f'{STATIC_ROOT}/images/noprofile.png'
     return HttpResponse(open(new_url, "rb"))
+
+
+def view_announcement(request, announcement_id):
+    try:
+        announcement = Announcement.objects.get(id=announcement_id)
+        return render(request, "announcement.html", {'announcement':announcement})
+    except:
+        return HttpResponseRedirect("/")

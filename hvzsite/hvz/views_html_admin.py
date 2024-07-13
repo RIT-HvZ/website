@@ -8,7 +8,7 @@ from django.utils import timezone
 from .decorators import admin_required
 from .forms import AboutUpdateForm, AnnouncementForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm
 from .models import get_active_game, reset_active_game
-from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Mission, NameChangeRequest, Person, PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Tag
+from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Clan, Mission, NameChangeRequest, Person, PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Tag
 from .views import for_all_methods
 
 
@@ -315,14 +315,7 @@ class AdminHTMLViews(object):
                 announcement = form.save()
                 return HttpResponseRedirect(f"/announcement/{announcement.id}/")
         return render(request, "edit_announcement.html", {'form':form})
-
-
-    def view_announcement(request, announcement_id):
-        try:
-            announcement = Announcement.objects.get(id=announcement_id)
-            return render(request, "announcement.html", {'announcement':announcement})
-        except:
-            return HttpResponseRedirect("/")
+    
             
     def view_name_change_requests(request):
         current_requests = NameChangeRequest.objects.filter(request_status='n').order_by("request_open_timestamp")
@@ -332,3 +325,7 @@ class AdminHTMLViews(object):
     def cull_accounts(request):
         context = {}
         return render(request, "account_culling.html", context)
+
+    def manage_clans(request):
+        clans = Clan.objects.all().order_by('name')
+        return render(request, "manage_clans.html", {'clans':clans})

@@ -199,7 +199,7 @@ class AdminAPIViews(object):
             search = r["search[value]"]
         except AssertionError:
             raise
-        query = Person.full_name_objects.filter(is_banned=False, is_active=True).exclude(playerstatus__game=game, playerstatus__status__in=['h','v','e','z','x','m','a','o'])
+        query = Person.full_name_objects.filter(is_banned=False, is_active=True).filter(Q(playerstatus__game=game)&Q(playerstatus__status='n'))
         records_total = query.count()
         if search != "":
             query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))

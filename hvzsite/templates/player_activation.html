@@ -181,9 +181,10 @@ let waiver_signed = false;
                 {"className": "dt_activate", "name": "activation_link"  , "data": "activation_link", "orderable": false},
             ],
         } );
-        setInterval( function () {
-           datatable.ajax.reload( null, false ); // user paging is not reset on reload
-        }, 2000 );
+        $("#refreshbutton").click(function() {
+          datatable.ajax.reload( null, false );
+
+        })
         var exampleModal = document.getElementById('activationmodal');
         exampleModal.addEventListener('show.bs.modal', function (event) {
           
@@ -299,6 +300,7 @@ let waiver_signed = false;
 </div>
 <div class="row">
     <div class="col">
+        <button type="button" id="refreshbutton" class="btn btn-primary">Refresh</button>
         <table id="players" class="table table-striped display">
             <thead>
                 <tr>
