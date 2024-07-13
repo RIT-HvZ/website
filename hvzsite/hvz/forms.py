@@ -41,6 +41,9 @@ class HVZRegistrationForm(UserCreationForm):
             User.get_email_field_name(),
             "first_name", "last_name", "password1", "password2")
 
+    captcha = CaptchaField()
+    captcha.label = "Captcha (enter the answer to the math problem, not the text of it)"
+
     error_css_class = "error"
     required_css_class = "required"
 
