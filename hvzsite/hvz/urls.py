@@ -43,7 +43,7 @@ urlpatterns = [
     re_path(r'^clan/invitation_response/(?P<invite_id>[^/]+)/(?P<command>[^/]+)?$', UserAPIViews.clan_api_userresponse),
     re_path(r'^clan/request_response/(?P<request_id>[^/]+)/(?P<command>[^/]+)?$', UserAPIViews.clan_api_leaderresponse),
     re_path(r'^modify_clan/(?P<clan_name>[^/]+)/', UserHTMLViews.modify_clan_view),
-    re_path(r'^announcement/(?P<announcement_id>[^/]+)/?$', AdminHTMLViews.view_announcement),
+    re_path(r'^announcement/(?P<announcement_id>[^/]+)/?$', views.view_announcement),
     re_path(r'^tags/?$', views.view_tags),
     re_path(r'^ext/(?P<redir_name>[^/]+)/?$', views.redirect_view),
 
