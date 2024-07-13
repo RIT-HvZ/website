@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Inactive Account Culling {% endblock %}
+
+{% block extrahead %}
+<link href="{% static 'css/player_activation.css' %}" rel="stylesheet">
+
+<script>
+    var datatable;
+    window.onbeforeunload = function () {
+        return true;
+    };
+
+
+    $(document).ready(function () {
+        datatable = $('#players').DataTable({
+            "serverSide": true,
+            "ajax": {
+                "url": '/api/account_culling_api',
+                "type": 'GET'
+            },
+            "scrollX": true,
+            "order": [[0, 'asc']],
+            "columns": [
+                { "className": "dt_creationdate", "name": "creationdate", "data": "creationdate" },
+                { "className": "dt_name", "name": "name", "data": "name" },
+                { "className": "dt_email", "name": "email", "data": "email", "orderable": false },
+                { "className": "dt_gamesplayed", "name": "gamesplayed", "data": "gamesplayed" },
+                { "className": "dt_activate", "name": "activation_link", "data": "activation_link", "orderable": false },
+            ],
+        });
+    });
+
+function handle_delete(button) {
+    var uuid = $(button).attr('data-account-uuid');
+    if (confirm("Delete inactive account?")) {
+        console.log("Sending command");
+    } else {
+        console.log("Not sending command")
+        return;
+    }
+    $.ajax('/api/account_culling_rest',{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            deleted_player: uuid
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+            console.log("SUCCESSFULLY DELETED PLAYER");
+            datatable.ajax.reload(null, false);
+        }
+        else {
+            console.log("FAILED TO DELETE PLAYER");
+        }
+    })
+}
+</script>
+{% endblock %}
+
+
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Inactive Account Culling </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="players" class="table table-striped display">
+            <thead>
+                <tr>
+                    <th class="foo">Creation Date</th>
+                    <th class="foo">Name</th>
+                    <th class="email">Email</th>
+                    <th class="foo">Games Played</th>
+                    <th class="activate">Delete?</th>
+            </thead>
+        </table>
+    </div>
+</div>
+{% endblock %}
