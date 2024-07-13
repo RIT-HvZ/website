@@ -12,7 +12,7 @@ from django.core import exceptions
 from django.db.models import Q, Count
 from django.db.models.functions import Lower
 from django.db.utils import IntegrityError
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 
 from rest_framework import permissions, viewsets
@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from .forms import ReportForm
-from .models import About, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, ClanHistoryItem, CustomRedirect, DiscordLinkCode, FailedAVAttempt, Mission, PlayerStatus, Person, Report, Rules, Tag
+from .models import About, Announcement, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, ClanHistoryItem, CustomRedirect, DiscordLinkCode, FailedAVAttempt, Mission, PlayerStatus, Person, Report, Rules, Tag
 from .models import get_active_game
 from .serializers import GroupSerializer, UserSerializer
 
@@ -545,3 +545,11 @@ def profile_picture_view(request, player_uuid, fname):
     else:
         new_url = f'{STATIC_ROOT}/images/noprofile.png'
     return HttpResponse(open(new_url, "rb"))
+
+
+def view_announcement(request, announcement_id):
+    try:
+        announcement = Announcement.objects.get(id=announcement_id)
+        return render(request, "announcement.html", {'announcement':announcement})
+    except:
+        return HttpResponseRedirect("/")
