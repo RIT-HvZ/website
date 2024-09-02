@@ -201,8 +201,8 @@ class AdminAPIViews(object):
             raise
         query = Person.full_name_objects.filter(is_banned=False, is_active=True)
         records_total = query.count()
-        if search != "":
-            query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
+        for search_term in search.split():
+            query = query.filter(Q(first_name__icontains=search_term) | Q(last_name__icontains=search_term))
         query = query.order_by(f"""{'-' if order_direction == 'desc' else ''}{ {"name":"full_name"}[order_column_name]}""")
         result = []
         filtered_length = len(query)
