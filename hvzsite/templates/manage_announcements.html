@@ -26,14 +26,14 @@
         <table id="announcements" class="table table-striped display adminlist">
             <thead>
                 <tr>
-                    <th class="foo">Post Date</th>
+                    <th class="foo">Originally Posted</th>
                     <th class="foo">Active?</th>
                     <th class="foo">Short Form</th>
             </thead>
             <tbody>
-                {% for announcement in announcements %}
+                {% for announcement in editable_announcements %}
                 <tr onclick="window.location.href='/admin/announcement/{{announcement.id}}/'">
-                    <td>{{announcement.post_date}}</td>
+                    <td>{{announcement.post_time}}</td>
                     <td>{{announcement.active}}</td>
                     <td>{{announcement.short_form}}</td>
                 </tr>

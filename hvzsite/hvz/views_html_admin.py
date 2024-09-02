@@ -296,7 +296,7 @@ class AdminHTMLViews(object):
     
     def manage_announcements(request):
         announcements = Announcement.objects.all().order_by('-post_time')
-        return render(request, "manage_announcements.html", {'announcements':announcements})
+        return render(request, "manage_announcements.html", {'editable_announcements':announcements})
 
 
     def edit_announcement(request, announcement_id):
