@@ -199,7 +199,7 @@ class AdminAPIViews(object):
             search = r["search[value]"]
         except AssertionError:
             raise
-        query = Person.full_name_objects.filter(is_banned=False, is_active=True).filter(Q(playerstatus__game=game)&Q(playerstatus__status='n'))
+        query = Person.full_name_objects.filter(is_banned=False, is_active=True)
         records_total = query.count()
         if search != "":
             query = query.filter(Q(first_name__icontains=search) | Q(last_name__icontains=search) | Q(clan__name__icontains=search))
@@ -210,12 +210,15 @@ class AdminAPIViews(object):
             for person in query[start:]:
                 if limit == 0:
                     break
+                disabled = ''
+                if not person.current_status.is_nonplayer():
+                    disabled = 'disabled'
                 result.append({
                     "name": f"""{html.escape(person.readable_name(True))}""",
                     "pic": f"""<img src='{person.picture_url}' class='dt_profile' />""",
                     "email": f"""{html.escape(person.email)}""",
                     "DT_RowClass": {"h": "dt_human", "v": "dt_human", "a": "dt_admin", "z": "dt_zombie", "o": "dt_zombie", "n": "dt_nonplayer", "x": "dt_zombie", "m": "dt_mod"}[person.current_status.status],
-                    "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{html.escape(person.first_name)} {html.escape(person.last_name)}" data-bs-activationid="{person.player_uuid}">Register</button>"""
+                    "activation_link": f"""<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activationmodal" data-bs-activationname="{html.escape(person.first_name)} {html.escape(person.last_name)}" data-bs-activationid="{person.player_uuid}" {disabled}>Register</button>"""
                 })
                 limit -= 1
         data = {
