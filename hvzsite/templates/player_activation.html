@@ -19,7 +19,7 @@ function clearphoto() {
   }
 
 let photo_taken = false;
-let waiver_signed = false;
+ // let waiver_signed = false;
 
 (() => {
   // The width and height of the captured photo. We will set the
@@ -139,7 +139,7 @@ let waiver_signed = false;
       const data = canvas.toDataURL("image/jpeg");
       photo.setAttribute("src", data);
       photo_taken = true;
-      if (photo_taken && document.getElementById("confirmwaiver").checked) {
+      if (photo_taken /* && document.getElementById("confirmwaiver").checked */) {
         $('#confirmactivation').removeAttr('disabled');
       }
     } else {
@@ -155,17 +155,17 @@ let waiver_signed = false;
 })();
 
     $(document).ready(function () {
-      document.getElementById('confirmwaiver').checked = false;
-      $('#confirmwaiver').change(function() {
-        if (this.checked && photo_taken)
-        {
-          $('#confirmactivation').removeAttr('disabled');
-        }
-        else
-        { 
-          $('#confirmactivation').attr('disabled','disabled');
-        }
-      }); 
+      // document.getElementById('confirmwaiver').checked = false;
+      // $('#confirmwaiver').change(function() {
+      //   if (this.checked && photo_taken)
+      //   {
+      //     $('#confirmactivation').removeAttr('disabled');
+      //   }
+      //   else
+      //   {
+      //     $('#confirmactivation').attr('disabled','disabled');
+      //   }
+      // });
         var datatable = $('#players').DataTable( {
             "serverSide": true,
             "ajax": {
@@ -197,23 +197,23 @@ let waiver_signed = false;
           $("#modal_status").html("");
           // If necessary, you could initiate an AJAX request here
           var modal_button = exampleModal.querySelector("#confirmactivation")
-          var modal_checkbox = exampleModal.querySelector("#confirmwaiver")
+          // var modal_checkbox = exampleModal.querySelector("#confirmwaiver")
           var new_button = modal_button.cloneNode(true);
-          var new_checkbox = modal_checkbox.cloneNode(true);
+          // var new_checkbox = modal_checkbox.cloneNode(true);
           new_button.disabled = true;
-          new_checkbox.checked = false;
+          // new_checkbox.checked = false;
           modal_button.parentNode.replaceChild(new_button, modal_button);
-          modal_checkbox.parentNode.replaceChild(new_checkbox, modal_checkbox);
-          new_checkbox.addEventListener("change", function(event) {
-            if (this.checked && photo_taken)
-            {
-              $('#confirmactivation').removeAttr('disabled');
-            }
-            else
-            { 
-              $('#confirmactivation').attr('disabled','disabled');
-            }
-          });
+          // modal_checkbox.parentNode.replaceChild(new_checkbox, modal_checkbox);
+          // new_checkbox.addEventListener("change", function(event) {
+          //   if (this.checked && photo_taken)
+          //   {
+          //     $('#confirmactivation').removeAttr('disabled');
+          //   }
+          //   else
+          //   {
+          //     $('#confirmactivation').attr('disabled','disabled');
+          //   }
+          // });
           new_button.addEventListener("click", function(event){
             event.preventDefault()
             new_button.disabled = true;
@@ -224,7 +224,7 @@ let waiver_signed = false;
               data: {
                 activated_player: activationid,
                 player_photo: $("#photo").attr('src'),
-                waiver_signed: document.getElementById("confirmwaiver").checked,
+                // waiver_signed: document.getElementById("confirmwaiver").checked,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
               }
             }).done( function (data) {
@@ -232,7 +232,7 @@ let waiver_signed = false;
               if (data.status == "success") {
                 clearphoto();
                 $('#confirmactivation').attr('disabled','disabled');
-                $('#confirmwaiver').attr('value','faslse');
+                // $('#confirmwaiver').attr('value','false');
                 $('#activationmodal').modal('hide');
               }
               else {
@@ -276,8 +276,8 @@ let waiver_signed = false;
           <div class="output">
             <img id="photo" alt="The screen capture will appear in this box." />
           </div>
-          <h2 class="cameralabel">Player Waiver</h2>
-          <label for="confirmwaiver"> Has this player signed a waiver?</label><input type="checkbox" value="false" id="confirmwaiver">
+          <!-- <h2 class="cameralabel">Player Waiver</h2>
+               <label for="confirmwaiver"> Has this player signed a waiver?</label><input type="checkbox" value="false" id="confirmwaiver"> -->
         </div>
         <div class="modal-footer">
           <span id="modal_info">Ensure Player has a signed waiver before registering!</span>

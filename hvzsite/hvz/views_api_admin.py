@@ -245,7 +245,8 @@ class AdminAPIViews(object):
             person_status = PlayerStatus.objects.get(player=requested_player, game=game)
             person_status.activation_timestamp = timezone.now()
             person_status.status = 'h'
-            person_status.waiver_signed = (request.POST["waiver_signed"] == "true")
+            # Going forward, always assume all players have signed a waiver
+            person_status.waiver_signed = True #(request.POST["waiver_signed"] == "true")
             requested_player.save()
             person_status.save()
             return JsonResponse({"status":"success"})

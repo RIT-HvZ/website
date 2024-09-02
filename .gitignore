@@ -1,6 +1,7 @@
 hvzsite/secret.txt
 hvzsite/secrets.json
 hvzvenv
+venv
 *.pyc
 hvzsite/hvz/migrations
 hvzsite/static/profile_pictures/*
