@@ -942,3 +942,14 @@ class Scoreboard(models.Model):
 
     def __str__(self) -> str:
         return f'Scoreboard "{self.shortname}" for game {self.associated_game.game_name}'
+
+    def visible_to(self, user: Person) -> bool:
+        status = user.current_status
+
+        if self.visibility == 'e' or status.is_staff:
+            return True
+        if self.visibility == 'h' and status.is_human:
+            return True
+        if self.visibility == 'z' and status.is_zombie:
+            return True
+        return False

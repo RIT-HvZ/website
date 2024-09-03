@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from .forms import ReportForm
-from .models import About, Announcement, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, ClanHistoryItem, CustomRedirect, DiscordLinkCode, FailedAVAttempt, Mission, PlayerStatus, Person, Report, Rules, Tag
+from .models import About, Announcement, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, ClanHistoryItem, CustomRedirect, DiscordLinkCode, FailedAVAttempt, Mission, PlayerStatus, Person, Report, Rules, Scoreboard, Tag
 from .models import get_active_game
 from .serializers import GroupSerializer, UserSerializer
 
@@ -90,7 +90,18 @@ def index(request):
     else:
         most_recent_registration = None
     (humancount, zombiecount, most_tags, merged_recents, timestamps, zombiecounts, humancounts) = get_recent_events(most_recent_tag, most_recent_av, most_recent_registration)
-    return render(request, "index.html", {'game': game, 'humancount': humancount, 'zombiecount': zombiecount, 'most_tags': most_tags[:10], 'recent_events': merged_recents[0:10], 'timestamps': timestamps, 'zombiecounts': zombiecounts, 'humancounts': humancounts, 'game':game})
+
+    scoreboards = Scoreboard.objects.filter(associated_game=game, active=True)
+
+    return render(request, "index.html", {'game': game,
+                                          'humancount': humancount,
+                                          'zombiecount': zombiecount,
+                                          'most_tags': most_tags[:10],
+                                          'recent_events': merged_recents[0:10],
+                                          'timestamps': timestamps,
+                                          'zombiecounts': zombiecounts,
+                                          'humancounts': humancounts,
+                                          'scoreboards': scoreboards})
 
 
 def infection(request):
