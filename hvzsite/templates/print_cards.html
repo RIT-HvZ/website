@@ -1,183 +1,36 @@
 <!DOCTYPE html>
+
 {% load static %}
 <html lang="en">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-<link href="https://fonts.cdnfonts.com/css/droid-sans-mono-2" rel="stylesheet">
-<script src="{% static 'js/datamatrix.min.js' %}"></script>
-<script>
-function markprinted() {
-    confirm = window.confirm("Mark all players as printed? Note: THIS CANNOT BE UNDONE!");
-    if (confirm) {
-        window.location.href='/admin/mark_printed/';
-    }
-}
-$(document).ready(function () {
-    $("p.name").each(function(index, name_elem){
-        var name_length = $(name_elem).text().length;
-        if( name_length > 37 && name_length <= 43){
-            $(name_elem).addClass("longassname");
-        } else if (name_length > 43 ){
-            $(name_elem).addClass("reallylongassname");
-        }
-    });
-})
-</script>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>HvZ Player Id Cards</title>
-
-    <!--<link href="./HvZ Player Id Cards_files/css" rel="stylesheet" type="text/css">-->
-    <style type="text/css">
-        body {
-            font-family: 'Droid Sans Mono', serif;
-        }
-
-        .card-spacer {
-            height: 14em;
-        }
-
-        .card {
-            float: left;
-            width: 3.5in;
-            height: 2in;
-            background-color: #FFF;
-            border: 0.10in #00CC00 solid;
-            overflow: hidden;
-            border-radius: 10px;
-            box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            -webkit-box-sizing: border-box;
-        }
-
-        .card.mod {
-            border-color: #0000CC;
-        }
-
-        .card.admin {
-            border-color: #EEEE00;
-        }
-
-        .card .info {
-            position: absolute;
-            font-size: 14px;
-            color: black;
-            margin-top: -10px;
-            margin-left: 105px;
-            width: 130px;
-            height: 2.8cm;
-            line-height: 1.2em;
-            word-wrap: break-word;
-        }
-
-        .card .name {
-            font-weight: bold;
-            white-space: nowrap; 
-            max-width:100%;
-            width: 100%;
-            overflow: hidden;
-            text-overflow: clip;
-        }
-
-        .card .avatar img {
-            width: 66px;
-            height: 66px;
-            max-height: 100%;
-            max-width: 100%;
-            float: right;
-            background-color: #D4D4D4;
-        }
-
-        .card .qr svg {
-            margin-top: 0px;
-            padding-top: 2px;
-            padding-left: 4px;
-            padding-bottom: 0;
-            width: 98px;
-            height: 98px;
-            max-height: 100%;
-            max-width: 100%;
-            background-color: #fff;
-        }
-
-        .card .top {
-            width: 3.3in;
-            height: 1.2in;
-        }
-
-        .card .id_number {
-            width: 3.3in;
-            text-align: center;
-            color: black;
-            font-size: 0.8em;
-        }
-
-        .card .bottom .ids {
-            height: 3.5em;
-        }
-        .card .id_number {
-            line-height: 1.3em;
-        }
-
-        .card .human-id {
-            margin-top: 0.5em;
-            padding-bottom: 0.3em;
-        }
-        @media print {
-            #mark_printed {
-                display: none;
-            }
-        }
-        .playercardtable {
-            width: 3.3in;
-            padding: 0;
-            margin: 0;
-            border-spacing: 0px;
-        }
-        .toprow {
-            font-size: 14px;
-            color: black;            
-            font-weight: bold;
-            line-height: 1.2em;
-            text-align: center;
-        }
-        .toprow td {
-            width: 3.3in;
-            max-width: 3.3in;
-        }
-        tr, td, p {
-            padding: 0;
-            margin: 0;
-        }
-        .card  img {
-            width: 100px;
-            height: 100px;
-            max-height: 100%;
-            max-width: 100%;
-            background-color: #D4D4D4;
-        }
-        .scan_and_image td{
-            text-align: center;
-        }
-        .border_sandwich td{
-            border-top: 1px solid black;
-            border-bottom: 1px solid black;
-        }
-        .card .toprow p.name.longassname {
-            font-size: 12px;
-        }
-        .card .toprow p.name.reallylongassname {
-            font-size: 10px;
-            white-space: normal;
-            line-height: 10px;
-        }
-        @media print {
-            .pagebreak { page-break-before: always; }
-        }
-    </style>
-</head>
-<body>
-    {% if not preview %}{% if not print_one %}<button id="mark_printed" class="btn btn-primary" onclick="markprinted()">Mark All as Printed</button>{% endif %}{% endif %}
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+        <link href="https://fonts.cdnfonts.com/css/droid-sans-mono-2" rel="stylesheet">
+        <link href="{% static 'css/cards.css' %}" rel="stylesheet">
+        <script src="{% static 'js/datamatrix.min.js' %}"></script>
+        <script>
+         function markprinted() {
+             confirm = window.confirm("Mark all players as printed? Note: THIS CANNOT BE UNDONE!");
+             if (confirm) {
+                 window.location.href='/admin/mark_printed/';
+             }
+         }
+         $(document).ready(function () {
+             $("p.name").each(function(index, name_elem){
+                 var name_length = $(name_elem).text().length;
+                 if( name_length > 37 && name_length <= 43){
+                     $(name_elem).addClass("longassname");
+                 } else if (name_length > 43 ){
+                     $(name_elem).addClass("reallylongassname");
+                 }
+             });
+         })
+        </script>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>HvZ Player Id Cards</title>
+    </head>
+    <body>
+        <!-- {% if not preview %}{% if not print_one %}<button id="mark_printed" class="btn btn-primary" onclick="markprinted()">Mark All as Printed</button>{% endif %}{% endif %} -->
     {% for player in players %}
         {% if forloop.counter0|divisibleby:2 %}<br style="clear:both">{%endif%}
         {% if forloop.counter0|divisibleby:8 %}<div class="pagebreak"></div>{%endif%}

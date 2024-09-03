@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Print IDs {% endblock %}
+
+{% block extrahead %}
+    <link href="{% static 'css/cards.css' %}" rel="stylesheet">
+    <script>
+         function toLocalISOString(date) {
+             const localDate = new Date(date - date.getTimezoneOffset() * 60000); //offset in milliseconds. Credit https://stackoverflow.com/questions/10830357/javascript-toisostring-ignores-timezone-offset
+
+             // Optionally remove second/millisecond if needed
+             localDate.setSeconds(null);
+             localDate.setMilliseconds(null);
+             return localDate.toISOString().slice(0, -1);
+         }
+
+         let now = new Date();
+         let past = new Date(now - 2*60*60*1000); // let the past time be the 2 previous hours
+         window.addEventListener("load", () => {
+             $("#date_end")[0].value = toLocalISOString(now);
+         });
+         window.addEventListener("load", () => {
+             $("#date_start")[0].value = toLocalISOString(past);
+         });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2>Print Player IDs</h2>
+        
+        <form action="/admin/view_print">
+            <div class="form-group">
+                <label class="form-label" for="date_start"> IDs from: </label>
+                <input id="date_start" name="date_start" type="datetime-local" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="date_end"> IDs until: </label>
+                <input id="date_end" name="date_end" type="datetime-local" />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="preview"> Hide player IDs: </label>
+                <input name="preview" type="checkbox" checked />
+            </div>
+
+            <input type="submit">
+        </form>
+    </div>
+{% endblock %}

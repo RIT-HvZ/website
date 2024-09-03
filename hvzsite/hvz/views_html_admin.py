@@ -4,6 +4,7 @@ from django.db.models.functions import Lower
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 from .decorators import admin_required
 from .forms import AboutUpdateForm, AnnouncementForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm
@@ -267,23 +268,28 @@ class AdminHTMLViews(object):
 
 
     def print_ids(request, preview=False):
-        to_print = PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n')).order_by(Lower('player__first_name'), Lower('player__last_name'))
+        query_vals = request.GET
+        start = parse_datetime(request.GET['date_start'])
+        end = parse_datetime(request.GET['date_end'])
+        to_print = PlayerStatus.objects.filter(Q(game=get_active_game()) &
+                                               ~Q(status='n') &
+                                               Q(activation_timestamp__gte=start) &
+                                               Q(activation_timestamp__lte=end)).order_by(Lower('player__first_name'), Lower('player__last_name'))
         context = {
             "players": [status.player for status in to_print],
-            "preview": preview,
+            "preview": 'preview' in query_vals,
             "print_one": False,
             "url": f"{request.scheme}://{get_current_site(request)}"
         }
         return render(request, "print_cards.html", context)
 
+    def print_choice(request):
+        return render(request, "print_cards_choice.html")
 
-    def print_preview(request):
-        return AdminHTMLViews.print_ids(request, True)
-
-
-    def mark_printed(request):
-        PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n')).update(printed=True)
-        return HttpResponseRedirect("/")
+    # TODO: This should become unused and safe to remove
+    # def mark_printed(request):
+    #     PlayerStatus.objects.filter(printed=False, game=get_active_game()).filter(~Q(status='n')).update(printed=True)
+    #     return HttpResponseRedirect("/")
 
 
     def view_failed_av_list(request):
