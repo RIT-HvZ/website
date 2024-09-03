@@ -7,9 +7,9 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from .decorators import admin_required
-from .forms import AboutUpdateForm, AnnouncementForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm
+from .forms import AboutUpdateForm, AnnouncementForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm, ScoreboardForm
 from .models import get_active_game, reset_active_game
-from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Clan, Mission, NameChangeRequest, Person, PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Tag
+from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Clan, Mission, NameChangeRequest, Person, PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Scoreboard, Tag
 from .views import for_all_methods
 
 
@@ -323,6 +323,28 @@ class AdminHTMLViews(object):
         return render(request, "edit_announcement.html", {'form':form})
     
             
+    def manage_scoreboards(request):
+        scoreboards = Scoreboard.objects.all().order_by('-id')
+        return render(request, "manage_scoreboards.html", {'scoreboards':scoreboards})
+
+    def edit_scoreboard(request, scoreboard_id):
+        if request.method == "GET":
+            if scoreboard_id == "new":
+                form = ScoreboardForm()
+            else:
+                form = ScoreboardForm(instance=Scoreboard.objects.get(id=scoreboard_id))
+        else:
+            if scoreboard_id == "new":
+                form = ScoreboardForm(request.POST)
+            else:
+                form = ScoreboardForm(request.POST, instance=Scoreboard.objects.get(id=scoreboard_id))
+
+            if form.is_valid():
+                scoreboard = form.save()
+                return HttpResponseRedirect(f"/admin/scoreboard/{scoreboard.id}/")
+        return render(request, "edit_scoreboard.html", {'form':form, 'new': (scoreboard_id=='new')})
+
+
     def view_name_change_requests(request):
         current_requests = NameChangeRequest.objects.filter(request_status='n').order_by("request_open_timestamp")
         previous_requests = NameChangeRequest.objects.filter(request_status__in=['c','r','a']).order_by("request_open_timestamp")

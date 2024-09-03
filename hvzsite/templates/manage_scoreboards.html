@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Manage Scoreboards {% endblock %}
+
+{% block extrahead %}
+<script>
+ $(document).ready(function () {
+     var datatable = $('#scoreboards').DataTable({'ordering':false});
+ });
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col">
+        <h1 class="center"> Scoreboards </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col center">
+        <a href="/admin/scoreboard/new/" class="btn btn-primary">Create new Scoreboard</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="scoreboards" class="table table-striped display adminlist">
+            <thead>
+                <tr>
+                    <th class="foo">Shortname</th>
+                    <th class="foo">Active?</th>
+                    <th class="foo">Game</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for scoreboard in scoreboards %}
+                <tr onclick="window.location.href='/admin/scoreboard/{{scoreboard.id}}/'">
+                    <td>{{scoreboard.shortname}}</td>
+                    <td>{{scoreboard.active}}</td>
+                    <td>{{scoreboard.associated_game.game_name}}</td>
+                </tr>
+                {% empty %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

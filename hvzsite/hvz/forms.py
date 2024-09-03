@@ -1,7 +1,6 @@
 from django import forms
 from django.forms import ValidationError
 from django.db.models import Count, Q
-from .models import Announcement, Person, Blaster, BodyArmor, AntiVirus, Rules, About, PlayerStatus, Clan, get_active_game, Tag, Mission, CurrentGame, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -10,6 +9,8 @@ from django_registration.forms import RegistrationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
 from captcha.fields import CaptchaField
+
+from .models import Announcement, Person, Blaster, BodyArmor, AntiVirus, Rules, About, PlayerStatus, Clan, get_active_game, Tag, Mission, CurrentGame, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate, Scoreboard
 
 def validate_no_special_chars_in_name(value):
     if not isinstance(value, str):
@@ -365,6 +366,22 @@ class AnnouncementForm(forms.ModelForm):
         model = Announcement
         fields = ["short_form", "long_form", "active"]
 
+
+class ScoreboardForm(forms.ModelForm):
+    class Meta:
+        model = Scoreboard
+        fields='__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['associated_game'] = forms.CharField(widget = forms.HiddenInput(), required = False)
+
+    def clean(self):
+        cd = self.cleaned_data
+        cd['associated_game'] = get_active_game()
+
+        print(cd['timer_expire'])
+        return cd
 
 class NameChangeForm(forms.Form):
     first_name = forms.CharField(label='First Name', max_length=50)

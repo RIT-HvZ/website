@@ -931,3 +931,14 @@ class CustomRedirect(models.Model):
 
     def __str__(self) -> str:
         return f"Custom redirect: {self.redirect_name} => {self.target}"
+
+class Scoreboard(models.Model):
+    active = models.BooleanField(default=False)
+    text_content = tinymce_models.HTMLField(verbose_name="Scoreboard text content")
+    shortname = models.CharField(verbose_name="Scoreboard name (internal only)",max_length=128)
+    visibility = models.CharField(max_length=1, choices=(('h',"Human only"),('z',"Zombie only"),('s',"Staff Only"),('e',"Everyone")), default='e')
+    associated_game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    timer_expire = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f'Scoreboard "{self.shortname}" for game {self.associated_game.game_name}'
