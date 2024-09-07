@@ -87,6 +87,8 @@ urlpatterns = [
     # re_path(r'^admin/mark_printed/?$', AdminHTMLViews.mark_printed),
     re_path(r'^admin/manage_announcements/?$', AdminHTMLViews.manage_announcements),
     re_path(r'^admin/announcement/(?P<announcement_id>[^/]+)/?$', AdminHTMLViews.edit_announcement),
+    re_path(r'^admin/manage_scoreboards/?$', AdminHTMLViews.manage_scoreboards),
+    re_path(r'^admin/scoreboard/(?P<scoreboard_id>[^/]+)/?$', AdminHTMLViews.edit_scoreboard),
     re_path(r'^admin/badge_grant/(?P<badge_type_id>[^/]+)/?$', StaffHTMLViews.badge_grant),
     re_path(r'^admin/badge_grant_list/?$', StaffHTMLViews.badge_grant_list),
     re_path(r'^admin/badge_grant_api/(?P<badge_type_id>[^/]+)/(?P<player_id>[^/]+)/?$', StaffAPIViews.badge_grant_api),

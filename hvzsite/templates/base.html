@@ -10,8 +10,8 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-        <link href="{% static 'css/base.css' %}" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.css"/>
+        <link href="{% static 'css/base.css' %}" rel="stylesheet" />
         <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
         {% block extrahead %}{% endblock %}
         <script>
@@ -199,6 +199,7 @@ $(document).ready(function () {
                       <li><a class="dropdown-item" href="/admin/editmissions/">Edit Missions</a></li>
                       <li><a class="dropdown-item" href="/admin/editpostgamesurveys/">Edit Post-Mission Surveys (Tiers🙄)</a></li>
                       <li><a class="dropdown-item" href="/admin/badge_grant_list/">Grant Badges</a></li>
+                      <li><a class="dropdown-item" href="/admin/manage_scoreboards/">Manage Scoreboards</a></li>
 
                       <li><h6 class="dropdown-header">Site Management</h6></li>
                       <li><a class="dropdown-item" href="/admin/cullaccounts/">Cull Inactive Accounts</a></li>

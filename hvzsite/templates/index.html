@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
+
 {% load static %}
 {% load hvztags %}
+
 {% block extrahead %}
+<link href="{% static 'css/home.css' %}" rel="stylesheet" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.30.1/date_fns.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -67,80 +71,137 @@ const zombieChart = new Chart(ctx, {
   },
 });
 });
-{% if game.is_after_end %}
-console.log("after_end");
-document.getElementById("countdowntext").innerHTML = "Game over!";
-{% else %}
-  // Set the date we're counting down to
-  {% if game.is_after_start %}
-  console.log("after_start");
-  console.log("{{game.end_date_javascript}}")
-  var countDownDate = new Date("{{game.end_date_javascript}}").getTime();
-  var countDownPrefix = "Game ends in ";
-  {% else %}
-  console.log("before_game");
-  console.log("{{game.start_date_javascript}}")
-  var countDownDate = new Date("{{game.start_date_javascript}}").getTime();
-  var countDownPrefix = "Game starts in ";
-  {% endif %}
-  console.log(countDownDate);
-  // Update the count down every 1 second
-  var x = setInterval(function() {
 
+function updateTimer(endTime, divId) {
     // Get today's date and time
     var now = new Date().getTime();
 
     // Find the distance between now and the count down date
-    var distance = countDownDate - now;
+    var distance = Math.max(endTime - now, 0);
 
     // Time calculations for days, hours, minutes and seconds
-    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    var days_num = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var days = "";
+    if (days_num != 0) {
+      days = days_num + "d ";
+    }
+    var hours_num = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var hours = "";
+    if (days_num != 0 || hours_num != 0) {
+      hours = hours_num + "h ";
+    }
+    var mins_num = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var mins = "";
+    if (days_num != 0 || hours_num != 0 || mins_num != 0) {
+      mins = mins_num + "m ";
+    }
+    var secs_num = Math.floor((distance % (1000 * 60)) / 1000);
+    var secs = "Timer expired!";
+    if (days_num != 0 || hours_num != 0 || mins_num != 0 || secs_num != 0) {
+     secs = secs_num + "s ";
+    }
 
     // Display the result in the element with id="demo"
-    document.getElementById("countdownprefix").innerHTML = countDownPrefix;
-    document.getElementById("countdowntext").innerHTML = days + "d " + hours + "h "
-    + minutes + "m " + seconds + "s ";
-
-    // If the count down is finished, write some text
-    if (distance < 0) {
+    document.getElementById(divId + "text").innerText = days + hours + mins + secs;
+   // If the count down is finished, write some text
+   if (distance < 0) {
       clearInterval(x);
-      document.getElementById("countdowntext").innerHTML = "0d 0h 0m 0s";
-    }
+      document.getElementById(divId + "text").innerText = "0d 0h 0m 0s";
+   }
+ }
+
+{% if game.is_after_end %}
+  // console.log("after_end");
+  document.getElementById("countdowntext").innerText = "Game over!";
+{% else %}
+  // Set the date we're counting down to
+  {% if game.is_after_start %}
+    // console.log("after_start");
+    // console.log("{{game.end_date_javascript}}")
+    var countDownDate = new Date("{{game.end_date_javascript}}").getTime();
+    var countDownPrefix = "Game ends in ";
+  {% else %}
+    // console.log("before_game");
+    // console.log("{{game.start_date_javascript}}")
+    var countDownDate = new Date("{{game.start_date_javascript}}").getTime();
+    var countDownPrefix = "Game starts in ";
+  {% endif %}
+
+  // console.log(countDownDate);
+  // Update the count down every 1 second
+  var x = setInterval(function() {
+    document.getElementById("countdownprefix").innerText = countDownPrefix;
+    updateTimer(countDownDate, "countdown");
   }, 1000);
+
 {% endif %}
+
+function createScoreboardTimer(time, prefix) {
+   console.log(prefix);
+   console.log(time);
+   setInterval(function() {
+     updateTimer(time, prefix);
+   }, 1000);
+ }
+
 </script>
 {% endblock %}
+
+
 {% block body %}
 <div class="row center">
-  <div class="col countdown">
-    <span class="countdownlabel" id="countdownprefix"></span>
-    <span class="countdowntext" id="countdowntext"></span>
+  <div class="col countdown timer">
+    <span class="timerlabel" id="countdownprefix"></span>
+    <span class="timertext" id="countdowntext"></span>
   </div>
+</div>
+
+<div class="scoreboard-container">
+  {% for scoreboard in scoreboards %}
+    <!-- Only show scoreboards that should be visible -->
+    {% scoreboard_visible scoreboard user as vis %}
+    {% if vis %}
+      <div class="scoreboard">
+        {% if scoreboard.timer_expire %}
+          <div class="timer">
+            <span class="timerlabel" id="timer{{ scoreboard.id }}-label">{{ scoreboard.timer_flavortext }}</span>
+            <span class="timertext" id="timer{{ scoreboard.id }}-text"></span>
+          </div>
+
+          <script>
+            var endTime = new Date("{{ scoreboard.timer_expire_javascript }}").getTime();
+            createScoreboardTimer(endTime, "timer{{ scoreboard.id }}-");
+          </script>
+        {% endif %}
+
+        <div class="scoreboard-content-wrapper">
+            {{ scoreboard.text_content | safe}}
+        </div>
+      </div>
+    {% endif %}
+  {% endfor %}
 </div>
 
 <div class="container mainpage-container">
 <div class="row">
   <div class="col">
-    <h1 class="main-title center"> HvZ @ RIT</h1>
+    <h1 id="main-title" class="center"> HvZ @ RIT</h1>
   </div>
 </div>
 
 <div class="row center">
-  <div class="col-md-5 humancount mx-auto">
-    <span class="humancountnumber">{{humancount}}</span>
+  <div id="humancount-container" class="col-md-5 mx-auto">
+    <span id="humancountnumber">{{humancount}}</span>
     <br />
-    <span class="humancountlabel">Humans</span>
+    <span id="humancountlabel">Humans</span>
   </div>
-  <div class="col-md-1 versussection mx-auto">
-    <span class="versuslabel"> VS </span>
+  <div id="versussection" class="col-md-1 mx-auto">
+    <span id="versuslabel"> VS </span>
   </div>
-  <div class="col-md-5 zombiecount mx-auto">
-    <span class="humancountnumber">{{zombiecount}}</span>
+  <div id="zombiecount-container" class="col-md-5 mx-auto">
+    <span id="zombiecountnumber">{{zombiecount}}</span>
     <br />
-    <span class="humancountlabel">Zombies</span>
+    <span id="zombiecountlabel">Zombies</span>
   </div>
 </div>
 

@@ -1,0 +1,71 @@
+#humancountnumber, #zombiecountnumber {
+    font-weight: bold;
+    font-size: 48pt;
+    color: white;
+}
+
+#humancountlabel, #zombiecountlabel {
+    font-weight: bold;
+    color: black;
+    font-size: 24pt;
+}
+
+#versussection {
+    margin: auto;
+    height: 100%;
+    vertical-align: middle;
+}
+
+#humancount-container {
+    background-color: #d86611;
+}
+
+#zombiecount-container {
+    background-color: #0faa01;
+}
+
+#humancount-container, #zombiecount-container {
+    border-radius: 5px;
+}
+
+#humancount-container, #zombiecount-container, #versussection {
+    padding: 10px;
+    margin: 10px;
+    min-height: 10vw;
+}
+
+#main-title, #versuslabel {
+    font-weight: bold;
+    color: white;
+    font-size: 32pt;
+    margin: auto;
+}
+
+div.countdown {
+    display: block;
+    border-radius: 10px;
+    margin: 5px;
+}
+
+div.timer {
+    background-color: #777;
+    color: black;
+    font-size: xx-large;
+}
+
+.scoreboard {
+    border: 1px solid #999;
+    border-radius: 5px;
+    background-color: #333;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.scoreboard .timer {
+    width: 100%;
+    border-bottom: 1px solid #999;
+}
+
+.scoreboard-content-wrapper {
+    padding: 5px;
+}

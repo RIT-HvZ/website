@@ -47,6 +47,12 @@ def get_player_name(player, requesting_user):
                                 requesting_user.is_authenticated and \
                                 requesting_user.active_this_game)
 
+@register.simple_tag
+def scoreboard_visible(scoreboard, requesting_user):
+    if requesting_user.is_anonymous:
+        return False
+
+    return scoreboard.visible_to(requesting_user)
 
 @register.filter
 def strftime(date, fmt="%H:%M (%m/%d)"):
