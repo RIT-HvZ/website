@@ -29,18 +29,23 @@
         <form method="post">{% csrf_token %}
             <div class="mb-3">
                 {{ form.shortname.errors }}
-                <label for="{{ form.shortname.id_for_label }}" class="form-label">Scoreboard shortname: </label>
+                <label for="{{ form.shortname.id_for_label }}" class="form-label">Scoreboard shortname (not shown to players): </label>
                 {{ form.shortname }}
 
                 <br />
                 {{ form.text_content.errors }}
-                <label for="{{ form.text_content.id_for_label }}" class="form-label">Text to show (optional): </label>
+                <label for="{{ form.text_content.id_for_label }}" class="form-label">Text to show on scoreboard: </label>
                 {{ form.text_content }}
 
                 <br />
                 {{ form.visibility.errors }}
                 <label for="{{ form.visibility.id_for_label }}" class="form-label">Visible to: </label>
                 {{ form.visibility }}
+
+                <br />
+                {{ form.timer_flavortext.errors }}
+                <label for="{{ form.timer_flavortext.id_for_label }}" class="form-label">Timer flavortext (displayed before countdown): </label>
+                {{ form.timer_flavortext }}
 
                 <br />
                 {{ form.timer_expire.errors }}

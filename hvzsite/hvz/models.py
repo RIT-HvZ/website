@@ -938,6 +938,7 @@ class Scoreboard(models.Model):
     shortname = models.CharField(verbose_name="Scoreboard name (internal only)",max_length=128)
     visibility = models.CharField(max_length=1, choices=(('h',"Human only"),('z',"Zombie only"),('s',"Staff Only"),('e',"Everyone")), default='e')
     associated_game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    timer_flavortext = models.CharField(verbose_name="The text to place before the timer", default='Time until mission end:', max_length=128)
     timer_expire = models.DateTimeField(null=True, blank=True)
 
     def __str__(self) -> str:
@@ -946,10 +947,14 @@ class Scoreboard(models.Model):
     def visible_to(self, user: Person) -> bool:
         status = user.current_status
 
-        if self.visibility == 'e' or status.is_staff:
+        if self.visibility == 'e' or status.is_staff():
             return True
-        if self.visibility == 'h' and status.is_human:
+        if self.visibility == 'h' and status.is_human():
             return True
-        if self.visibility == 'z' and status.is_zombie:
+        if self.visibility == 'z' and status.is_zombie():
             return True
         return False
+
+    @property
+    def timer_expire_javascript(self):
+        return self.timer_expire.strftime("%b %d, %Y %H:%M:%S %Z")

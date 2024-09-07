@@ -113,53 +113,6 @@ th, label {
     background-color: transparent;
 }
 
-.humancountnumber, .zombiecountnumber {
-    font-weight: bold;
-    color: black;
-}
-
-.humancountlabel, .zombiecountlabel {
-    font-weight: bold;
-    color: black;
-}
-
-.versussection {
-    margin: auto;
-    height: 100%;
-    vertical-align: middle;
-}
-
-.main-title, .versuslabel {
-    font-weight: bold;
-    color: white;
-    font-size: 32pt;
-    margin: auto;
-}
-
-div.humancount {
-    background-color: #d86611;
-}
-
-div.zombiecount {
-    background-color: #0faa01;
-}
-
-div.humancount, div.zombiecount, div.versussection {
-    padding: 10px;
-    border-radius: 5px;
-    margin: 10px;
-    min-height: 10vw;
-}
-
-.humancountnumber, .zombiecountnumber {
-    font-size: 48pt;
-    color: white;
-}
-
-.humancountlabel, .zombiecountlabel {
-    font-size: 24pt;
-}
-
 .dt_name_link, .dt_clan_link{
     color: white;
     font-weight: bold;
@@ -335,7 +288,6 @@ border-radius: 4px;
     word-wrap: break-word;
 }
 
-
 #surveys {
     background-color: #222;
 }
@@ -360,9 +312,11 @@ border-radius: 4px;
 .surveynotopen {
     background-color: rgb(4, 121, 199);
 }
+
 .hoverhand {
     cursor:pointer;
 }
+
 .player_blaster_div, .player_tag_div {
     display: inline-block;
 }
@@ -386,7 +340,6 @@ border-radius: 4px;
     text-shadow: #000 1px 1px 2px;
 }
 
-
 .tagformerrors {
     background-color: #822;
     border-radius: 10px;
@@ -407,6 +360,7 @@ border-radius: 4px;
 scrollercol {
     margin: 10px;
 }
+
 a.scrolllink {
     text-decoration: none;
     font-weight: bold;
@@ -452,6 +406,7 @@ a.scrolllink {
 .rulescontainer h3 {
     color: rgb(255,255,255);
 }
+
 .rulescontainer {
     font-family: "Noto Sans", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -487,16 +442,6 @@ a.statuspage:hover {
 
 #playerlist {
     width: 100%;
-}
-
-div.countdown {
-    width: 80%;
-    display: block;
-    background-color: #777;
-    color: black;
-    font-size: xx-large;
-    border-radius: 10px;
-    margin: 5px;
 }
 
 .qrcontainer {
@@ -586,9 +531,11 @@ div.countdown {
 .modcontainer .player_picture {
     border-color: #0820b8;
 }
+
 .bannedcontainer .player_picture {
     border-color: #f00;
 }
+
 .player_name {
     color: white;
     align-self: flex-end;
@@ -599,6 +546,7 @@ div.countdown {
 .playernamecol {
     display: flex;
 }
+
 .humancontainer .playernamerow {
     background-color: #d86611;
 }
@@ -610,6 +558,7 @@ div.countdown {
 .npcontainer .playernamerow {
     background-color: #777;
 }
+
 .modcontainer .playernamerow {
     background-color: #0820b8;
 }
@@ -772,6 +721,7 @@ div.controls ul {
 .toast:not(.showing):not(.show) {
 display: none !important;
 }
+
 .recent-announcements .announcement-short {
     font-weight: bold;
 }

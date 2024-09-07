@@ -49,6 +49,9 @@ def get_player_name(player, requesting_user):
 
 @register.simple_tag
 def scoreboard_visible(scoreboard, requesting_user):
+    if requesting_user.is_anonymous:
+        return False
+
     return scoreboard.visible_to(requesting_user)
 
 @register.filter

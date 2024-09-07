@@ -28,6 +28,7 @@
                 <tr>
                     <th class="foo">Shortname</th>
                     <th class="foo">Active?</th>
+                    <th class="foo">Timer</th>
                     <th class="foo">Game</th>
                 </tr>
             </thead>
@@ -36,6 +37,7 @@
                 <tr onclick="window.location.href='/admin/scoreboard/{{scoreboard.id}}/'">
                     <td>{{scoreboard.shortname}}</td>
                     <td>{{scoreboard.active}}</td>
+                    <td>{{scoreboard.timer_expire}}</td>
                     <td>{{scoreboard.associated_game.game_name}}</td>
                 </tr>
                 {% empty %}
