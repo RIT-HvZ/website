@@ -43,8 +43,8 @@ def for_all_methods(decorator):
 @lru_cache(maxsize=1)
 def get_recent_events(most_recent_tag, most_recent_av, most_recent_registration):
     game = get_active_game()
-    humancount = PlayerStatus.objects.filter(game=game).filter(Q(status='h') | Q(status='v') | Q(status='e')).count()
-    zombiecount = PlayerStatus.objects.filter(game=game).filter(Q(status='z') | Q(status='x') | Q(status='o')).count()
+    humancount = PlayerStatus.objects.filter(Q(game=game) & (Q(status='h') | Q(status='v') | Q(status='e'))).count()
+    zombiecount = PlayerStatus.objects.filter(Q(game=game) & (Q(status='z') | Q(status='x') | Q(status='o'))).count()
     most_tags = PlayerStatus.objects.filter(game=game).annotate(tag_count=Count("player__taggers", filter=Q(player__taggers__game=game))).filter(tag_count__gt=0).order_by("-tag_count")
     recent_tags = Tag.objects.filter(game=get_active_game()).order_by('-timestamp')
     recent_avs = AntiVirus.objects.filter(game=get_active_game(), used_by__isnull=False).order_by('-time_used')
