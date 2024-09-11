@@ -202,4 +202,6 @@ TINYMCE_DEFAULT_CONFIG = {
     'menubar': 'edit view tools'
 }
 
-CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
+CAPTCHA_LENGTH = 6
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',)

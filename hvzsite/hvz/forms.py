@@ -43,7 +43,8 @@ class HVZRegistrationForm(UserCreationForm):
             "first_name", "last_name", "password1", "password2")
 
     captcha = CaptchaField()
-    captcha.label = "Captcha (enter the answer to the math problem, not the text of it)"
+    captcha.label = "Captcha (enter the letters you see in the image)"
+    # captcha.label = "Captcha (enter the answer to the math problem, not the text of it)"
 
     error_css_class = "error"
     required_css_class = "required"
@@ -313,7 +314,8 @@ class ReportForm(forms.ModelForm):
         else:
             self.fields["reporter_email"].label = "Your email address (optional)"
             self.fields['captcha'] = CaptchaField()
-            self.fields['captcha'].label = "Captcha (enter the answer to the math problem, not the text of it)"
+            self.fields['captcha'].label = "Captcha (enter the letters you see in the image)"
+            # self.fields['captcha'].label = "Captcha (enter the answer to the math problem, not the text of it)"
 
 class ReportUpdateForm(forms.ModelForm):
     update_status = forms.ChoiceField(choices=(('x','No change'),('n','New'),('i','Investigating'),('d','Dismissed'),('c','Closed')))
