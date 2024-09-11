@@ -207,7 +207,9 @@ function createScoreboardTimer(time, prefix) {
 
 <div class="row center">
   <div class="col center">
+    {% if game.is_after_start %}
     <canvas id="zombieChart" width="400" height="200"></canvas>
+    {% endif %}
   </div>
 </div>
 <br />
@@ -215,6 +217,10 @@ function createScoreboardTimer(time, prefix) {
 <div class="row center">
   <div class="col-md-6 recent-tags">
     <h2>Recent Events</h2>
+    {% if recent_events|length == 0 %}
+    No one has been tagged... yet.
+    {% endif %}
+
     {% for t in recent_events %}
       {% if t.datatype == "Tag" %}
         {% if t.taggee %}
@@ -234,6 +240,10 @@ function createScoreboardTimer(time, prefix) {
 
   <div class="col-md-6 leaderboard">
     <h2>Most Tags</h2>
+    {% if recent_events|length == 0 %}
+    N/A
+    {% endif %}
+
     {% for p in most_tags %}
 
     <a class="statuspage" href="player/{{p.player.player_uuid}}">{% get_player_name p.player user %}</a> with <b>{{p.num_tags}}</b> tags <br />
@@ -247,6 +257,10 @@ function createScoreboardTimer(time, prefix) {
   <div class="col-md-3"></div>
   <div class="col-md-6 recent-announcements">
     <h2>Announcements</h2>
+    {% if announcements|length == 0 %}
+    There are no announcements to show at this time.
+    {% endif %}
+
     {% for announcement in announcements %}
     <div class="col center">
       <span class="announcement-short"> {{announcement.short_form}} </span>
