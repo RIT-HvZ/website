@@ -32,7 +32,7 @@ with open(os.path.join(BASE_DIR,"secrets.json"),'r') as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.1.200", "localhost", "127.0.0.1", "hvz.henderson.codes",  "137.184.204.67"]
+ALLOWED_HOSTS = ["192.168.1.200", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_api_key',
     'crispy_forms',
+    'crispy_bootstrap5',
     'grappelli',
     'filebrowser',
     'tinymce',
@@ -168,7 +169,10 @@ LOGOUT_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'hvz.Person'
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost", "https://hvz.henderson.codes"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
