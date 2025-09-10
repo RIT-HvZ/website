@@ -69,7 +69,7 @@ def resize_image(photo, width, height, format="JPEG"):
     output = BytesIO()
     im = im.convert('RGB')
     #Resize/modify the image
-    im.thumbnail( (width,height) , Image.ANTIALIAS )
+    im.thumbnail( (width,height) , Image.Resampling.LANCZOS )
     #after modifications, save it to the output
     im.save(output, format=format, quality=95)
     output.seek(0)
