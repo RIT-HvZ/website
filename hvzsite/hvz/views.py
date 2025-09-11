@@ -159,6 +159,9 @@ def recent_events_view(request):
                 "timestamp": e.timestamp
             } for e in merged_recents
         ],
+        "timestamps": [
+            t for t in timestamps
+        ],
         "zombiecounts": [
             z for z in zombiecounts
         ],
