@@ -13,13 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import re_path,include
-from hvz.forms import HVZRegistrationForm
+from django.urls import re_path, include
 from django_registration.backends.activation.views import RegistrationView
 from filebrowser.sites import site
-from django.conf.urls.static import static
-from django.conf import settings
+from hvz.forms import HVZRegistrationForm
 
 urlpatterns = [
     re_path(r"", include('hvz.urls')),

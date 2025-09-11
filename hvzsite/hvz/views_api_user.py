@@ -1,7 +1,6 @@
 
 from django.http import JsonResponse
 from django.utils import timezone
-
 from rest_framework.decorators import api_view
 
 from .decorators import authentication_required_api

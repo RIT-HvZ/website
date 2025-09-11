@@ -1,6 +1,6 @@
 from django import template
 from hvz.models import PostGameSurveyResponse, PostGameSurvey, Person, PlayerStatus
-from django.utils import timezone
+
 register = template.Library()
 
 @register.simple_tag
