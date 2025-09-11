@@ -111,6 +111,7 @@ urlpatterns = [
     re_path(r'^api/reports/?$', views.ApiReports.as_view()),
     re_path(r'^api/create-av/?$', views.ApiCreateAv.as_view()),
     re_path(r'^api/create-armor/?$', views.ApiCreateBodyArmor.as_view()),
+    re_path(r'^api/recent_events/?$', views.recent_events_view),
 
     # Api Documentation
     re_path(r'^openapi/?$', get_schema_view(
