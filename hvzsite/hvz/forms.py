@@ -10,7 +10,10 @@ from django.utils.translation import gettext_lazy as _
 from django_registration import validators
 from captcha.fields import CaptchaField
 
-from .models import Announcement, Person, Blaster, BodyArmor, AntiVirus, Rules, About, PlayerStatus, Clan, get_active_game, Tag, Mission, CurrentGame, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate, Scoreboard
+from .models import Announcement, Person, Blaster, BodyArmor, AntiVirus, Rules, About, PlayerStatus, Clan, \
+    get_active_game, Tag, Mission, CurrentGame, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate, Scoreboard, \
+    BadgeType
+
 
 def validate_no_special_chars_in_name(value):
     if not isinstance(value, str):
@@ -361,6 +364,22 @@ class ClanCreateForm(forms.ModelForm):
         existing_clans = Clan.objects.filter(name__iexact=cd['name'])
         if existing_clans.count() > 0 and (self.instance is None or self.instance != existing_clans[0]):
             raise ValidationError("A clan with that name already exists.")
+
+
+class CreateBadgeForm(forms.ModelForm):
+    class Meta:
+        model = BadgeType
+        fields = ["badge_name", "picture", "badge_type", 'badge_description', 'mod_grantable', 'active']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.fields['color'].widget = forms.TextInput(attrs={'data-coloris': ''})
+
+    def clean(self):
+        cd = self.cleaned_data
+        existing_badges = BadgeType.objects.filter(badge_name__iexact=cd['badge_name'])
+        if existing_badges.count() > 0 and (self.instance is None or self.instance != existing_badges[0]):
+            raise ValidationError("A badge with that name already exists.")
 
 
 class AnnouncementForm(forms.ModelForm):

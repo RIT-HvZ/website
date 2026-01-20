@@ -7,7 +7,8 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from .decorators import admin_required
-from .forms import AboutUpdateForm, AnnouncementForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm, ScoreboardForm
+from .forms import AboutUpdateForm, AnnouncementForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, \
+    MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm, ScoreboardForm, CreateBadgeForm
 from .models import get_active_game, reset_active_game
 from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Clan, Mission, NameChangeRequest, Person, PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Scoreboard, Tag
 from .views import for_all_methods
@@ -15,6 +16,18 @@ from .views import for_all_methods
 
 @for_all_methods(admin_required)
 class AdminHTMLViews(object):
+    def create_badge_view(request):
+        if request.method == "GET":
+            form = CreateBadgeForm()
+        else:
+            form = CreateBadgeForm(request.POST, request.FILES)
+
+            if form.is_valid():
+                newbadge = form.save()
+                return HttpResponseRedirect(f"/admin/badge_grant_list/")
+        return render(request, "create_badge.html", {'form': form, 'newbadge': True})
+
+
     def editmissions(request):
         this_game = get_active_game()
         missions = Mission.objects.filter(game=this_game)

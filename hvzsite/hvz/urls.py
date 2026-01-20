@@ -57,6 +57,7 @@ urlpatterns = [
     re_path(r'^api/player_oz_enable/?$', AdminAPIViews.player_oz_enable),
 
     # Admin Routes
+    re_path(r'^admin/create_badge/?$', AdminHTMLViews.create_badge_view),
     re_path(r'^admin/reset-game/?$', AdminHTMLViews.admin_reset_game),
     re_path(r'^admin/cullaccounts/?$', AdminHTMLViews.cull_accounts),
     re_path(r'^api/account_culling_api/?$', AdminAPIViews.get_cullable_accounts),

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} HvZ @ RIT - Create Clan {% endblock %}
+{% block extrahead %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.css"/>
+<script src="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.js"></script>
+<script>
+
+$(document).ready(function () {
+  Coloris({
+    themeMode: 'dark',
+    alpha: false
+  });
+  
+  var current_image = $("#div_id_picture a").attr('href');
+  $("#div_id_picture .controls a").replaceWith("<img class='clanphotopreview' src='"+current_image+"' />");
+});
+</script>
+{% endblock %}
+{% block body %}
+{% load crispy_forms_tags %}
+
+<div class="row">
+  <div class="col">
+    {% if newbadge %}<h1 class="center"> Create a new Badge</h1>{% else %}<h1 class="center"> Edit Badge</h1>{% endif %}
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <form method="post" id="create-badge-form" class="center" enctype="multipart/form-data">{% csrf_token %}
+      <div class="mb-3">
+        {{ form | crispy }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
