@@ -93,7 +93,11 @@ urlpatterns = [
     re_path(r'^admin/scoreboard/(?P<scoreboard_id>[^/]+)/?$', AdminHTMLViews.edit_scoreboard),
     re_path(r'^admin/badge_grant/(?P<badge_type_id>[^/]+)/?$', StaffHTMLViews.badge_grant),
     re_path(r'^admin/badge_grant_list/?$', StaffHTMLViews.badge_grant_list),
+    re_path(r'^admin/badge_grant_to_user/(?P<target_id>[^/]+)/?$', StaffHTMLViews.badge_grant_to_user_list),
+
     re_path(r'^admin/badge_grant_api/(?P<badge_type_id>[^/]+)/(?P<player_id>[^/]+)/?$', StaffAPIViews.badge_grant_api),
+    re_path(r'^admin/badge_grant_id_api/(?P<badge_type_id>[^/]+)/(?P<player_id>[^/]+)/?$', StaffAPIViews.badge_grant_id_api),
+
     re_path(r'^admin/view_failed_av_list/?$', AdminHTMLViews.view_failed_av_list),
     re_path(r'^admin/name_change_requests/?$', AdminHTMLViews.view_name_change_requests),
     re_path(r'^admin/name_change_response/(?P<request_id>[^/]+)/(?P<command>[^/]+)?$', AdminAPIViews.name_change_response),
