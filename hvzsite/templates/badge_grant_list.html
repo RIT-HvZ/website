@@ -25,6 +25,7 @@
                     <th class="foo">Badge Name</th>
                     <th class="foo">Badge Description</th>
                     <th class="foo">Badge Type</th>
+                    <th class="foo">Edit</th>
             </thead>
             <tbody>
                 {% for badge in badge_choices %}
@@ -33,6 +34,8 @@
                     <td>{{badge.badge_name}}</td>
                     <td>{{badge.badge_description}}</td>
                     <td>{{badge.badge_type_display}}</td>
+                    <td><a class="btn btn-primary"  href="/admin/modify_badge/{{badge.badge_name}}/">Edit</a></td>
+
                 </tr>
                 {% empty %}
                 <tr>
