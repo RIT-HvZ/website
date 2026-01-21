@@ -241,7 +241,7 @@ class AdminAPIViews(object):
             img = Image.open(im_file)   # img is now PIL Image object
             output = BytesIO()
             im = img.convert('RGB')
-            im.thumbnail( (400, 400) , Image.ANTIALIAS )
+            im.thumbnail( (400, 400) , Image.Resampling.LANCZOS )
             im.save(output, format="JPEG", quality=95)
             output.seek(0)
             requested_player.picture = InMemoryUploadedFile(output,'ImageField', "%s.jpg" % requested_player.player_uuid, 'image/jpeg', sys.getsizeof(output), None)
