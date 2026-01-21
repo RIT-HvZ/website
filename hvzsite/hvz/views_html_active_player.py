@@ -4,7 +4,8 @@ from django.utils import timezone
 
 from .decorators import active_player_required
 from .forms import AVForm, ClanCreateForm, Mission, TagForm
-from .models import ClanHistoryItem, FailedAVAttempt, PlayerStatus, PostGameSurveyOption, PostGameSurveyResponse, Tag
+from .models import ClanHistoryItem, FailedAVAttempt, PlayerStatus, PostGameSurveyOption, PostGameSurveyResponse, Tag, \
+    BadgeType
 from .models import get_active_game
 from .views import for_all_methods
 
@@ -61,6 +62,7 @@ class ActivePlayerHTMLViews(object):
                 if form.cleaned_data['type'] == "player":
                     tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, taggee=form.cleaned_data['taggee'].player, game=get_active_game())
                     tag.handle_streak_badges()
+                    tag.handle_other_badges()
                     tag.save()
                     if form.cleaned_data['taggee'].status == 'v':
                         form.cleaned_data['taggee'].status = 'x'
@@ -70,6 +72,7 @@ class ActivePlayerHTMLViews(object):
                 else:
                     tag = Tag.objects.create(tagger=form.cleaned_data['tagger'].player, armor_taggee=form.cleaned_data['taggee'], game=get_active_game())
                     tag.handle_streak_badges()
+                    tag.handle_other_badges()
                     tag.save()
                 form = TagForm()
                 return render(request, "tag.html", {'form':form, 'tagcomplete': True, 'tag': tag, 'qr': qr})
@@ -113,6 +116,7 @@ class ActivePlayerHTMLViews(object):
                 form.cleaned_data['av'].used_by = request.user
                 form.cleaned_data['av'].time_used = timezone.now()
                 form.cleaned_data['av'].save()
+                form.cleaned_data['av'].handle_av_badges()
                 newform = AVForm()
                 return render(request, "av.html", {'form':newform, 'avcomplete': True, 'av': form.cleaned_data['av']})
             else:
@@ -147,6 +151,8 @@ class ActivePlayerHTMLViews(object):
                     # No response for this survey for this user exists. Create one.
                     new_response = PostGameSurveyResponse.objects.create(player=request.user, survey=survey, response=response)
                     new_response.save()
+                    new_response.give_voting_badge()
+
             else:
                 return HttpResponseRedirect("/")
         if request.user.current_status.is_zombie():
