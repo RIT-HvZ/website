@@ -363,6 +363,22 @@ class ClanCreateForm(forms.ModelForm):
             raise ValidationError("A clan with that name already exists.")
 
 
+class CreateBadgeForm(forms.ModelForm):
+    class Meta:
+        model = BadgeType
+        fields = ["badge_name", "picture", "badge_type", 'badge_description', 'mod_grantable', 'active']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.fields['color'].widget = forms.TextInput(attrs={'data-coloris': ''})
+
+    def clean(self):
+        cd = self.cleaned_data
+        existing_badges = BadgeType.objects.filter(badge_name__iexact=cd['badge_name'])
+        if existing_badges.count() > 0 and (self.instance is None or self.instance != existing_badges[0]):
+            raise ValidationError("A badge with that name already exists.")
+
+
 class AnnouncementForm(forms.ModelForm):
     class Meta:
         model = Announcement

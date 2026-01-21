@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .decorators import staff_required
-from .models import BadgeType
+from .models import BadgeType, Person
 from .views import for_all_methods
 
 
@@ -17,6 +17,15 @@ class StaffHTMLViews(object):
             return HttpResponseRedirect("/")
         return render(request, "badge_grant_list.html", {'badge_choices': grantable_badges})
         
+    def badge_grant_to_user_list(request, target_id):
+        if request.user.mod_this_game:
+            grantable_badges = BadgeType.objects.filter(mod_grantable=True, active=True)
+        elif request.user.admin_this_game:
+            grantable_badges = BadgeType.objects.filter(active=True)
+        else:
+            return HttpResponseRedirect("/")
+        target = Person.objects.get(player_uuid=target_id)
+        return render(request, "badge_grant_list.html", {'badge_choices': grantable_badges, 'target': target})
 
     def badge_grant(request, badge_type_id):
         try:

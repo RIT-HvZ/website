@@ -57,6 +57,8 @@ urlpatterns = [
     re_path(r'^api/player_oz_enable/?$', AdminAPIViews.player_oz_enable),
 
     # Admin Routes
+    re_path(r'^admin/create_badge/?$', AdminHTMLViews.create_badge_view),
+    re_path(r'^admin/modify_badge/(?P<badge_name>[^/]+)/', AdminHTMLViews.modify_badge_view),
     re_path(r'^admin/reset-game/?$', AdminHTMLViews.admin_reset_game),
     re_path(r'^admin/cullaccounts/?$', AdminHTMLViews.cull_accounts),
     re_path(r'^api/account_culling_api/?$', AdminAPIViews.get_cullable_accounts),
@@ -91,7 +93,11 @@ urlpatterns = [
     re_path(r'^admin/scoreboard/(?P<scoreboard_id>[^/]+)/?$', AdminHTMLViews.edit_scoreboard),
     re_path(r'^admin/badge_grant/(?P<badge_type_id>[^/]+)/?$', StaffHTMLViews.badge_grant),
     re_path(r'^admin/badge_grant_list/?$', StaffHTMLViews.badge_grant_list),
+    re_path(r'^admin/badge_grant_to_user/(?P<target_id>[^/]+)/?$', StaffHTMLViews.badge_grant_to_user_list),
+
     re_path(r'^admin/badge_grant_api/(?P<badge_type_id>[^/]+)/(?P<player_id>[^/]+)/?$', StaffAPIViews.badge_grant_api),
+    re_path(r'^admin/badge_grant_id_api/(?P<badge_type_id>[^/]+)/(?P<player_id>[^/]+)/?$', StaffAPIViews.badge_grant_id_api),
+
     re_path(r'^admin/view_failed_av_list/?$', AdminHTMLViews.view_failed_av_list),
     re_path(r'^admin/name_change_requests/?$', AdminHTMLViews.view_name_change_requests),
     re_path(r'^admin/name_change_response/(?P<request_id>[^/]+)/(?P<command>[^/]+)?$', AdminAPIViews.name_change_response),

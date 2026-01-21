@@ -1,19 +1,39 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %} HvZ @ RIT - Badge Grant List {% endblock %}
+{% load hvztags %}
 
+
+
+{% block title %} HvZ @ RIT - Badge Grant List {% endblock %}
 {% block extrahead %}
 <script>
     $(document).ready(function () {
         var datatable = $('#badges').DataTable({'ordering':false});
     });
+function send_thing(badge_n) {
+    $.ajax("/admin/badge_grant_id_api/"+badge_n+"/{{target.player_uuid}}/",{
+        method: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+    }).done( function (data) {
+        console.log(data);
+        if (data.status == "success") {
+        };
+    })
+}
+
 </script>
 {% endblock %}
 
 {% block body %}
 <div class="row">
     <div class="col">
+        {% if not target %}
         <h1 class="center"> Badge Granting </h1>
+        {% else %}
+        <h1 class="center"> Grant Badges to {% get_player_name target user %} </h1>
+        {% endif %}
     </div>
 </div>
 <div class="row">
@@ -25,6 +45,11 @@
                     <th class="foo">Badge Name</th>
                     <th class="foo">Badge Description</th>
                     <th class="foo">Badge Type</th>
+                    {% if not target %}
+                    <th class="foo">Edit</th>
+                    {% else %}
+                    <th class="foo">Give</th>
+                    {% endif %}
             </thead>
             <tbody>
                 {% for badge in badge_choices %}
@@ -33,6 +58,12 @@
                     <td>{{badge.badge_name}}</td>
                     <td>{{badge.badge_description}}</td>
                     <td>{{badge.badge_type_display}}</td>
+                    {% if target %}
+                    <td><a class="btn btn-primary"  href="/player/{{target.player_uuid}}/" onmousedown="send_thing({{badge.id}})">Assign to user</a></td>
+                    {% else %}
+                    <td><a class="btn btn-primary"  href="/admin/modify_badge/{{badge.badge_name}}/">Edit</a></td>
+                    {% endif %}
+
                 </tr>
                 {% empty %}
                 <tr>

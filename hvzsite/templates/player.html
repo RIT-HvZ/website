@@ -169,6 +169,8 @@ function invite_player(player_uuid) {
                     {% else %}
                     <li><a class="dropdown-item" href="#" onclick="admintools('avban')">Block Player From AVing</a></li>
                     {% endif %}
+                    <li><h6 class="dropdown-header">Badges!</h6></li>
+                    <li><a class="dropdown-item" href="/admin/badge_grant_to_user/{{player.player_uuid}}/">Give Badges</a></li>
                     <li><h6 class="dropdown-header">Regenerate ID codes</h6></li>
                     <li><a class="dropdown-item" href="#" onclick="admintools('regenerate_tag1')">Regenerate Tag #1 ID</a></li>
                     <li><a class="dropdown-item" href="#" onclick="admintools('regenerate_tag2')">Regenerate Tag #2 ID</a></li>
