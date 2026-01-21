@@ -1,0 +1,24 @@
+[project]
+name = "rithvz-website"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "crispy-bootstrap5>=2025.6",
+    "discord-py>=2.6.3",
+    "django>=5.2.6",
+    "django-crispy-forms>=2.4",
+    "django-extensions>=4.1",
+    "django-filebrowser-no-grappelli>=4.0.2",
+    "django-grappelli>=4.0.2",
+    "django-registration>=5.2.1",
+    "django-rest-framework>=0.1.0",
+    "django-simple-captcha>=0.6.2",
+    "django-tinymce>=4.1.0",
+    "django-verify-email>=3.0.3",
+    "djangorestframework>=3.16.1",
+    "djangorestframework-api-key>=3.1.0",
+    "pillow>=11.3.0",
+    "psycopg2-binary>=2.9.10",
+    "pytz>=2025.2",
+]

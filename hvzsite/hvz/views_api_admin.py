@@ -1,17 +1,19 @@
-import base64, html, random, sys
+import base64
+import html
+import random
+import sys
+from io import BytesIO
 
+from PIL import Image
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db.models import Q
 from django.http import JsonResponse
 from django.utils import timezone
-from io import BytesIO
-from PIL import Image
 from rest_framework.decorators import api_view
 
 from .decorators import admin_required_api
 from .models import BodyArmor, Clan, ClanHistoryItem, NameChangeRequest, OZEntry, Person, PlayerStatus, Tag
 from .models import get_active_game, generate_tag_id
-
 from .views import for_all_methods
 from .views_html_admin import AdminHTMLViews
 

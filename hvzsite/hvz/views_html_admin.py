@@ -7,9 +7,11 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from .decorators import admin_required
-from .forms import AboutUpdateForm, AnnouncementForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm, ScoreboardForm
+from .forms import AboutUpdateForm, AnnouncementForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, \
+    MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm, ScoreboardForm
+from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Clan, Mission, NameChangeRequest, Person, \
+    PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Scoreboard, Tag
 from .models import get_active_game, reset_active_game
-from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Clan, Mission, NameChangeRequest, Person, PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Scoreboard, Tag
 from .views import for_all_methods
 
 

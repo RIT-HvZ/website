@@ -1,7 +1,7 @@
 import functools
+
+from django.http import JsonResponse
 from django.shortcuts import redirect
-from django.contrib import messages
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 
 
 def authentication_required(view_func):

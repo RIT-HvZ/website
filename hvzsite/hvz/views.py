@@ -1,10 +1,10 @@
-import copy
 from itertools import chain
-from functools import lru_cache
 import json
 import os
-import discord
+from functools import lru_cache
+from itertools import chain
 
+import discord
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Group
@@ -14,18 +14,17 @@ from django.db.models.functions import Lower
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
-
+from hvzsite.settings import MEDIA_ROOT, STATIC_ROOT
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from .forms import ReportForm
-from .models import About, Announcement, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, ClanHistoryItem, CustomRedirect, DiscordLinkCode, FailedAVAttempt, Mission, PlayerStatus, Person, Report, Rules, Scoreboard, Tag
+from .models import About, Announcement, AntiVirus, BadgeInstance, Blaster, BodyArmor, Clan, ClanHistoryItem, \
+    CustomRedirect, DiscordLinkCode, FailedAVAttempt, Mission, PlayerStatus, Person, Report, Rules, Scoreboard, Tag
 from .models import get_active_game
 from .serializers import GroupSerializer, UserSerializer
-
-from hvzsite.settings import MEDIA_ROOT, STATIC_ROOT
 
 if settings.DISCORD_REPORT_WEBHOOK_URL:
     report_webhook = discord.SyncWebhook.from_url(settings.DISCORD_REPORT_WEBHOOK_URL)

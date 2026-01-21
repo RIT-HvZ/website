@@ -2,7 +2,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
 
-
 from .decorators import active_player_required
 from .forms import AVForm, ClanCreateForm, Mission, TagForm
 from .models import ClanHistoryItem, FailedAVAttempt, PlayerStatus, PostGameSurveyOption, PostGameSurveyResponse, Tag

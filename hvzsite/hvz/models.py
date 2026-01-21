@@ -1,14 +1,13 @@
-from importlib.metadata import requires
-from django.db import models
-from django.contrib.auth.models import AbstractUser, UserManager, BaseUserManager
-from django.db.models.functions import Concat
-from django.db.models import CharField, Q
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser, UserManager
+from django.core.validators import RegexValidator
+from django.db import models
+from django.db.models import CharField, Q
+from django.db.models.functions import Concat
+from django.db.models.functions import Upper
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.templatetags.static import static
-from django.core.validators import RegexValidator
-from django.db.models.functions import Upper
 
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
 hex_rgb = RegexValidator(r'^#[0-9a-fA-F]{6}$', 'Only hex color codes e.g. #52fa3d are allowed.')
@@ -20,7 +19,6 @@ import os
 import random
 import string
 from django.utils import timezone
-from pytz import timezone as pytz_timezone
 from tinymce import models as tinymce_models
 from PIL import Image
 from io import BytesIO
