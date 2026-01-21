@@ -426,15 +426,16 @@ class ApiPlayers(APIView):
     Returns all player information
     '''
     def get(self, request):
+        game = get_active_game()
         players = [
             {
                 'name': p.readable_name(request.user.is_authenticated and request.user.active_this_game),
                 'id': p.player_uuid,
                 'status': p.current_status.get_status_display(),
                 'tags': p.current_status.num_tags,
-            } for p in Person.objects.all()
+            } for p in Person.full_name_objects.filter(playerstatus__game=game, playerstatus__status__in=['h','v','e','z','o','x','a','m'])
         ]
-        
+
         data = {
             'players': players
         }
