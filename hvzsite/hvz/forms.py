@@ -1,18 +1,15 @@
+from captcha.fields import CaptchaField
 from django import forms
-from django.forms import ValidationError
-from django.db.models import Count, Q
-from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.db.models import Count, Q
+from django.forms import ValidationError
 from django.utils import timezone
-from django_registration.forms import RegistrationForm
 from django.utils.translation import gettext_lazy as _
 from django_registration import validators
-from captcha.fields import CaptchaField
 
 from .models import Announcement, Person, Blaster, BodyArmor, AntiVirus, Rules, About, PlayerStatus, Clan, \
-    get_active_game, Tag, Mission, CurrentGame, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate, Scoreboard, \
-    BadgeType
+    get_active_game, Tag, Mission, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate, Scoreboard
 
 
 def validate_no_special_chars_in_name(value):

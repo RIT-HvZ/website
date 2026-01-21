@@ -8,9 +8,12 @@ from django.utils.dateparse import parse_datetime
 
 from .decorators import admin_required
 from .forms import AboutUpdateForm, AnnouncementForm, AVCreateForm, BlasterApprovalForm, BodyArmorCreateForm, \
-    MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm, ScoreboardForm, CreateBadgeForm
-from .models import get_active_game, reset_active_game, BadgeType
-from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Clan, Mission, NameChangeRequest, Person, PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Scoreboard, Tag
+    MissionForm, PostGameSurveyForm, ReportUpdateForm, RulesUpdateForm, ScoreboardForm
+from .forms import CreateBadgeForm
+from .models import About, Announcement, AntiVirus, Blaster, BodyArmor, Clan, Mission, NameChangeRequest, Person, \
+    PlayerStatus, PostGameSurvey, Report, ReportUpdate, Rules, Scoreboard, Tag
+from .models import BadgeType
+from .models import get_active_game, reset_active_game
 from .views import for_all_methods
 
 

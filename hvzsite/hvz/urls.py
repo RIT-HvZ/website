@@ -1,9 +1,10 @@
+from django.contrib.auth.views import LogoutView
 from django.urls import path, re_path, include
 from django.views.generic import TemplateView
-from django.contrib.auth.views import LogoutView
+from rest_framework.schemas import get_schema_view
 
 from . import views
-#from rest_framework import routers
+# from rest_framework import routers
 from .views_api_admin import AdminAPIViews
 from .views_api_staff import StaffAPIViews
 from .views_api_user import UserAPIViews
@@ -11,7 +12,6 @@ from .views_html_active_player import ActivePlayerHTMLViews
 from .views_html_admin import AdminHTMLViews
 from .views_html_staff import StaffHTMLViews
 from .views_html_user import UserHTMLViews
-from rest_framework.schemas import get_schema_view
 
 # router = routers.DefaultRouter()
 # router.register(r'users', views.UserViewSet)

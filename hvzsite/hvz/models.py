@@ -1,14 +1,13 @@
-from importlib.metadata import requires
-from django.db import models
-from django.contrib.auth.models import AbstractUser, UserManager, BaseUserManager
-from django.db.models.functions import Concat
-from django.db.models import CharField, Q
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser, UserManager
+from django.core.validators import RegexValidator
+from django.db import models
+from django.db.models import CharField, Q
+from django.db.models.functions import Concat
+from django.db.models.functions import Upper
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.templatetags.static import static
-from django.core.validators import RegexValidator
-from django.db.models.functions import Upper
 
 alphanumeric = RegexValidator(r'^[0-9a-zA-Z ]*$', 'Only alphanumeric characters are allowed.')
 hex_rgb = RegexValidator(r'^#[0-9a-fA-F]{6}$', 'Only hex color codes e.g. #52fa3d are allowed.')
@@ -20,7 +19,6 @@ import os
 import random
 import string
 from django.utils import timezone
-from pytz import timezone as pytz_timezone
 from tinymce import models as tinymce_models
 from PIL import Image
 from io import BytesIO
@@ -480,6 +478,18 @@ class AntiVirus(models.Model):
             return f"AV code \"{self.av_code}\" (used by {self.used_by} at {self.time_used})"
         return f"AV code \"{self.av_code}\" (expires {self.expiration_time})"
 
+    def handle_av_badges(self):
+        """
+        Handles giving badges related to an AV being used.
+
+        - Backup Plan, for when someone uses an AV within an hour of getting tagged.
+        """
+        user_tagged_instance = Tag.objects.filter(taggee=self.used_by, game=self.game).order_by('-time_used').first()
+        if user_tagged_instance is None:
+            return
+        if (self.time_used-user_tagged_instance.timestamp).seconds /3600 < 1:
+            BadgeType.attempt_give_badge("Backup plan", self.used_by, self.game)
+
 
 class FailedAVAttempt(models.Model):
     player = models.ForeignKey(Person, on_delete=models.CASCADE, related_name="failed_av_attempts")
@@ -513,6 +523,20 @@ class BadgeType(models.Model):
         if self.picture:
             self.picture = resize_image(self.picture, 400, 400, "PNG")
         super().save()
+
+    @staticmethod
+    def attempt_give_badge(badge_name: str, player: Person, game: Game) -> bool:
+        """
+        Gives the badge if the name given exists (and returns true), otherwise returns False
+        """
+        try:
+            badge_name = BadgeType.objects.get(badge_name=badge_name)
+            badge = BadgeInstance.objects.create(badge_type=badge_name, player=player, game_awarded=game)
+            badge.save()
+            return True
+        except BadgeType.DoesNotExist:
+            print(f"WARN: Badge type {badge_name} does not exist")
+            return False
 
 class BadgeInstance(models.Model):
     badge_type = models.ForeignKey(BadgeType, on_delete=models.CASCADE)
@@ -578,6 +602,10 @@ class PostGameSurveyResponse(models.Model):
 
     def __str__(self) -> str:
         return f"Response of {self.player} for survey {self.survey} - {self.response}"
+
+    def give_voting_badge(self):
+        """Gives the 'I Voted' badge"""
+        BadgeType.attempt_give_badge('I Voted', self.player,  self.survey.game)
 
 
 class BodyArmor(models.Model):
@@ -654,10 +682,39 @@ class Tag(models.Model):
         delta = (timezone.localtime() - self.timestamp)
         return get_relative_time(delta)
 
+    def handle_other_badges(self):
+        """
+        handles giving badges to tagged player if appropriate
+
+        Welcome Back, for when a player is re-tagged as a zombie within an hour of using an AV
+
+        So Close, for when a player is tagged on thursday
+
+        Quick Turnaround, for getting a tag within an hour of getting tagged
+        """
+        prev_avs = AntiVirus.objects.filter(used_by=self.taggee, game=self.game).order_by('-time_used')
+        if len(prev_avs) > 0:
+            av_timestamp = prev_avs[0].time_used
+            curr_timestamp = self.timestamp
+            if (curr_timestamp - curr_timestamp).seconds / 3600 < 1:
+                # player is eligible for WELCOME BACK badge
+                BadgeType.attempt_give_badge('Welcome back!', self.taggee, self.game)
+        if self.timestamp.weekday() == 3:
+            # player tagged on thursday, eligible for "SO CLOSE" badge
+            BadgeType.attempt_give_badge('So Close', self.taggee, self.game)
+        tagger_was_tagged = Tag.objects.filter(taggee=self.tagger, game=self.game).order_by('-timestamp')
+        if len(tagger_was_tagged) > 0 or True:
+            if (tagger_was_tagged[0].timestamp - self.timestamp).seconds / 3600 < 1:
+                # tagger is eligible for "Quick Turnaround" badge
+                BadgeType.attempt_give_badge('Quick Turnaround', self.taggee, self.game)
+
+
     def handle_streak_badges(self):
-        '''
+        """
         Handles giving streak badges to the tagging player if appropriate
-        '''
+
+        While it does have some slightly redundant function, it should be vaguely robust, and remove the last badge from the streak, replacing it with the current.
+        """
         prev_tags = Tag.objects.filter(tagger=self.tagger, game=self.game).order_by('-timestamp')
         if prev_tags[0] == self:
             prev_tags = prev_tags[1:]
@@ -672,29 +729,25 @@ class Tag(models.Model):
                 streak += 1
             else:
                 break
-
-        if streak > 1:
+        try:
+            streak_badges = ['Tag Streak: Twin-Tag', 'Tag Streak: Triple-Tag', 'Tag Streak: Quad-Tag', 'Tag Streak: Pentag', 'Tag Streak: Overkill', 'Tag Streak: Lucky 7', 'Tag Streak: Tagalicious', 'Tag Streak: Unstoppable', 'Tag Streak: Apocalypse']
+            if streak <= 1:
+                return
             if streak == 2:
-                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Twin-Tag')
-            elif streak == 3:
-                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Triple-Tag')
-            elif streak == 4:
-                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Quad-Tag')
-            elif streak == 5:
-                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Pentag')
-            elif streak == 6:
-                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Overkill')
-            elif streak == 7:
-                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Lucky 7')
-            elif streak == 8:
-                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Tagalicious')
-            elif streak == 9:
-                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Unstoppable')
-            else:
-                badge_type = BadgeType.objects.get(badge_name='Tag Streak: Apocalypse')
-            # Give the player the badge
-            badge = BadgeInstance.objects.create(badge_type=badge_type, player=self.tagger, game_awarded=self.game)
-            badge.save()
+                # if player did not already have a streak, give them the starting badge
+                BadgeType.attempt_give_badge(streak_badges[0], self.tagger, self.game)
+                return
+            if streak > 10:
+                return
+            # get the streak badge for the last number
+            last_streak_badge = BadgeInstance.objects.filter(player=self.tagger, badge_type=BadgeType.objects.get(badge_name=streak_badges[min(streak-3, len(streak_badges)-1)])).order_by('-timestamp').first()
+
+            if last_streak_badge is not None and (curr_timestamp-last_streak_badge.timestamp)/3600 < 1:
+                last_streak_badge.delete()
+            BadgeType.attempt_give_badge(streak_badges[min(streak-2, len(streak_badges)-1)], self.tagger, self.game)
+        except BadgeInstance.DoesNotExist:
+            print("Badge does not exist!!! Streak badge giving was not completed.")
+            return
 
 
 class Report(models.Model):

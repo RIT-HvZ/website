@@ -7,8 +7,8 @@ from django.utils import timezone
 from .decorators import authentication_required
 from .forms import ClanCreateForm, NameChangeForm
 from .models import Clan, ClanHistoryItem, DiscordLinkCode, NameChangeRequest
-from .models import get_active_game
 from .views import for_all_methods, player_view
+
 
 @for_all_methods(authentication_required)
 class UserHTMLViews(object):
