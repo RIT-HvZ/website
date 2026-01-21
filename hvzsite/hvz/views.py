@@ -101,7 +101,74 @@ def index(request):
                                           'zombiecounts': zombiecounts,
                                           'humancounts': humancounts,
                                           'scoreboards': scoreboards})
+@api_view(["GET"])
+def recent_events_view(request):
+    game = get_active_game()
+    if len(most_recent_tags := Tag.objects.filter(game=game).order_by('-timestamp')) > 0:
+        most_recent_tag = most_recent_tags[0]
+    else:
+        most_recent_tag = None
+    if len(most_recent_avs := AntiVirus.objects.filter(game=game, used_by__isnull=False).order_by('-time_used')) > 0:
+        most_recent_av = most_recent_avs[0]
+    else:
+        most_recent_av = None
+    if len(most_recent_registrations := PlayerStatus.objects.filter(game=game).order_by("-activation_timestamp")) > 0:
+        most_recent_registration = most_recent_registrations[0]
+    else:
+        most_recent_registration = None
+    (humancount, zombiecount, most_tags, merged_recents, timestamps, zombiecounts, humancounts) = get_recent_events(
+        most_recent_tag, most_recent_av, most_recent_registration)
 
+    authed = request.user.is_authenticated
+
+    data = {
+        "humancount": humancount,
+        "zombiecount": zombiecount,
+        "most_tags": [
+            {
+                'player_uuid': h.player.player_uuid,
+                'player_name': h.player.readable_name(authed),
+                'tags': h.num_tags
+            } for h in most_tags
+        ],
+        "recent_events": [
+            {
+                'type': "av",
+                'av_uuid': e.av_uuid,
+                'time_used': e.time_used,
+                'used_by': {
+                    'player_uuid': e.used_by.player_uuid,
+                    'player_name': e.used_by.readable_name(authed),
+                }
+            }
+            if isinstance(e, AntiVirus) else
+            {
+                "type": 'tag',
+                "tagger": {
+                    "player_uuid": e.tagger.player_uuid,
+                    "player_name": e.tagger.readable_name(authed)
+                } if e.tagger is not None else {},
+                "taggee": {
+                    "player_uuid": e.taggee.player_uuid,
+                    "player_name": e.taggee.readable_name(authed)
+                } if e.taggee is not None else {},
+                "armor_taggee": {
+                    "armor_uuid": e.armor_taggee.armor_uuid
+                } if e.armor_taggee is not None else {},
+                "timestamp": e.timestamp
+            } for e in merged_recents
+        ],
+        "timestamps": [
+            t for t in timestamps
+        ],
+        "zombiecounts": [
+            z for z in zombiecounts
+        ],
+        "humancounts": [
+            h for h in humancounts
+        ]
+    }
+    return JsonResponse(data)
 
 def infection(request):
     game = get_active_game()
