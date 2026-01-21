@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django_registration import validators
 
 from .models import Announcement, Person, Blaster, BodyArmor, AntiVirus, Rules, About, PlayerStatus, Clan, \
-    get_active_game, Tag, Mission, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate, Scoreboard
+    get_active_game, Tag, Mission, PostGameSurvey, PostGameSurveyOption, Report, ReportUpdate, Scoreboard, BadgeType
 
 
 def validate_no_special_chars_in_name(value):
