@@ -12,5 +12,24 @@
     "discord_report_webhook_url": null,
     "debug": true,
     "allowed_hosts": ["192.168.1.200", "localhost", "127.0.0.1"],
-    "csrf_trusted_origins": ["http://localhost", "http://127.0.0.1"]
+    "csrf_trusted_origins": ["http://localhost", "http://127.0.0.1"],
+    "logging": {
+        "version": 1,
+        "disable_existing_loggers": false,
+        "handlers": {
+            "file": {
+                "level": "WARNING",
+                "class": "logging.RotatingFileHandler",
+                "filename": "example.log",
+                "maxBytes":  104857600,
+                "backupCount": 10
+            }
+        },
+        "loggers": {
+            "hvz": {
+                "handlers": ["file"],
+                "level": "WARNING"
+            }
+        }
+    }
 }

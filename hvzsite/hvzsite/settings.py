@@ -209,3 +209,5 @@ TINYMCE_DEFAULT_CONFIG = {
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 CAPTCHA_LENGTH = 6
 CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',)
+
+LOGGING = SECRET_SETTINGS['logging'] if 'logging' in SECRET_SETTINGS else {}
