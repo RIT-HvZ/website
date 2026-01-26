@@ -26,13 +26,13 @@ with open(os.path.join(BASE_DIR,"secret.txt"),'r') as f:
     SECRET_KEY = f.readline().strip()
 
 SECRET_SETTINGS = {}
-with open(os.path.join(BASE_DIR,"secrets.json"),'r') as f:
+with open(os.path.join(BASE_DIR,"config.json"),'r') as f:
     SECRET_SETTINGS = json.load(f)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = SECRET_SETTINGS['debug']
 
-ALLOWED_HOSTS = ["192.168.1.200", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = SECRET_SETTINGS['allowed_hosts']
 
 
 # Application definition
@@ -169,7 +169,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'hvz.Person'
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = SECRET_SETTINGS["csrf_trusted_origins"]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'

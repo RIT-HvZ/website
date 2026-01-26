@@ -1,0 +1,16 @@
+{
+    "user": "django",
+    "pass": "djangohvz123",
+    "host": "127.0.0.1",
+    "port": "5432",
+    "email_host": "smtp.gmail.com",
+    "email_port": "587",
+    "email_use_tls": true,
+    "email": "fakeemail@gmail.com",
+    "email_password": "fakepass",
+    "email_from": "HvZ at RIT <fakeemail@gmail.com>",
+    "discord_report_webhook_url": null,
+    "debug": true,
+    "allowed_hosts": ["192.168.1.200", "localhost", "127.0.0.1"],
+    "csrf_trusted_origins": ["http://localhost", "http://127.0.0.1"]
+}
