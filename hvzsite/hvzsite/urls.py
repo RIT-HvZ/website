@@ -17,7 +17,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import re_path, include
-from django_registration.backends.activation.views import RegistrationView
+from django_registration.backends.activation.views import RegistrationView, ActivationView
 from filebrowser.sites import site
 from hvz.forms import HVZRegistrationForm
 
@@ -32,6 +32,12 @@ urlpatterns = [
             form_class=HVZRegistrationForm
         ),
         name='django_registration_register',
+    ),
+    re_path(r'^accounts/activate/?',
+        ActivationView.as_view(
+            template_name="django_registration/activation_complete.html"
+        ),
+        name='django_registration_activate',
     ),
     re_path(r'^accounts/?', include('django_registration.backends.activation.urls')),
     re_path(r'^accounts/?', include('django.contrib.auth.urls')),
