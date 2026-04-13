@@ -75,7 +75,7 @@ class AdminHTMLViews(object):
     def editpostgamesurvey(request, postgamesurvey_id):
         if request.method == "GET":
             if postgamesurvey_id == "new":
-                form = PostGameSurveyForm()
+                form = PostGameSurveyForm(instance=PostGameSurvey.objects.create())
             else:
                 form = PostGameSurveyForm(instance=PostGameSurvey.objects.get(id=postgamesurvey_id))
         else:

@@ -46,7 +46,7 @@ urlpatterns = [
     re_path(r'^announcement/(?P<announcement_id>[^/]+)/?$', views.view_announcement),
     re_path(r'^tags/?$', views.view_tags),
     re_path(r'^ext/(?P<redir_name>[^/]+)/?$', views.redirect_view),
-
+    
     # Activation Routes
     re_path(r'^player_activation/?$', AdminHTMLViews.player_activation),
     re_path(r'^api/player_activation_api/?$', AdminAPIViews.player_activation_api),
