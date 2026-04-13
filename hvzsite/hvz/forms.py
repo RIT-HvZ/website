@@ -233,7 +233,7 @@ class PostGameSurveyForm(forms.ModelForm):
                 if key.startswith("option_text_") and not key.startswith("option_text_id") or \
                       key.startswith("option_name_") and not key.startswith("option_name_id"):
                     self.fields[key] = forms.CharField()
-        if self.instance.id=='new':
+        if self.pk is None:
             return
         options = PostGameSurveyOption.objects.filter(
             survey=self.instance
