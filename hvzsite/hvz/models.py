@@ -703,7 +703,7 @@ class Tag(models.Model):
             # player tagged on thursday, eligible for "SO CLOSE" badge
             BadgeType.attempt_give_badge('So Close', self.taggee, self.game)
         tagger_was_tagged = Tag.objects.filter(taggee=self.tagger, game=self.game).order_by('-timestamp')
-        if len(tagger_was_tagged) > 0 or True:
+        if len(tagger_was_tagged) > 0:
             if (tagger_was_tagged[0].timestamp - self.timestamp).seconds / 3600 < 1:
                 # tagger is eligible for "Quick Turnaround" badge
                 BadgeType.attempt_give_badge('Quick Turnaround', self.taggee, self.game)
