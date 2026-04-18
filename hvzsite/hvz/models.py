@@ -742,7 +742,7 @@ class Tag(models.Model):
             # get the streak badge for the last number
             last_streak_badge = BadgeInstance.objects.filter(player=self.tagger, badge_type=BadgeType.objects.get(badge_name=streak_badges[min(streak-3, len(streak_badges)-1)])).order_by('-timestamp').first()
 
-            if last_streak_badge is not None and (curr_timestamp-last_streak_badge.timestamp)/3600 < 1:
+            if last_streak_badge is not None and (curr_timestamp-last_streak_badge.timestamp).seconds/3600 < 1:
                 last_streak_badge.delete()
             BadgeType.attempt_give_badge(streak_badges[min(streak-2, len(streak_badges)-1)], self.tagger, self.game)
         except BadgeInstance.DoesNotExist:
